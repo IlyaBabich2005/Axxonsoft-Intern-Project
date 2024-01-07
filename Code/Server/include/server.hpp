@@ -2,24 +2,31 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/thread_pool.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
-using boost::asio::thread_pool, boost::asio::io_context;
+using	boost::asio::thread_pool,
+		boost::asio::io_context,
+		boost::asio::ip::tcp;
 
 namespace programm
 {
 	class Server
 	{
 	private:
-		static const int port{ 3000 };
-		static const int numOfFreads{ 3 };
-		int numOfConnectedClients{ 0 };
-		thread_pool thread_pool{Server::numOfFreads};
+		static const int	port{ 3000 };
+		static const int	numOfThreads{ 3 };
+		int					numOfConnectedClients;
+		thread_pool			threadPool;
+		tcp::acceptor		acceptor;
 
 	public:
-		Server(const io_context& io_context);
+		Server();
 
 		void Run();
 
 		virtual ~Server();
+
+	private: 
+		void ConfigurateAcceptor();
 	};
 }

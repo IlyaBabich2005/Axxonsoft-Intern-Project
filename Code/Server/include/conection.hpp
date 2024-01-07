@@ -18,5 +18,7 @@ public:
 
 	void Run();
 
+	void WaitConnection();
+
 	//virtual ~Conection();
 };

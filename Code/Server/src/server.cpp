@@ -2,17 +2,25 @@
 
 namespace programm
 {
-	Server::Server(const io_context& io_context)
+	Server::Server() : 
+		numOfConnectedClients{0},
+		threadPool{Server::numOfThreads},
+		acceptor{this->threadPool.executor()}
 	{
-	}
+		tcp::endpoint serverEndpoint{ tcp::v4(), Server::port };
 
-	void Server::Run()
-	{
-
+		this->acceptor.open(serverEndpoint.protocol());
+		this->acceptor.bind(serverEndpoint);
+		this->acceptor.listen();
 	}
 
 	Server::~Server()
 	{
-		this->thread_pool.join();
+		this->threadPool.join();
+	}
+
+	void Server::ConfigurateAcceptor()
+	{
+
 	}
 }
