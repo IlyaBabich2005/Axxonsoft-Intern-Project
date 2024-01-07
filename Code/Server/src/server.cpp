@@ -2,8 +2,17 @@
 
 namespace programm
 {
-	Server::Server(int port)
+	Server::Server(const io_context& io_context)
 	{
-		this->port = port;
+	}
+
+	void Server::Run()
+	{
+
+	}
+
+	Server::~Server()
+	{
+		this->thread_pool.join();
 	}
 }
