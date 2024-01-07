@@ -22,8 +22,6 @@ namespace programm
 	public:
 		Server();
 
-		void Run();
-
 		virtual ~Server();
 
 	private: 
