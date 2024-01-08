@@ -28,8 +28,6 @@ namespace programm
 		this->acceptor.open(serverEndpoint.protocol());
 		this->acceptor.bind(serverEndpoint);
 		this->acceptor.listen();
-
-		Accept();
 	}
 
 	void Server::Accept()
