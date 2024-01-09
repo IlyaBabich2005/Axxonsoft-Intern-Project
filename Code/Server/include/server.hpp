@@ -21,21 +21,19 @@ namespace programm
 	class Server
 	{
 	private:
-		static const int	port{ 3000 };
-		static const int	numOfThreads{ 3 };
 		int					numOfConnectedClients;
 		thread_pool			threadPool;
 		tcp::acceptor		acceptor;
 
 	public:
-		Server();
+		Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize);
 
 		void Run();
 
 		virtual ~Server();
 
 	private: 
-		void ConfigurateAcceptor();
+		void ConfigurateAcceptor(const std::string& adress, const std::string& port);
 
 		void Accept();
 	};

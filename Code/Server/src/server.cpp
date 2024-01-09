@@ -2,12 +2,12 @@
 
 namespace programm
 {
-	Server::Server() : 
+	Server::Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize) : 
 		numOfConnectedClients{0},
-		threadPool{Server::numOfThreads},
+		threadPool{threadPoolSize},
 		acceptor{this->threadPool.executor()}
 	{
-		this->ConfigurateAcceptor();
+		this->ConfigurateAcceptor(adress, port);
 
 		Accept();
 	}
@@ -21,9 +21,10 @@ namespace programm
 	{
 	}
 
-	void Server::ConfigurateAcceptor()
+	void Server::ConfigurateAcceptor(const std::string& adress, const std::string& port)
 	{
-		tcp::endpoint serverEndpoint{ boost::asio::ip::address::from_string("127.0.0.1"), Server::port };
+		tcp::resolver resolver{ this->threadPool.executor() };
+		tcp::endpoint serverEndpoint{ *resolver.resolve(adress, port).begin()};
 
 		this->acceptor.open(serverEndpoint.protocol());
 		this->acceptor.bind(serverEndpoint);
@@ -36,12 +37,12 @@ namespace programm
 			[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket) {
 				if (!ec)
 				{
-					boost::asio::write(connectionSocket, buffer(std::string{ "Connection succesfull" }));
+					write(connectionSocket, buffer(std::string{"hello world"}));
 					std::cout << "success!\n";
 				}
 
 				//std::this_thread::sleep_for(std::chrono::seconds{ 4 });
-				Accept();
+				this->Accept();
 			});
 	}
 }
