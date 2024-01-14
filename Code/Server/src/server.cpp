@@ -34,7 +34,8 @@ namespace programm
 	void Server::Accept()
 	{
 		this->acceptor.async_accept(make_strand(this->threadPool.executor()), 
-			[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket) {
+			[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket) 
+			{
 				if (!ec)
 				{
 					write(connectionSocket, buffer(std::string{"hello world"}));

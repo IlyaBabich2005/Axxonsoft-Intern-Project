@@ -25,16 +25,16 @@ namespace programm
 		thread_pool			threadPool;
 		tcp::acceptor		acceptor;
 
+	private: 
+		void ConfigurateAcceptor(const std::string& adress, const std::string& port);
+
+		void Accept();
+
 	public:
 		Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize);
 
 		void Run();
 
 		virtual ~Server();
-
-	private: 
-		void ConfigurateAcceptor(const std::string& adress, const std::string& port);
-
-		void Accept();
 	};
 }
