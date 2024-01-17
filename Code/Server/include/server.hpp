@@ -21,9 +21,9 @@ namespace programm
 	class Server
 	{
 	private:
-		int					numOfConnectedClients;
-		thread_pool			threadPool;
-		tcp::acceptor		acceptor;
+		int	numOfConnectedClients;
+		thread_pool	threadPool;
+		tcp::acceptor acceptor;
 
 	private: 
 		void ConfigurateAcceptor(const std::string& adress, const std::string& port);
