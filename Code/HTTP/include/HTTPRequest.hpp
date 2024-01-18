@@ -1,9 +1,11 @@
 #pragma once
 
+#include "HTTPDocument.hpp"
+
 namespace http
 {
-	class HTTPRequest
+	struct HTTPRequest : HTTPDocument
 	{
-		
+		string method;
 	};
 }
