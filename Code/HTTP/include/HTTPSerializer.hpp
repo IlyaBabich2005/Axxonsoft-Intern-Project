@@ -1,17 +1,18 @@
 #pragma once
 
+#include <memory>
+
 #include "HTTPRequest.hpp"
+#include "checks.hpp"
+
+using checks::characters::IsChar,
+checks::characters::IsControlChar,
+checks::characters::IsDigid,
+checks::characters::IsSpesialChar,
+std::shared_ptr;
 
 namespace http
 {
-	const char spesialCharacters[]
-	{
-	'(', ')', '<', '>', '@',
-	',', ';', ':', '\\', '"',
-	'/', '[', ']', '?', '=',
-	'{', '}', ' ', '\t',
-	};
-
 	enum SerializationStatus
 	{
 		endResultBad = 0,
@@ -26,7 +27,6 @@ namespace http
 		httpVersion,
 		expecting_newline_1,
 		header_line_start,
-		header_lws,
 		header_name,
 		space_before_header_value,
 		header_value,
@@ -39,20 +39,23 @@ namespace http
 	private:
 		SerializationStatus status;
 		SerializationStage stage;
+		HTTPDocument* document;
 
 	public:
-		HTTPSerializer();
+		HTTPSerializer(HTTPDocument* document);
+		~HTTPSerializer();
 
 		SerializationStatus GetStage();
+		HTTPDocument* GetDocument();
 
 		void SetStatus(SerializationStatus status);
 		void SetStage(SerializationStage stage);
 
-		virtual SerializationStatus HandleSymble(char curentSymbol) = 0;
-		
-		bool IsDigid(char symbol);
-		bool IsChar(char symbol);
-		bool IsControlChar(char symbol);
-		bool IsSpesialChar(char symbol);
+		virtual SerializationStatus HandleSymbol(char curentSymbol);
+
+	private:
+		void HandleVersionSymbol(char curentSymbol);
+
+
 	};
-}
+}  

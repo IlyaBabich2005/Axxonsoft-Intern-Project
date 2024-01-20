@@ -2,9 +2,24 @@
 
 namespace http
 {
+    HTTPSerializer::HTTPSerializer(HTTPDocument* document) :
+        document{document}
+    {
+    }
+
+    HTTPSerializer::~HTTPSerializer()
+    {
+        delete this->document;
+    }
+
     SerializationStatus HTTPSerializer::GetStage()
     {
         return this->status;
+    }
+
+    HTTPDocument* HTTPSerializer::GetDocument()
+    {
+        return this->document;
     }
 
     void HTTPSerializer::SetStatus(SerializationStatus state)
@@ -17,31 +32,28 @@ namespace http
         this->stage = stage;
     }
 
-    bool HTTPSerializer::IsDigid(char symbol)
+    SerializationStatus HTTPSerializer::HandleSymbol(char curentSymbol)
     {
-        return symbol >= '0' and symbol <= '9';
-    }
-
-    bool HTTPSerializer::IsChar(char symbol) 
-    {
-        return symbol >= 0 and symbol <= 127;
-    }
-
-    bool HTTPSerializer::IsControlChar(char symbol)
-    {
-        return symbol >= 0 and symbol <= 31 or symbol == 127;
-    }
-
-    bool HTTPSerializer::IsSpesialChar(char symbol)
-    {
-        for (auto specialSymbol : spesialCharacters)
+        switch (this->stage)
         {
-            if (symbol == specialSymbol)
-            {
-                return true;
-            }
-        }
+            case httpVersion: this->HandleVersionSymbol(curentSymbol); break;
 
-        return false;
+        }
+    }
+
+    void HTTPSerializer::HandleVersionSymbol(char curentSymbol)
+    {
+        if (curentSymbol == '\r')
+        {
+            this->SetStage(SerializationStage::expecting_newline_1);
+        }
+        else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+        {
+            this->SetStatus(SerializationStatus::endResultBad);
+        }
+        else
+        {
+            this->document->version.push_back(curentSymbol);
+        }
     }
 }

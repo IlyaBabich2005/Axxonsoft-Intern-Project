@@ -7,5 +7,6 @@ namespace http
 	struct HTTPRequest : HTTPDocument
 	{
 		string method;
+		string uri;
 	};
 }

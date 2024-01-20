@@ -8,12 +8,14 @@ namespace http
 	class HTTPRequestSerializer : HTTPSerializer
 	{
 	private:
-		HTTPRequest request;
 
 	public:
-		SerializationStatus HandleSymble(char curentSymbol) override;
+		HTTPRequestSerializer();
+
+		SerializationStatus HandleSymbol(char curentSymbol) override;
 		
 		void HandleMethodSymbool(char curentSymbol);
 		void HandleURISymbol(char curentSymbol);
+		
 	};
 }
