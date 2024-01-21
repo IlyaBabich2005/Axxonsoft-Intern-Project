@@ -25,13 +25,12 @@ namespace http
 		method = 0,
 		uri,
 		httpVersion,
-		expecting_newline_1,
-		header_line_start,
-		header_name,
-		space_before_header_value,
-		header_value,
-		expecting_newline_2,
-		expecting_newline_3
+		expectingHeaderNewline,
+		NewLineStart,
+		headerName,
+		spaceBeforeHaderValue,
+		headerValue,
+		expectingLineBeforeBody,
 	};
 
 	class HTTPSerializer
@@ -55,7 +54,10 @@ namespace http
 
 	private:
 		void HandleVersionSymbol(char curentSymbol);
-
-
+		void HandleNewHeaderLineExpectingSymbol(char curentSymbol);
+		void HandleNewLineStartSymbol(char curentSymbol);
+		void HandleHeaderNameSymbol(char curentSymbol);
+		void HandleSymbolBeforeHeaderValue(char curentSymbol);
+		void HandleHeaderValueSymbol(char curentSymbol);
 	};
 }  

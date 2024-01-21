@@ -55,4 +55,6 @@ namespace http
 			request->uri.push_back(curentSymbol);
 		}
 	}
+
+	
 }
