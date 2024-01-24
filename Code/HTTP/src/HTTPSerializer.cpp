@@ -3,7 +3,8 @@
 namespace http
 {
     HTTPSerializer::HTTPSerializer(HTTPDocument* document) :
-        document{document}
+        document{document},
+        status{SerializationStatus::indeterminate}
     {
     }
 
@@ -37,7 +38,13 @@ namespace http
         switch (this->stage)
         {
             case httpVersion: this->HandleVersionSymbol(curentSymbol); break;
-            case expectingHeaderNewline: this->HandleNewHeaderLineExpectingSymbol(curentSymbol); break;
+            case expectingHeaderNewLine: this->HandleNewHeaderLineExpectingSymbol(curentSymbol); break;
+            case newLineStart: this->HandleNewLineStartSymbol(curentSymbol); break;
+            case headerName: this->HandleHeaderNameSymbol(curentSymbol); break;
+            case spaceBeforeHaderValue: this->HandleSymbolBeforeHeaderValue(curentSymbol); break;
+            case headerValue: this->HandleHeaderValueSymbol(curentSymbol); break;
+            case expectingLineBeforeBody: HandleBodyStartExpectingSymbol(curentSymbol); break;
+            case body: this->HandleBodySymbol(curentSymbol); return;
         }
     }
 
@@ -45,7 +52,7 @@ namespace http
     {
         if (curentSymbol == '\r')
         {
-            this->stage = SerializationStage::expectingHeaderNewline;
+            this->stage = SerializationStage::expectingHeaderNewLine;
         }
         else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
         {
@@ -61,7 +68,7 @@ namespace http
     {
         if (curentSymbol == '\n')
         {
-            this->stage = SerializationStage::NewLineStart;
+            this->stage = SerializationStage::newLineStart;
         }
         else
         {
@@ -71,7 +78,7 @@ namespace http
 
     void HTTPSerializer::HandleNewLineStartSymbol(char curentSymbol)
     {
-        if (curentSymbol == '\n')
+        if (curentSymbol == '\r')
         {
             this->stage = SerializationStage::expectingLineBeforeBody;
         }
@@ -119,7 +126,7 @@ namespace http
     {
         if (curentSymbol == '\r')
         {
-            this->stage = SerializationStage::expectingHeaderNewline;
+            this->stage = SerializationStage::expectingHeaderNewLine;
         }
         else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
         {
@@ -131,5 +138,18 @@ namespace http
         }
     }
 
-
+    void HTTPSerializer::HandleBodyStartExpectingSymbol(char curentSymbol)
+    {
+        if (curentSymbol == '\n')
+        {
+            this->stage = SerializationStage::body;
+        }
+        else
+        {
+            this->status = SerializationStatus::endResultBad;
+        }
+    }
+    void HTTPSerializer::HandleBodySymbol(char curentSymbol)
+    {
+    }
 }

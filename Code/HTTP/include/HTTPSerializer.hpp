@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include <boost/asio/buffer.hpp>
 
 #include "HTTPRequest.hpp"
 #include "checks.hpp"
@@ -8,8 +8,7 @@
 using checks::characters::IsChar,
 checks::characters::IsControlChar,
 checks::characters::IsDigid,
-checks::characters::IsSpesialChar,
-std::shared_ptr;
+checks::characters::IsSpesialChar;
 
 namespace http
 {
@@ -25,12 +24,13 @@ namespace http
 		method = 0,
 		uri,
 		httpVersion,
-		expectingHeaderNewline,
-		NewLineStart,
+		expectingHeaderNewLine,
+		newLineStart,
 		headerName,
 		spaceBeforeHaderValue,
 		headerValue,
 		expectingLineBeforeBody,
+		body
 	};
 
 	class HTTPSerializer
@@ -50,6 +50,9 @@ namespace http
 		void SetStatus(SerializationStatus status);
 		void SetStage(SerializationStage stage);
 
+		template <typename InputIterator>
+		SerializationStatus Serialize(InputIterator begin, InputIterator end);
+
 		virtual SerializationStatus HandleSymbol(char curentSymbol);
 
 	private:
@@ -59,5 +62,24 @@ namespace http
 		void HandleHeaderNameSymbol(char curentSymbol);
 		void HandleSymbolBeforeHeaderValue(char curentSymbol);
 		void HandleHeaderValueSymbol(char curentSymbol);
+		void HandleBodyStartExpectingSymbol(char curentSymbol);
+		void HandleBodySymbol(char curentSymbol);;
 	};
-}  
+
+	template<typename InputIterator>
+	inline SerializationStatus HTTPSerializer::Serialize(InputIterator begin, InputIterator end)
+	{
+		while (begin != end)
+		{
+			this->HandleSymbol(*begin++);
+
+			if (this->status == SerializationStatus::endResultBad ||
+				this->status == SerializationStatus::endResultGood);
+			{
+				return this->status;
+			}
+		}
+
+		return this->status;
+	}
+}
