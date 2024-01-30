@@ -6,7 +6,7 @@ namespace http
 {
 	struct HTTPReply : HTTPDocument
 	{
-		string method;
-		string uri;
+		string code;
+		string status;
 	};
 }

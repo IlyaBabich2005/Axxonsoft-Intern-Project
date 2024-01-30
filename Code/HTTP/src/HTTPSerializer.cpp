@@ -148,7 +148,9 @@ namespace http
         {
             this->status = SerializationStatus::endResultBad;
         }
+
     }
+
     void HTTPSerializer::HandleBodySymbol(char curentSymbol)
     {
     }

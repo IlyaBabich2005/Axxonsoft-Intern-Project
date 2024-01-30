@@ -15,8 +15,7 @@ namespace http
 		{
 		case method: this->HandleMethodSymbool(curentSymbol); break;
 		case uri: this->HandleURISymbol(curentSymbol); break;
-		default: 
-			return;
+		default: break;
 		}
 
 		return this->GetStage();

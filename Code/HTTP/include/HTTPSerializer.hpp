@@ -23,6 +23,8 @@ namespace http
 	{
 		method = 0,
 		uri,
+		code,
+		httpStatus,
 		httpVersion,
 		expectingHeaderNewLine,
 		newLineStart,
