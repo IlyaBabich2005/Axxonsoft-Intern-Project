@@ -48,22 +48,6 @@ namespace http
         }
     }
 
-    void HTTPSerializer::HandleVersionSymbol(char curentSymbol)
-    {
-        if (curentSymbol == '\r')
-        {
-            this->stage = SerializationStage::expectingHeaderNewLine;
-        }
-        else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
-        {
-            this->status = SerializationStatus::endResultBad;
-        }
-        else
-        {
-            this->document->version.push_back(curentSymbol);
-        }
-    }
-
     void HTTPSerializer::HandleNewHeaderLineExpectingSymbol(char curentSymbol)
     {
         if (curentSymbol == '\n')

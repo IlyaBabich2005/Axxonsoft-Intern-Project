@@ -12,6 +12,9 @@ namespace http
 
 		SerializationStatus HandleSymbol(char curentSymbol) override;
 
+		void HandleVersionSymbol(char curentSymbol) override;
+
+	private:
 		void HandleStatusSymbool(char curentSymbol);
 		void HandleCodeSymbol(char curentSymbol);
 	};

@@ -5,6 +5,7 @@ namespace http
 	HTTPReplySerializer::HTTPReplySerializer() :
 		HTTPSerializer{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
 	{
+		this->SetStage(SerializationStage::httpVersion);
 	}
 
 	SerializationStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
@@ -19,6 +20,22 @@ namespace http
 		}
 
 		return this->GetStage();
+	}
+
+	void HTTPReplySerializer::HandleVersionSymbol(char curentSymbol)
+	{
+		if (curentSymbol == ' ')
+		{
+			this->SetStage(SerializationStage::code);
+		}
+		else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+		{
+			this->SetStatus(SerializationStatus::endResultBad);
+		}
+		else
+		{
+			this->GetDocument()->version.push_back(curentSymbol);
+		}
 	}
 
 	void HTTPReplySerializer::HandleStatusSymbool(char curentSymbol)

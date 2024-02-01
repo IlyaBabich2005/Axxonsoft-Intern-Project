@@ -57,8 +57,9 @@ namespace http
 
 		virtual SerializationStatus HandleSymbol(char curentSymbol);
 
+		virtual void HandleVersionSymbol(char curentSymbol) = 0;
+
 	private:
-		void HandleVersionSymbol(char curentSymbol);
 		void HandleNewHeaderLineExpectingSymbol(char curentSymbol);
 		void HandleNewLineStartSymbol(char curentSymbol);
 		void HandleHeaderNameSymbol(char curentSymbol);
