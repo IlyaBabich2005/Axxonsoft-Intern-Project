@@ -1,14 +1,14 @@
-#include "HTTPRequestSerializer.hpp"
+#include "HTTPRequestParser.hpp"
 
 namespace http
 {
 	HTTPRequestSerializer::HTTPRequestSerializer() : 
-		HTTPSerializer{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
+		HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
 	{
-		this->SetStage(SerializationStage::method);
+		this->SetStage(ParsingStage::method);
 	}
 
-	SerializationStatus HTTPRequestSerializer::HandleSymbol(char curentSymbol)
+	ParsingStatus HTTPRequestSerializer::HandleSymbol(char curentSymbol)
 	{
 		__super::HandleSymbol(curentSymbol);
 
@@ -26,11 +26,11 @@ namespace http
 	{
 		if (curentSymbol == '\r')
 		{
-			this->SetStage(SerializationStage::expectingHeaderNewLine);
+			this->SetStage(ParsingStage::expectingHeaderNewLine);
 		}
 		else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 		{
-			this->SetStatus(SerializationStatus::endResultBad);
+			this->SetStatus(ParsingStatus::endResultBad);
 		}
 		else
 		{
@@ -42,11 +42,11 @@ namespace http
 	{
 		if (curentSymbol == ' ')
 		{
-			this->SetStage(SerializationStage::uri);
+			this->SetStage(ParsingStage::uri);
 		}
 		else if(!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 		{
-			this->SetStatus(SerializationStatus::endResultBad);
+			this->SetStatus(ParsingStatus::endResultBad);
 		}
 		else
 		{
@@ -59,11 +59,11 @@ namespace http
 	{
 		if (curentSymbol == ' ')
 		{
-			this->SetStage(SerializationStage::httpVersion);
+			this->SetStage(ParsingStage::httpVersion);
 		}
 		else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 		{
-			this->SetStatus(SerializationStatus::endResultBad);
+			this->SetStatus(ParsingStatus::endResultBad);
 		}
 		else
 		{

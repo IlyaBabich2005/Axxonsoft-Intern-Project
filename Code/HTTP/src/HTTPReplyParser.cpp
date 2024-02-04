@@ -1,14 +1,14 @@
-#include "HTTPReplySerializer.hpp"
+#include "HTTPReplyParser.hpp"
 
 namespace http
 {
 	HTTPReplySerializer::HTTPReplySerializer() :
-		HTTPSerializer{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
+		HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
 	{
-		this->SetStage(SerializationStage::httpVersion);
+		this->SetStage(ParsingStage::httpVersion);
 	}
 
-	SerializationStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
+	ParsingStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
 	{
 		__super::HandleSymbol(curentSymbol);
 
@@ -26,11 +26,11 @@ namespace http
 	{
 		if (curentSymbol == ' ')
 		{
-			this->SetStage(SerializationStage::code);
+			this->SetStage(ParsingStage::code);
 		}
 		else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 		{
-			this->SetStatus(SerializationStatus::endResultBad);
+			this->SetStatus(ParsingStatus::endResultBad);
 		}
 		else
 		{
@@ -42,7 +42,7 @@ namespace http
 	{
 		if (curentSymbol == '\r')
 		{
-			this->SetStage(SerializationStage::expectingHeaderNewLine);
+			this->SetStage(ParsingStage::expectingHeaderNewLine);
 		}
 		else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
 		{
@@ -51,7 +51,7 @@ namespace http
 		}
 		else
 		{
-			this->SetStatus(SerializationStatus::endResultBad);
+			this->SetStatus(ParsingStatus::endResultBad);
 		}
 	}
 
@@ -59,7 +59,7 @@ namespace http
 	{
 		if (curentSymbol == ' ')
 		{
-			this->SetStage(SerializationStage::httpStatus);
+			this->SetStage(ParsingStage::httpStatus);
 		}
 		else if (IsDigid(curentSymbol))
 		{
@@ -68,7 +68,7 @@ namespace http
 		}
 		else
 		{
-			this->SetStatus(SerializationStatus::endResultBad);
+			this->SetStatus(ParsingStatus::endResultBad);
 		}
 	}
 }

@@ -1,39 +1,39 @@
-#include "HTTPSerializer.hpp"
+#include "HTTPParser.hpp"
 
 namespace http
 {
-    HTTPSerializer::HTTPSerializer(HTTPDocument* document) :
+    HTTPParser::HTTPParser(HTTPDocument* document) :
         document{document},
-        status{SerializationStatus::indeterminate}
+        status{ParsingStatus::indeterminate}
     {
     }
 
-    HTTPSerializer::~HTTPSerializer()
+    HTTPParser::~HTTPParser()
     {
         delete this->document;
     }
 
-    SerializationStatus HTTPSerializer::GetStage()
+    ParsingStatus HTTPParser::GetStage()
     {
         return this->status;
     }
 
-    HTTPDocument* HTTPSerializer::GetDocument()
+    HTTPDocument* HTTPParser::GetDocument()
     {
         return this->document;
     }
 
-    void HTTPSerializer::SetStatus(SerializationStatus state)
+    void HTTPParser::SetStatus(ParsingStatus state)
     {
         this->status = status;
     }
 
-    void HTTPSerializer::SetStage(SerializationStage stage)
+    void HTTPParser::SetStage(ParsingStage stage)
     {
         this->stage = stage;
     }
 
-    SerializationStatus HTTPSerializer::HandleSymbol(char curentSymbol)
+    ParsingStatus HTTPParser::HandleSymbol(char curentSymbol)
     {
         switch (this->stage)
         {
@@ -48,45 +48,45 @@ namespace http
         }
     }
 
-    void HTTPSerializer::HandleNewHeaderLineExpectingSymbol(char curentSymbol)
+    void HTTPParser::HandleNewHeaderLineExpectingSymbol(char curentSymbol)
     {
         if (curentSymbol == '\n')
         {
-            this->stage = SerializationStage::newLineStart;
+            this->stage = ParsingStage::newLineStart;
         }
         else
         {
-            this->status = SerializationStatus::endResultBad;
+            this->status = ParsingStatus::endResultBad;
         }
     }
 
-    void HTTPSerializer::HandleNewLineStartSymbol(char curentSymbol)
+    void HTTPParser::HandleNewLineStartSymbol(char curentSymbol)
     {
         if (curentSymbol == '\r')
         {
-            this->stage = SerializationStage::expectingLineBeforeBody;
+            this->stage = ParsingStage::expectingLineBeforeBody;
         }
         else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
         {
-            this->status = SerializationStatus::endResultBad;
+            this->status = ParsingStatus::endResultBad;
         }
         else
         {
             this->document->headers.push_back(HTTPHeader{});
             this->document->headers.back().name.push_back(curentSymbol);
-            this->stage = SerializationStage::headerName;
+            this->stage = ParsingStage::headerName;
         }
     }
 
-    void HTTPSerializer::HandleHeaderNameSymbol(char curentSymbol)
+    void HTTPParser::HandleHeaderNameSymbol(char curentSymbol)
     {
         if (curentSymbol == ':')
         {
-            this->stage = SerializationStage::spaceBeforeHaderValue;
+            this->stage = ParsingStage::spaceBeforeHaderValue;
         }
         else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
         {
-            this->status = SerializationStatus::endResultBad;
+            this->status = ParsingStatus::endResultBad;
         }
         else
         {
@@ -94,27 +94,27 @@ namespace http
         }
     }
 
-    void HTTPSerializer::HandleSymbolBeforeHeaderValue(char curentSymbol)
+    void HTTPParser::HandleSymbolBeforeHeaderValue(char curentSymbol)
     {
         if (curentSymbol == ' ')
         {
-            this->stage = SerializationStage::headerValue;
+            this->stage = ParsingStage::headerValue;
         }
         else
         {
-            this->status = SerializationStatus::endResultBad;
+            this->status = ParsingStatus::endResultBad;
         }
     }
 
-    void HTTPSerializer::HandleHeaderValueSymbol(char curentSymbol)
+    void HTTPParser::HandleHeaderValueSymbol(char curentSymbol)
     {
         if (curentSymbol == '\r')
         {
-            this->stage = SerializationStage::expectingHeaderNewLine;
+            this->stage = ParsingStage::expectingHeaderNewLine;
         }
         else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
         {
-            this->status = SerializationStatus::endResultBad;
+            this->status = ParsingStatus::endResultBad;
         }
         else
         {
@@ -122,20 +122,20 @@ namespace http
         }
     }
 
-    void HTTPSerializer::HandleBodyStartExpectingSymbol(char curentSymbol)
+    void HTTPParser::HandleBodyStartExpectingSymbol(char curentSymbol)
     {
         if (curentSymbol == '\n')
         {
-            this->stage = SerializationStage::body;
+            this->stage = ParsingStage::body;
         }
         else
         {
-            this->status = SerializationStatus::endResultBad;
+            this->status = ParsingStatus::endResultBad;
         }
 
     }
 
-    void HTTPSerializer::HandleBodySymbol(char curentSymbol)
+    void HTTPParser::HandleBodySymbol(char curentSymbol)
     {
     }
 }

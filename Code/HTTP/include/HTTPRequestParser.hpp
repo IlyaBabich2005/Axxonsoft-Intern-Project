@@ -1,18 +1,18 @@
 #pragma once
 
-#include "HTTPSerializer.hpp"
+#include "HTTPParser.hpp"
 #include "HTTPRequest.hpp"
 
 namespace http
 {
-	class HTTPRequestSerializer : HTTPSerializer
+	class HTTPRequestSerializer : HTTPParser
 	{
 	private:
 
 	public:
 		HTTPRequestSerializer();
 
-		SerializationStatus HandleSymbol(char curentSymbol) override;
+		ParsingStatus HandleSymbol(char curentSymbol) override;
 
 		void HandleVersionSymbol(char curentSymbol) override;
 		
