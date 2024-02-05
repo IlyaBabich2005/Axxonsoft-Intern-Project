@@ -137,5 +137,6 @@ namespace http
 
     void HTTPParser::HandleBodySymbol(char curentSymbol)
     {
+        this->document->body.push_back(curentSymbol);
     }
 }
