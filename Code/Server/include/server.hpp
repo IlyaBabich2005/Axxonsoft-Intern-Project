@@ -16,25 +16,28 @@ using	boost::asio::thread_pool,
 		boost::asio::async_write,
 		boost::asio::make_strand;
 
-namespace programm
+namespace AxxonsoftInternProject
 {
-	class Server
+	namespace SERVER
 	{
-	private:
-		int	numOfConnectedClients;
-		thread_pool	threadPool;
-		tcp::acceptor acceptor;
+		class Server
+		{
+		private:
+			int	numOfConnectedClients;
+			thread_pool	threadPool;
+			tcp::acceptor acceptor;
 
-	private: 
-		void ConfigurateAcceptor(const std::string& adress, const std::string& port);
+		private:
+			void ConfigurateAcceptor(const std::string& adress, const std::string& port);
 
-		void Accept();
+			void Accept();
 
-	public:
-		Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize);
+		public:
+			Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize);
 
-		void Run();
+			void Run();
 
-		virtual ~Server();
-	};
+			virtual ~Server();
+		};
+	}
 }

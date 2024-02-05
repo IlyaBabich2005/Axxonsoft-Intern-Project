@@ -12,22 +12,28 @@ using	boost::asio::ip::tcp,
 		std::size_t,
 		std::array;
 
-class Conection
+namespace AxxonsoftInternProject
 {
-private:
-	static const size_t bufferSize{ 1 * 1024 };
-	array<char, Conection::bufferSize> textBuffer;
-	tcp::socket connectionSocket;
+	namespace SERVER
+	{
+		class Conection
+		{
+		private:
+			static const size_t bufferSize{ 1 * 1024 };
+			array<char, Conection::bufferSize> textBuffer;
+			tcp::socket connectionSocket;
 
 
-private:
-	void Read();
-	void Write();
+		private:
+			void Read();
+			void Write();
 
-public: 
-	Conection(tcp::socket connectionSocket);
+		public:
+			Conection(tcp::socket connectionSocket);
 
-	void Run();
+			void Run();
 
-	virtual ~Conection();
-};
+			virtual ~Conection();
+		};
+	}
+}

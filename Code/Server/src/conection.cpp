@@ -1,31 +1,37 @@
 #include "conection.hpp"
 
-void Conection::Read()
+namespace AxxonsoftInternProject
 {
-	this->connectionSocket.async_read_some(buffer(textBuffer), 
-		[this](error_code ec, size_t bytesTransferred)
+	namespace SERVER
+	{
+		void Conection::Read()
 		{
-			if (!ec)
-			{
-				this->Read();
-			}
-		});
-}
+			this->connectionSocket.async_read_some(buffer(textBuffer),
+				[this](error_code ec, size_t bytesTransferred)
+				{
+					if (!ec)
+					{
+						this->Read();
+					}
+				});
+		}
 
-void Conection::Write()
-{
-}
+		void Conection::Write()
+		{
+		}
 
-Conection::Conection(tcp::socket connectionSocket) :
-	connectionSocket{std::move(connectionSocket)}
-{
-}
+		Conection::Conection(tcp::socket connectionSocket) :
+			connectionSocket{ std::move(connectionSocket) }
+		{
+		}
 
-void Conection::Run()
-{
-	this->Read();
-}
+		void Conection::Run()
+		{
+			this->Read();
+		}
 
-Conection::~Conection()
-{
+		Conection::~Conection()
+		{
+		}
+	}
 }

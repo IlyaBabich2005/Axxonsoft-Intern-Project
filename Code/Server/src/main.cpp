@@ -10,7 +10,7 @@
 
 int main()
 {
-	programm::Server server{"127.0.0.1", "80", 8};
+	AxxonsoftInternProject::SERVER::Server server{"127.0.0.1", "80", 8};
 	server.Run();
 	
 	return 0;
