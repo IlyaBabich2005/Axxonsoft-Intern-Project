@@ -4,11 +4,14 @@
 
 using std::string;
 
-namespace http
+namespace AxxonsoftInternProject
 {
-	struct HTTPHeader
+	namespace http
 	{
-		string name;
-		string value;
-	};
+		struct HTTPHeader
+		{
+			string name;
+			string value;
+		};
+	}
 }

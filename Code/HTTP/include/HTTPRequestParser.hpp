@@ -3,22 +3,25 @@
 #include "HTTPParser.hpp"
 #include "HTTPRequest.hpp"
 
-namespace http
+namespace AxxonsoftInternProject
 {
-	class HTTPRequestSerializer : HTTPParser
+	namespace http
 	{
-	private:
+		class HTTPRequestSerializer : HTTPParser
+		{
+		private:
 
-	public:
-		HTTPRequestSerializer();
+		public:
+			HTTPRequestSerializer();
 
-		ParsingStatus HandleSymbol(char curentSymbol) override;
+			ParsingStatus HandleSymbol(char curentSymbol) override;
 
-		void HandleVersionSymbol(char curentSymbol) override;
-		
-	private:
-		void HandleMethodSymbool(char curentSymbol);
-		void HandleURISymbol(char curentSymbol);
-		
-	};
+			void HandleVersionSymbol(char curentSymbol) override;
+
+		private:
+			void HandleMethodSymbool(char curentSymbol);
+			void HandleURISymbol(char curentSymbol);
+
+		};
+	}
 }

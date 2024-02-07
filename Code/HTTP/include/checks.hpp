@@ -1,20 +1,23 @@
 #pragma once
 
-namespace checks
+namespace AxxonsoftInternProject
 {
-	namespace characters
+	namespace checks
 	{
-		const char spesialCharacters[]
+		namespace characters
 		{
-		'(', ')', '<', '>', '@',
-		',', ';', ':', '\\', '"',
-		'/', '[', ']', '?', '=',
-		'{', '}', ' ', '\t',
-		};
+			const char spesialCharacters[]
+			{
+			'(', ')', '<', '>', '@',
+			',', ';', ':', '\\', '"',
+			'/', '[', ']', '?', '=',
+			'{', '}', ' ', '\t',
+			};
 
-		bool IsDigid(char symbol);
-		bool IsChar(char symbol);
-		bool IsControlChar(char symbol);
-		bool IsSpesialChar(char symbol);
+			bool IsDigid(char symbol);
+			bool IsChar(char symbol);
+			bool IsControlChar(char symbol);
+			bool IsSpesialChar(char symbol);
+		}
 	}
 }

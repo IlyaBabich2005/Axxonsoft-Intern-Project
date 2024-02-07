@@ -6,12 +6,15 @@
 
 using std::vector;
 
-namespace http
+namespace AxxonsoftInternProject
 {
-	struct HTTPDocument
+	namespace http
 	{
-		vector<HTTPHeader> headers;
-		string version;
-		string body;
-	};
+		struct HTTPDocument
+		{
+			vector<HTTPHeader> headers;
+			string version;
+			string body;
+		};
+	}
 }

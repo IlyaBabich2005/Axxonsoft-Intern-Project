@@ -2,11 +2,14 @@
 
 #include "HTTPDocument.hpp"
 
-namespace http
+namespace AxxonsoftInternProject
 {
-	struct HTTPRequest : HTTPDocument
+	namespace http
 	{
-		string method;
-		string uri;
-	};
+		struct HTTPRequest : HTTPDocument
+		{
+			string method;
+			string uri;
+		};
+	}
 }

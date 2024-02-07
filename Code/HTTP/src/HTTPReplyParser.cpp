@@ -1,75 +1,77 @@
 #include "HTTPReplyParser.hpp"
 
-namespace http
+namespace AxxonsoftInternProject
 {
-	HTTPReplySerializer::HTTPReplySerializer() :
-		HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
+	namespace http
 	{
-		this->SetStage(ParsingStage::httpVersion);
-	}
-
-	ParsingStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
-	{
-		__super::HandleSymbol(curentSymbol);
-
-		switch (this->GetStage())
+		HTTPReplySerializer::HTTPReplySerializer() :
+			HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
 		{
-		case code: this->HandleCodeSymbol(curentSymbol); break;
-		case httpStatus: this->HandleStatusSymbool(curentSymbol); break;
-		default: break;
+			this->SetStage(ParsingStage::httpVersion);
 		}
 
-		return this->GetStage();
-	}
+		ParsingStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
+		{
+			__super::HandleSymbol(curentSymbol);
 
-	void HTTPReplySerializer::HandleVersionSymbol(char curentSymbol)
-	{
-		if (curentSymbol == ' ')
-		{
-			this->SetStage(ParsingStage::code);
-		}
-		else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
-		{
-			this->SetStatus(ParsingStatus::endResultBad);
-		}
-		else
-		{
-			this->GetDocument()->version.push_back(curentSymbol);
-		}
-	}
+			switch (this->GetStage())
+			{
+			case code: this->HandleCodeSymbol(curentSymbol); break;
+			case httpStatus: this->HandleStatusSymbool(curentSymbol); break;
+			default: break;
+			}
 
-	void HTTPReplySerializer::HandleStatusSymbool(char curentSymbol)
-	{
-		if (curentSymbol == '\r')
-		{
-			this->SetStage(ParsingStage::expectingHeaderNewLine);
+			return this->GetStage();
 		}
-		else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
-		{
-			HTTPReply* reply = (HTTPReply*)GetDocument();
-			reply->status.push_back(curentSymbol);
-		}
-		else
-		{
-			this->SetStatus(ParsingStatus::endResultBad);
-		}
-	}
 
-	void HTTPReplySerializer::HandleCodeSymbol(char curentSymbol)
-	{
-		if (curentSymbol == ' ')
+		void HTTPReplySerializer::HandleVersionSymbol(char curentSymbol)
 		{
-			this->SetStage(ParsingStage::httpStatus);
+			if (curentSymbol == ' ')
+			{
+				this->SetStage(ParsingStage::code);
+			}
+			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+			{
+				this->SetStatus(ParsingStatus::endResultBad);
+			}
+			else
+			{
+				this->GetDocument()->version.push_back(curentSymbol);
+			}
 		}
-		else if (IsDigid(curentSymbol))
+
+		void HTTPReplySerializer::HandleStatusSymbool(char curentSymbol)
 		{
-			HTTPReply* reply = (HTTPReply*)GetDocument();
-			reply->code.push_back(curentSymbol);
+			if (curentSymbol == '\r')
+			{
+				this->SetStage(ParsingStage::expectingHeaderNewLine);
+			}
+			else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
+			{
+				HTTPReply* reply = (HTTPReply*)GetDocument();
+				reply->status.push_back(curentSymbol);
+			}
+			else
+			{
+				this->SetStatus(ParsingStatus::endResultBad);
+			}
 		}
-		else
+
+		void HTTPReplySerializer::HandleCodeSymbol(char curentSymbol)
 		{
-			this->SetStatus(ParsingStatus::endResultBad);
+			if (curentSymbol == ' ')
+			{
+				this->SetStage(ParsingStage::httpStatus);
+			}
+			else if (IsDigid(curentSymbol))
+			{
+				HTTPReply* reply = (HTTPReply*)GetDocument();
+				reply->code.push_back(curentSymbol);
+			}
+			else
+			{
+				this->SetStatus(ParsingStatus::endResultBad);
+			}
 		}
 	}
 }
-

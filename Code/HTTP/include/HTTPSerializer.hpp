@@ -1,10 +1,12 @@
 #pragma once
 
-
-namespace http
+namespace AxxonsoftInternProject
 {
-	class HTTPDeserializer
+	namespace http
 	{
+		class HTTPDeserializer
+		{
 
-	};
+		};
+	}
 }

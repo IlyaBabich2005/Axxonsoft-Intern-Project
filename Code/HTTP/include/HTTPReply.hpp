@@ -2,11 +2,14 @@
 
 #include "HTTPDocument.hpp"
 
-namespace http
+namespace AxxonsoftInternProject
 {
-	struct HTTPReply : HTTPDocument
+	namespace http
 	{
-		string code;
-		string status;
-	};
+		struct HTTPReply : HTTPDocument
+		{
+			string code;
+			string status;
+		};
+	}
 }
