@@ -12,7 +12,7 @@ namespace AxxonsoftInternProject
 
         HTTPParser::~HTTPParser()
         {
-            delete this->document;
+            
         }
 
         ParsingStatus HTTPParser::GetStage()
@@ -20,7 +20,7 @@ namespace AxxonsoftInternProject
             return this->status;
         }
 
-        HTTPDocument* HTTPParser::GetDocument()
+        shared_ptr<HTTPDocument> HTTPParser::GetDocument()
         {
             return this->document;
         }

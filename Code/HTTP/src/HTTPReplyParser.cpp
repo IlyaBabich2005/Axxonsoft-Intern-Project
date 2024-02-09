@@ -48,7 +48,7 @@ namespace AxxonsoftInternProject
 			}
 			else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
 			{
-				HTTPReply* reply = (HTTPReply*)GetDocument();
+				shared_ptr<HTTPReply> reply = dynamic_pointer_cast<HTTPReply>(GetDocument());
 				reply->status.push_back(curentSymbol);
 			}
 			else
@@ -65,7 +65,7 @@ namespace AxxonsoftInternProject
 			}
 			else if (IsDigid(curentSymbol))
 			{
-				HTTPReply* reply = (HTTPReply*)GetDocument();
+				shared_ptr<HTTPReply> reply = dynamic_pointer_cast<HTTPReply>(GetDocument());
 				reply->code.push_back(curentSymbol);
 			}
 			else

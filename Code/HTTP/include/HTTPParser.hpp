@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <boost/asio/buffer.hpp>
 
 #include "HTTPRequest.hpp"
@@ -7,7 +9,8 @@
 
 namespace charChecks = AxxonsoftInternProject::checks::characters;
 
-using charChecks::IsChar,
+using std::shared_ptr,
+	  charChecks::IsChar,
 	  charChecks::IsControlChar,
 	  charChecks::IsDigid,
 	  charChecks::IsSpesialChar;
@@ -44,14 +47,14 @@ namespace AxxonsoftInternProject
 		private:
 			ParsingStatus status;
 			ParsingStage stage;
-			HTTPDocument* document;
+			shared_ptr<HTTPDocument> document;
 
 		public:
 			HTTPParser(HTTPDocument* document);
 			~HTTPParser();
 
 			ParsingStatus GetStage();
-			HTTPDocument* GetDocument();
+			shared_ptr<HTTPDocument> GetDocument();
 
 			void SetStatus(ParsingStatus status);
 			void SetStage(ParsingStage stage);

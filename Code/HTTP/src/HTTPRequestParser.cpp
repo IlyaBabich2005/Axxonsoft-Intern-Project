@@ -52,7 +52,7 @@ namespace AxxonsoftInternProject
 			}
 			else
 			{
-				HTTPRequest* request = (HTTPRequest*)GetDocument();
+				shared_ptr<HTTPRequest> request = dynamic_pointer_cast<HTTPRequest>(GetDocument());
 				request->method.push_back(curentSymbol);
 			}
 		}
@@ -69,7 +69,7 @@ namespace AxxonsoftInternProject
 			}
 			else
 			{
-				HTTPRequest* request = (HTTPRequest*)GetDocument();
+				shared_ptr<HTTPRequest> request = dynamic_pointer_cast<HTTPRequest>(GetDocument());
 				request->uri.push_back(curentSymbol);
 			}
 		}

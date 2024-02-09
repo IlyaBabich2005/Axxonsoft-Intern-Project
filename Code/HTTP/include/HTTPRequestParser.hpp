@@ -3,6 +3,8 @@
 #include "HTTPParser.hpp"
 #include "HTTPRequest.hpp"
 
+using std::dynamic_pointer_cast;
+
 namespace AxxonsoftInternProject
 {
 	namespace http
