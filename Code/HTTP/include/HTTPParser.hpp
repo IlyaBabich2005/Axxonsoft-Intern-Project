@@ -67,13 +67,12 @@ namespace AxxonsoftInternProject
 			virtual void HandleVersionSymbol(char curentSymbol) = 0;
 
 		private:
-			void HandleNewHeaderLineExpectingSymbol(char curentSymbol);
 			void HandleNewLineStartSymbol(char curentSymbol);
 			void HandleHeaderNameSymbol(char curentSymbol);
-			void HandleSymbolBeforeHeaderValue(char curentSymbol);
 			void HandleHeaderValueSymbol(char curentSymbol);
-			void HandleBodyStartExpectingSymbol(char curentSymbol);
-			void HandleBodySymbol(char curentSymbol);;
+			void HandleBodySymbol(char curentSymbol);
+
+			void HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage);
 		};
 
 		template<typename InputIterator>

@@ -40,25 +40,13 @@ namespace AxxonsoftInternProject
             switch (this->stage)
             {
             case httpVersion: this->HandleVersionSymbol(curentSymbol); break;
-            case expectingHeaderNewLine: this->HandleNewHeaderLineExpectingSymbol(curentSymbol); break;
+            case expectingHeaderNewLine: this->HandleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); break;
             case newLineStart: this->HandleNewLineStartSymbol(curentSymbol); break;
             case headerName: this->HandleHeaderNameSymbol(curentSymbol); break;
-            case spaceBeforeHaderValue: this->HandleSymbolBeforeHeaderValue(curentSymbol); break;
+            case spaceBeforeHaderValue: this->HandleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
             case headerValue: this->HandleHeaderValueSymbol(curentSymbol); break;
-            case expectingLineBeforeBody: HandleBodyStartExpectingSymbol(curentSymbol); break;
+            case expectingLineBeforeBody: this->HandleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::body); break;
             case body: this->HandleBodySymbol(curentSymbol); return;
-            }
-        }
-
-        void HTTPParser::HandleNewHeaderLineExpectingSymbol(char curentSymbol)
-        {
-            if (curentSymbol == '\n')
-            {
-                this->stage = ParsingStage::newLineStart;
-            }
-            else
-            {
-                this->status = ParsingStatus::endResultBad;
             }
         }
 
@@ -96,18 +84,6 @@ namespace AxxonsoftInternProject
             }
         }
 
-        void HTTPParser::HandleSymbolBeforeHeaderValue(char curentSymbol)
-        {
-            if (curentSymbol == ' ')
-            {
-                this->stage = ParsingStage::headerValue;
-            }
-            else
-            {
-                this->status = ParsingStatus::endResultBad;
-            }
-        }
-
         void HTTPParser::HandleHeaderValueSymbol(char curentSymbol)
         {
             if (curentSymbol == '\r')
@@ -124,22 +100,21 @@ namespace AxxonsoftInternProject
             }
         }
 
-        void HTTPParser::HandleBodyStartExpectingSymbol(char curentSymbol)
+        void HTTPParser::HandleBodySymbol(char curentSymbol)
         {
-            if (curentSymbol == '\n')
+            this->document->body.push_back(curentSymbol);
+        }
+
+        void HTTPParser::HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage)
+        {
+            if (curentSymbol == requiredSymbol)
             {
-                this->stage = ParsingStage::body;
+                this->stage = nextStage;
             }
             else
             {
                 this->status = ParsingStatus::endResultBad;
             }
-
-        }
-
-        void HTTPParser::HandleBodySymbol(char curentSymbol)
-        {
-            this->document->body.push_back(curentSymbol);
         }
     }
 }

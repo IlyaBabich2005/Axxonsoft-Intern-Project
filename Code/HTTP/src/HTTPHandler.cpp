@@ -21,7 +21,7 @@ namespace AxxonsoftInternProject
 			}
 			catch (...)
 			{
-				//some reaction for invalid HTTP
+				
 			}
 		}
 		else
