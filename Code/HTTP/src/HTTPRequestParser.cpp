@@ -7,36 +7,36 @@ namespace AxxonsoftInternProject
 		HTTPRequestSerializer::HTTPRequestSerializer() :
 			HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
 		{
-			this->SetStage(ParsingStage::method);
+			this->stage = ParsingStage::method;
 		}
 
 		ParsingStatus HTTPRequestSerializer::HandleSymbol(char curentSymbol)
 		{
 			__super::HandleSymbol(curentSymbol);
 
-			switch (this->GetStage())
+			switch (this->stage)
 			{
 			case method: this->HandleMethodSymbool(curentSymbol); break;
 			case uri: this->HandleURISymbol(curentSymbol); break;
 			default: break;
 			}
 
-			return this->GetStage();
+			return this->status;
 		}
 
 		void HTTPRequestSerializer::HandleVersionSymbol(char curentSymbol)
 		{
 			if (curentSymbol == '\r')
 			{
-				this->SetStage(ParsingStage::expectingHeaderNewLine);
+				stage = ParsingStage::expectingHeaderNewLine;
 			}
 			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 			{
-				this->SetStatus(ParsingStatus::endResultBad);
+				status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				this->GetDocument()->version.push_back(curentSymbol);
+				document->version.push_back(curentSymbol);
 			}
 		}
 
@@ -44,16 +44,15 @@ namespace AxxonsoftInternProject
 		{
 			if (curentSymbol == ' ')
 			{
-				this->SetStage(ParsingStage::uri);
+				stage = ParsingStage::uri;
 			}
 			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 			{
-				this->SetStatus(ParsingStatus::endResultBad);
+				status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				shared_ptr<HTTPRequest> request = dynamic_pointer_cast<HTTPRequest>(GetDocument());
-				request->method.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPRequest>(this->document)->method.push_back(curentSymbol);
 			}
 		}
 
@@ -61,16 +60,15 @@ namespace AxxonsoftInternProject
 		{
 			if (curentSymbol == ' ')
 			{
-				this->SetStage(ParsingStage::httpVersion);
+				this->stage = ParsingStage::httpVersion;
 			}
 			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 			{
-				this->SetStatus(ParsingStatus::endResultBad);
+				this->status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				shared_ptr<HTTPRequest> request = dynamic_pointer_cast<HTTPRequest>(GetDocument());
-				request->uri.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPRequest>(this->document)->uri.push_back(curentSymbol);
 			}
 		}
 

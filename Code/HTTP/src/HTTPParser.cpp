@@ -15,26 +15,6 @@ namespace AxxonsoftInternProject
             
         }
 
-        ParsingStatus HTTPParser::GetStage()
-        {
-            return this->status;
-        }
-
-        shared_ptr<HTTPDocument> HTTPParser::GetDocument()
-        {
-            return this->document;
-        }
-
-        void HTTPParser::SetStatus(ParsingStatus state)
-        {
-            this->status = status;
-        }
-
-        void HTTPParser::SetStage(ParsingStage stage)
-        {
-            this->stage = stage;
-        }
-
         ParsingStatus HTTPParser::HandleSymbol(char curentSymbol)
         {
             switch (this->stage)

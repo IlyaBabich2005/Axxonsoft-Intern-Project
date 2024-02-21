@@ -13,22 +13,18 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPHandler::VerifyVersion()
 	{
-		if (this->document->version.substr(0, 5) == "HTTP/")
+		try
 		{
-			try
+			std::stod(this->document->version.substr(5));
+
+			if (this->document->version.substr(0, 5) != "HTTP/")
 			{
-				std::stod(this->document->version.substr(5));
-			}
-			catch (...)
-			{
-				
+				throw new InvalidHTTPVersionException{};
 			}
 		}
-		else
+		catch (...)
 		{
 			//some reaction for invalid HTTP
 		}
 	}
-
-
 }

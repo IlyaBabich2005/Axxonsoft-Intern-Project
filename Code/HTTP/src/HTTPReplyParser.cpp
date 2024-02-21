@@ -7,36 +7,36 @@ namespace AxxonsoftInternProject
 		HTTPReplySerializer::HTTPReplySerializer() :
 			HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
 		{
-			this->SetStage(ParsingStage::httpVersion);
+			this->stage = ParsingStage::httpVersion;
 		}
 
 		ParsingStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
 		{
 			__super::HandleSymbol(curentSymbol);
 
-			switch (this->GetStage())
+			switch (this->stage)
 			{
 			case code: this->HandleCodeSymbol(curentSymbol); break;
 			case httpStatus: this->HandleStatusSymbool(curentSymbol); break;
 			default: break;
 			}
 
-			return this->GetStage();
+			return this->status;
 		}
 
 		void HTTPReplySerializer::HandleVersionSymbol(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{
-				this->SetStage(ParsingStage::code);
+				this->stage = ParsingStage::code;
 			}
 			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 			{
-				this->SetStatus(ParsingStatus::endResultBad);
+				this->status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				this->GetDocument()->version.push_back(curentSymbol);
+				this->document->version.push_back(curentSymbol);
 			}
 		}
 
@@ -44,16 +44,15 @@ namespace AxxonsoftInternProject
 		{
 			if (curentSymbol == '\r')
 			{
-				this->SetStage(ParsingStage::expectingHeaderNewLine);
+				this->stage = ParsingStage::expectingHeaderNewLine;
 			}
 			else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
 			{
-				shared_ptr<HTTPReply> reply = dynamic_pointer_cast<HTTPReply>(GetDocument());
-				reply->status.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPReply>(document)->status.push_back(curentSymbol);
 			}
 			else
 			{
-				this->SetStatus(ParsingStatus::endResultBad);
+				this->status = ParsingStatus::endResultBad;
 			}
 		}
 
@@ -61,16 +60,15 @@ namespace AxxonsoftInternProject
 		{
 			if (curentSymbol == ' ')
 			{
-				this->SetStage(ParsingStage::httpStatus);
+				this->stage = ParsingStage::httpStatus;
 			}
 			else if (IsDigid(curentSymbol))
 			{
-				shared_ptr<HTTPReply> reply = dynamic_pointer_cast<HTTPReply>(GetDocument());
-				reply->code.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPReply>(this->document)->code.push_back(curentSymbol);
 			}
 			else
 			{
-				this->SetStatus(ParsingStatus::endResultBad);
+				this->status = ParsingStatus::endResultBad;
 			}
 		}
 	}

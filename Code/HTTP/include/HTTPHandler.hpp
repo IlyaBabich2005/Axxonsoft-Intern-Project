@@ -3,8 +3,10 @@
 #include <memory>
 
 #include "HTTPDocument.hpp"
+#include "InvalidHTTPVersionException.hpp"
 
-using std::shared_ptr;
+using std::shared_ptr,
+	  AxxonsoftInternProject::http::exceptions::InvalidHTTPVersionException;
 
 namespace AxxonsoftInternProject
 {
@@ -12,9 +14,10 @@ namespace AxxonsoftInternProject
 	{
 		class HTTPHandler
 		{
-		public:
+		protected: 
 			shared_ptr<HTTPDocument> document;
 
+		public:
 			HTTPHandler(HTTPDocument* document);
 			virtual ~HTTPHandler();
 

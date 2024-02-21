@@ -44,27 +44,10 @@ namespace AxxonsoftInternProject
 
 		class HTTPParser
 		{
-		private:
+		protected:
+			shared_ptr<HTTPDocument> document;
 			ParsingStatus status;
 			ParsingStage stage;
-			shared_ptr<HTTPDocument> document;
-
-		public:
-			HTTPParser(HTTPDocument* document);
-			~HTTPParser();
-
-			ParsingStatus GetStage();
-			shared_ptr<HTTPDocument> GetDocument();
-
-			void SetStatus(ParsingStatus status);
-			void SetStage(ParsingStage stage);
-
-			template <typename InputIterator>
-			ParsingStatus Parse(InputIterator begin, InputIterator end);
-
-			virtual ParsingStatus HandleSymbol(char curentSymbol);
-
-			virtual void HandleVersionSymbol(char curentSymbol) = 0;
 
 		private:
 			void HandleNewLineStartSymbol(char curentSymbol);
@@ -73,6 +56,18 @@ namespace AxxonsoftInternProject
 			void HandleBodySymbol(char curentSymbol);
 
 			void HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage);
+
+		protected: 
+			virtual ParsingStatus HandleSymbol(char curentSymbol);
+
+			virtual void HandleVersionSymbol(char curentSymbol) = 0;
+
+		public:
+			HTTPParser(HTTPDocument* document);
+			~HTTPParser();
+
+			template <typename InputIterator>
+			ParsingStatus Parse(InputIterator begin, InputIterator end);
 		};
 
 		template<typename InputIterator>
