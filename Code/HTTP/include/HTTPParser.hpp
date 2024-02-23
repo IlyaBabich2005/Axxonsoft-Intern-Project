@@ -63,7 +63,7 @@ namespace AxxonsoftInternProject
 			virtual void HandleVersionSymbol(char curentSymbol) = 0;
 
 		public:
-			HTTPParser(HTTPDocument* document);
+			HTTPParser(shared_ptr<HTTPDocument> document);
 			~HTTPParser();
 
 			template <typename InputIterator>

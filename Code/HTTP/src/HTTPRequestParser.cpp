@@ -5,7 +5,7 @@ namespace AxxonsoftInternProject
 	namespace http
 	{
 		HTTPRequestSerializer::HTTPRequestSerializer() :
-			HTTPParser{ dynamic_cast<HTTPDocument*>(new HTTPRequest{}) }
+			HTTPParser{ std::make_shared<HTTPDocument>(new HTTPRequest{}) }
 		{
 			this->stage = ParsingStage::method;
 		}

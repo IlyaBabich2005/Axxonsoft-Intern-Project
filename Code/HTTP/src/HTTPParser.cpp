@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
     namespace http
     {
-        HTTPParser::HTTPParser(HTTPDocument* document) :
+        HTTPParser::HTTPParser(shared_ptr<HTTPDocument> document) :
             document{ document },
             status{ ParsingStatus::indeterminate }
         {
