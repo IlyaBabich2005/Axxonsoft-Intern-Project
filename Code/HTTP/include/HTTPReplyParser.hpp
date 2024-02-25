@@ -9,10 +9,10 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class HTTPReplySerializer : HTTPParser
+		class HTTPReplyParser : HTTPParser
 		{
 		public:
-			HTTPReplySerializer();
+			HTTPReplyParser();
 
 			ParsingStatus HandleSymbol(char curentSymbol) override;
 

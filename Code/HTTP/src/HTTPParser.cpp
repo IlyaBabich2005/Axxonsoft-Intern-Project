@@ -15,6 +15,11 @@ namespace AxxonsoftInternProject
             
         }
 
+        shared_ptr<HTTPDocument> HTTPParser::GetParsingResult()
+        {
+            return this->document;
+        }
+
         ParsingStatus HTTPParser::HandleSymbol(char curentSymbol)
         {
             switch (this->stage)

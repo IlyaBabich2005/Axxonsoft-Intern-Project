@@ -4,13 +4,13 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPReplySerializer::HTTPReplySerializer() :
+		HTTPReplyParser::HTTPReplyParser() :
 			HTTPParser{ std::make_shared<HTTPDocument>(new HTTPRequest{}) }
 		{
 			this->stage = ParsingStage::httpVersion;
 		}
 
-		ParsingStatus HTTPReplySerializer::HandleSymbol(char curentSymbol)
+		ParsingStatus HTTPReplyParser::HandleSymbol(char curentSymbol)
 		{
 			__super::HandleSymbol(curentSymbol);
 
@@ -24,7 +24,7 @@ namespace AxxonsoftInternProject
 			return this->status;
 		}
 
-		void HTTPReplySerializer::HandleVersionSymbol(char curentSymbol)
+		void HTTPReplyParser::HandleVersionSymbol(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{
@@ -40,7 +40,7 @@ namespace AxxonsoftInternProject
 			}
 		}
 
-		void HTTPReplySerializer::HandleStatusSymbool(char curentSymbol)
+		void HTTPReplyParser::HandleStatusSymbool(char curentSymbol)
 		{
 			if (curentSymbol == '\r')
 			{
@@ -56,7 +56,7 @@ namespace AxxonsoftInternProject
 			}
 		}
 
-		void HTTPReplySerializer::HandleCodeSymbol(char curentSymbol)
+		void HTTPReplyParser::HandleCodeSymbol(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{

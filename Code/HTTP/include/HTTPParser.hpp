@@ -66,6 +66,8 @@ namespace AxxonsoftInternProject
 			HTTPParser(shared_ptr<HTTPDocument> document);
 			~HTTPParser();
 
+			shared_ptr<HTTPDocument> GetParsingResult();
+
 			template <typename InputIterator>
 			ParsingStatus Parse(InputIterator begin, InputIterator end);
 		};

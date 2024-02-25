@@ -6,6 +6,8 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/system/error_code.hpp>
 
+#include "HTTPDocument.hpp"
+
 using	boost::asio::ip::tcp,
 		boost::asio::buffer,
 		boost::system::error_code,
