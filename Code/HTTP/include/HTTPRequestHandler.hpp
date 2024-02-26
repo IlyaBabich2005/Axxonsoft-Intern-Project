@@ -21,7 +21,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class HTTPRequestHandler : HTTPHandler
+		class HTTPRequestHandler : public HTTPHandler
 		{
 		private: 
 			void VerifyVersion() override;

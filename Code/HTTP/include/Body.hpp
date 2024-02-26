@@ -7,7 +7,7 @@ namespace AxxonsoftInternProject
 		class Body
 		{
 		public:
-			void ToJson();
+			//void ToJson();
 		};
 	}
 }

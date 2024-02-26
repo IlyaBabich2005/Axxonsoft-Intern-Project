@@ -7,6 +7,8 @@
 #define _WIN32_WINNT 0x0A00
 #endif
 
+#include "HTTPDocument.hpp"
+
 
 int main()
 {

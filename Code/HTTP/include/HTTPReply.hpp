@@ -8,7 +8,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class HTTPReply : HTTPDocument
+		class HTTPReply : public HTTPDocument
 		{
 		public:
 			string code;

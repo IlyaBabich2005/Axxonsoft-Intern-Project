@@ -7,14 +7,14 @@
 namespace stock = AxxonsoftInternProject::http::stock;
 
 using stock::characters::separators::headerNameValueSeparator,
-	  boost::asio::to
+	boost::asio::buffer,
 	  std::string;
 
 namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		struct HTTPHeader : Serializable
+		struct HTTPHeader : public Serializable
 		{
 			string name;
 			string value;

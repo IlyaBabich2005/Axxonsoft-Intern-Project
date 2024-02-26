@@ -17,7 +17,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		struct HTTPDocument : Serializable
+		struct HTTPDocument : public Serializable
 		{
 			vector<HTTPHeader> headers;
 			string version;

@@ -11,6 +11,8 @@ namespace AxxonsoftInternProject
 				{
 					if (!ec)
 					{
+						ParsingStatus status = 
+
 						this->Read();
 					}
 				});

@@ -9,12 +9,12 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class HTTPRequestSerializer : HTTPParser
+		class HTTPRequestParcer : public HTTPParser
 		{
 		private:
 
 		public:
-			HTTPRequestSerializer();
+			HTTPRequestParcer();
 
 			ParsingStatus HandleSymbol(char curentSymbol) override;
 

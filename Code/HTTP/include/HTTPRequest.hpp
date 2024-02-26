@@ -13,13 +13,13 @@ namespace AxxonsoftInternProject
 			"DELETE"
 		};
 
-		struct HTTPRequest : HTTPDocument
+		struct HTTPRequest : public HTTPDocument
 		{
 			string method;
 			string uri;
 		
 		private: 
-			vector<const_buffer> SerializeVersion() override;
+			//vector<const_buffer> SerializeVersion() override;
 		};
 	}
 }

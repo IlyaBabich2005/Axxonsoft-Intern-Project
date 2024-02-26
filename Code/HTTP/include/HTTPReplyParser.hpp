@@ -9,7 +9,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class HTTPReplyParser : HTTPParser
+		class HTTPReplyParser : public HTTPParser
 		{
 		public:
 			HTTPReplyParser();

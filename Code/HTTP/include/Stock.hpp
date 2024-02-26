@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include "HTTPReplyStatus.hpp"
-
 using std::string;
 
 namespace AxxonsoftInternProject

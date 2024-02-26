@@ -10,7 +10,7 @@ namespace AxxonsoftInternProject
 	{
 		namespace exceptions
 		{
-			class InvalidHTTPVersionException : exception
+			class InvalidHTTPVersionException : public exception
 			{
 			};
 		}
