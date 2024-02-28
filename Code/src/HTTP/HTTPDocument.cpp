@@ -5,6 +5,8 @@ vector<const_buffer> AxxonsoftInternProject::http::HTTPDocument::SerializeVersio
 	vector<const_buffer> serializedVersion;
 
 	serializedVersion.push_back(buffer(this->version));
+
+	return serializedVersion;
 }
 
 vector<const_buffer> AxxonsoftInternProject::http::HTTPDocument::SerializeHeaders()
@@ -19,6 +21,8 @@ vector<const_buffer> AxxonsoftInternProject::http::HTTPDocument::SerializeHeader
 	}
 
 	serializedHeaders.push_back(buffer(httpDocumentLineSeparator));
+
+	return serializedHeaders;
 }
 
 vector<const_buffer> AxxonsoftInternProject::http::HTTPDocument::SerializeBody()
@@ -28,6 +32,6 @@ vector<const_buffer> AxxonsoftInternProject::http::HTTPDocument::SerializeBody()
 
 vector<const_buffer> AxxonsoftInternProject::http::HTTPDocument::Serialize()
 {
-	this->SerializeHeaders();
+	return this->SerializeHeaders();
 	//his->SerializeBody();
 }

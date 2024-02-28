@@ -40,8 +40,9 @@ namespace AxxonsoftInternProject
 				{
 					if (!ec)
 					{
-						write(connectionSocket, buffer(std::string{ "hello world" }));
-						std::cout << "success!\n";
+						std::make_shared<Conection>(
+							std::move(connectionSocket))->Run();
+						//conection.Run();
 					}
 
 					//std::this_thread::sleep_for(std::chrono::seconds{ 4 });

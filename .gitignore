@@ -368,3 +368,7 @@ FodyWeavers.xsd
 *.vcxproj.user
 *.sln
 *.packages.config
+
+#Ignore VS folder .vs and Cmake out folder
+Code/.vs/
+Code/out/

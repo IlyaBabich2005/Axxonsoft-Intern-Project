@@ -2,25 +2,16 @@
 
 #include <array>
 
+#include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/system/error_code.hpp>
-
-#include "HTTPRequestParser.hpp"
-#include "HTTPRequestHandler.hpp"
-#include "HTTPRequest.hpp"
-#include "HTTPReply"
-
-namespace http = AxxonsoftInternProject::http;
+#include <boost/asio/impl/write.hpp>
 
 using	boost::asio::ip::tcp,
 		boost::asio::buffer,
 		boost::system::error_code,
-		http::HTTPRequestParcer,
-		http::ParsingStatus,
-		http::HTTPRequestHandler,
-		http::HTTPReply,
-		http::HTTPRequest,
+		std::enable_shared_from_this,
 		std::size_t,
 		std::array;
 
@@ -28,16 +19,12 @@ namespace AxxonsoftInternProject
 {
 	namespace SERVER
 	{
-		class Conection
+		class Conection : public enable_shared_from_this<Conection>
 		{
 		private:
 			static const size_t bufferSize{ 1 * 1024 };
-			array<char, Conection::bufferSize> textBuffer;
+			array<char, Conection::bufferSize> incomeBuffer;
 			tcp::socket connectionSocket;
-			shared_ptr<HTTPRequest> request;
-			shared_ptr<HTTPReply> reply;
-			HTTPRequestParcer parcer;
-			HTTPRequestHandler handler;
 
 		private:
 			void Read();
@@ -47,8 +34,6 @@ namespace AxxonsoftInternProject
 			Conection(tcp::socket connectionSocket);
 
 			void Run();
-
-			virtual ~Conection();
 		};
 	}
 }

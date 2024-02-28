@@ -64,7 +64,6 @@ namespace AxxonsoftInternProject
 
 		public:
 			HTTPParser(shared_ptr<HTTPDocument> document);
-			~HTTPParser();
 
 			shared_ptr<HTTPDocument> GetParsingResult();
 

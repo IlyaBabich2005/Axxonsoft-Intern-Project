@@ -28,8 +28,7 @@ namespace AxxonsoftInternProject
 			void VerifyMethod();
 
 		public:
-			HTTPRequestHandler(shared_ptr<HTTPDocument> handledDocument);
-			virtual ~HTTPRequestHandler();
+			HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument);
 
 			void Handle() override;
 

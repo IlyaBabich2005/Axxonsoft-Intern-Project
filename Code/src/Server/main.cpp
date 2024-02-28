@@ -9,11 +9,12 @@
 
 #include "HTTPDocument.hpp"
 
-
 int main()
 {
 	AxxonsoftInternProject::SERVER::Server server{"127.0.0.1", "80", 8};
 	server.Run();
+
+	std::cin;
 	
 	return 0;
 }

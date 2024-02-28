@@ -2,12 +2,8 @@
 
 namespace AxxonsoftInternProject
 {
-	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPDocument> handledDocument) : 
-		HTTPHandler{handledDocument, std::make_shared<HTTPDocument>(new HTTPReply)}
-	{
-	}
-
-	http::HTTPRequestHandler::~HTTPRequestHandler()
+	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument) : 
+		HTTPHandler{std::dynamic_pointer_cast<HTTPDocument>(handledDocument), shared_ptr<HTTPDocument>(new HTTPReply)}
 	{
 	}
 

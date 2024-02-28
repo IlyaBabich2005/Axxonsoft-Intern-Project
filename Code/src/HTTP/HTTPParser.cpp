@@ -10,11 +10,6 @@ namespace AxxonsoftInternProject
         {
         }
 
-        HTTPParser::~HTTPParser()
-        {
-            
-        }
-
         shared_ptr<HTTPDocument> HTTPParser::GetParsingResult()
         {
             return this->document;
@@ -31,8 +26,10 @@ namespace AxxonsoftInternProject
             case spaceBeforeHaderValue: this->HandleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
             case headerValue: this->HandleHeaderValueSymbol(curentSymbol); break;
             case expectingLineBeforeBody: this->HandleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::body); break;
-            case body: this->HandleBodySymbol(curentSymbol); return;
+            case body: this->HandleBodySymbol(curentSymbol); break;
             }
+
+            return this->status;
         }
 
         void HTTPParser::HandleNewLineStartSymbol(char curentSymbol)

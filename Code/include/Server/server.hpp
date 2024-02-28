@@ -4,10 +4,9 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/strand.hpp>
-#include <boost/asio/write.hpp>
-#include <boost/asio/buffer.hpp>
+
+#include "conection.hpp"
 
 using	boost::asio::thread_pool,
 		boost::asio::io_context,

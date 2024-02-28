@@ -4,8 +4,8 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPRequestParcer::HTTPRequestParcer() :
-			HTTPParser{ std::make_shared<HTTPDocument>(new HTTPRequest{}) }
+		HTTPRequestParcer::HTTPRequestParcer(shared_ptr<HTTPRequest> request) :
+			HTTPParser{ dynamic_pointer_cast<HTTPDocument>(request) }
 		{
 			this->stage = ParsingStage::method;
 		}

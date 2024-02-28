@@ -9,9 +9,9 @@
 namespace separators = AxxonsoftInternProject::http::stock::characters::separators;
 
 using separators::httpDocumentLineSeparator,
-	  std::begin,
-	  std::end,
-	  std::vector;
+std::begin,
+std::end,
+std::vector;
 
 namespace AxxonsoftInternProject
 {
@@ -19,6 +19,7 @@ namespace AxxonsoftInternProject
 	{
 		struct HTTPDocument : public Serializable
 		{
+		public:
 			vector<HTTPHeader> headers;
 			string version;
 			string body;

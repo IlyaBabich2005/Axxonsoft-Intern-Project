@@ -4,8 +4,8 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPReplyParser::HTTPReplyParser() :
-			HTTPParser{ std::make_shared<HTTPDocument>(new HTTPRequest{}) }
+		HTTPReplyParser::HTTPReplyParser(shared_ptr<HTTPReply> reply) :
+			HTTPParser{ dynamic_pointer_cast<HTTPDocument>(reply)}
 		{
 			this->stage = ParsingStage::httpVersion;
 		}

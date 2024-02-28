@@ -1,7 +1,7 @@
 #pragma once
 
 #include "HTTPParser.hpp"
-#include "HTTPRequest.hpp"
+#include "HTTPReply.hpp"
 
 using std::dynamic_pointer_cast;
 
@@ -9,21 +9,16 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class HTTPRequestParcer : public HTTPParser
+		class HTTPReplyParser : public HTTPParser
 		{
-		private:
-
 		public:
-			HTTPRequestParcer();
-
-			ParsingStatus HandleSymbol(char curentSymbol) override;
-
-			void HandleVersionSymbol(char curentSymbol) override;
+			HTTPReplyParser(shared_ptr<HTTPReply> reply);
 
 		private:
-			void HandleMethodSymbool(char curentSymbol);
-			void HandleURISymbol(char curentSymbol);
-
+			void HandleStatusSymbool(char curentSymbol);
+			void HandleCodeSymbol(char curentSymbol);
+			ParsingStatus HandleSymbol(char curentSymbol) override;
+			void HandleVersionSymbol(char curentSymbol) override;
 		};
 	}
 }
