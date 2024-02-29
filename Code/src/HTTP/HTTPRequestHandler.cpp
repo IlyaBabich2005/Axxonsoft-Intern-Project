@@ -2,8 +2,8 @@
 
 namespace AxxonsoftInternProject
 {
-	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument) : 
-		HTTPHandler{std::dynamic_pointer_cast<HTTPDocument>(handledDocument), shared_ptr<HTTPDocument>(new HTTPReply)}
+	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument, shared_ptr<HTTPReply> outputDocument) :
+		HTTPHandler{std::dynamic_pointer_cast<HTTPDocument>(handledDocument), std::dynamic_pointer_cast<HTTPDocument>(outputDocument) }
 	{
 	}
 
@@ -13,12 +13,12 @@ namespace AxxonsoftInternProject
 		{
 			std::stod(this->handledDocument->version.substr(5));
 
-			if (this->handledDocument->version.substr(0, 5) == "HTTP/")
+			if (this->handledDocument->version.substr(0, 5) != "HTTP/")
 			{
 				throw new InvalidHTTPVersionException{};
 			}
 
-			this->handledDocument->version = this->handledDocument->version;
+			this->outputDocument->version = this->handledDocument->version;
 		}
 		catch (...)
 		{
@@ -41,9 +41,21 @@ namespace AxxonsoftInternProject
 		dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = badRequest;
 	}
 
+	void http::HTTPRequestHandler::HandleHeaders()
+	{
+		for (auto header : this->handledDocument->headers)
+		{
+			if (header.name == "Connection" && header.value == "keep-alive")
+			{
+				this->outputDocument->headers.push_back(header);
+			}
+		}
+	}
+
 	void http::HTTPRequestHandler::Handle()
 	{
 		VerifyMethod();
 		VerifyVersion();
+		HandleHeaders();
 	}
 }

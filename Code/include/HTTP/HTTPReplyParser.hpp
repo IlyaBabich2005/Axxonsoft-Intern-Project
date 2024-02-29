@@ -17,7 +17,7 @@ namespace AxxonsoftInternProject
 		private:
 			void HandleStatusSymbool(char curentSymbol);
 			void HandleCodeSymbol(char curentSymbol);
-			ParsingStatus HandleSymbol(char curentSymbol) override;
+			void HandleSymbol(char curentSymbol) override;
 			void HandleVersionSymbol(char curentSymbol) override;
 		};
 	}

@@ -10,8 +10,9 @@ namespace AxxonsoftInternProject
 			this->stage = ParsingStage::method;
 		}
 
-		ParsingStatus HTTPRequestParcer::HandleSymbol(char curentSymbol)
+		void HTTPRequestParcer::HandleSymbol(char curentSymbol)
 		{
+			std::cout << "Handle symbol " << curentSymbol << "\n";
 			__super::HandleSymbol(curentSymbol);
 
 			switch (this->stage)
@@ -20,8 +21,6 @@ namespace AxxonsoftInternProject
 			case uri: this->HandleURISymbol(curentSymbol); break;
 			default: break;
 			}
-
-			return this->status;
 		}
 
 		void HTTPRequestParcer::HandleVersionSymbol(char curentSymbol)
@@ -30,7 +29,10 @@ namespace AxxonsoftInternProject
 			{
 				stage = ParsingStage::expectingHeaderNewLine;
 			}
-			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+			else if (curentSymbol != '/' && 
+				(!IsChar(curentSymbol) || 
+				IsControlChar(curentSymbol) || 
+				IsSpesialChar(curentSymbol)))
 			{
 				status = ParsingStatus::endResultBad;
 			}
@@ -62,7 +64,12 @@ namespace AxxonsoftInternProject
 			{
 				this->stage = ParsingStage::httpVersion;
 			}
-			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+			else if (curentSymbol != ':' && 
+					curentSymbol != '/' && 
+					(!IsChar(curentSymbol) || 
+					IsControlChar(curentSymbol) || 
+					IsSpesialChar(curentSymbol))
+				)
 			{
 				this->status = ParsingStatus::endResultBad;
 			}

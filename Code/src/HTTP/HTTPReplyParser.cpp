@@ -10,7 +10,7 @@ namespace AxxonsoftInternProject
 			this->stage = ParsingStage::httpVersion;
 		}
 
-		ParsingStatus HTTPReplyParser::HandleSymbol(char curentSymbol)
+		void HTTPReplyParser::HandleSymbol(char curentSymbol)
 		{
 			__super::HandleSymbol(curentSymbol);
 
@@ -20,8 +20,6 @@ namespace AxxonsoftInternProject
 			case httpStatus: this->HandleStatusSymbool(curentSymbol); break;
 			default: break;
 			}
-
-			return this->status;
 		}
 
 		void HTTPReplyParser::HandleVersionSymbol(char curentSymbol)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
 
 #include <boost/asio/buffer.hpp>
 
@@ -48,17 +49,20 @@ namespace AxxonsoftInternProject
 			shared_ptr<HTTPDocument> document;
 			ParsingStatus status;
 			ParsingStage stage;
+			int contentSize;
+			int handledContentSize;
 
 		private:
 			void HandleNewLineStartSymbol(char curentSymbol);
 			void HandleHeaderNameSymbol(char curentSymbol);
 			void HandleHeaderValueSymbol(char curentSymbol);
+			void HandleSymbolBeforeBody(char curentSymbol);
 			void HandleBodySymbol(char curentSymbol);
 
 			void HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage);
 
 		protected: 
-			virtual ParsingStatus HandleSymbol(char curentSymbol);
+			virtual void HandleSymbol(char curentSymbol);
 
 			virtual void HandleVersionSymbol(char curentSymbol) = 0;
 
@@ -78,8 +82,8 @@ namespace AxxonsoftInternProject
 			{
 				this->HandleSymbol(*begin++);
 
-				if (this->status == ParsingStatus::endResultBad ||
-					this->status == ParsingStatus::endResultGood);
+				if (this->status == endResultBad ||
+					this->status == endResultGood)
 				{
 					return this->status;
 				}

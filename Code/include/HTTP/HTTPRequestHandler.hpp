@@ -26,9 +26,10 @@ namespace AxxonsoftInternProject
 		private: 
 			void VerifyVersion() override;
 			void VerifyMethod();
+			void HandleHeaders();
 
 		public:
-			HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument);
+			HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument, shared_ptr<HTTPReply> outputDocument);
 
 			void Handle() override;
 

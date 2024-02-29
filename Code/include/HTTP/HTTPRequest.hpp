@@ -17,9 +17,6 @@ namespace AxxonsoftInternProject
 		{
 			string method;
 			string uri;
-		
-		private: 
-			//vector<const_buffer> SerializeVersion() override;
 		};
 	}
 }

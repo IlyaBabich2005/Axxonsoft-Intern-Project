@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <iostream>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -8,9 +9,19 @@
 #include <boost/system/error_code.hpp>
 #include <boost/asio/impl/write.hpp>
 
+#include "HTTPRequestParser.hpp"
+#include "HTTPRequestHandler.hpp"
+
+namespace http = AxxonsoftInternProject::http;
+
 using	boost::asio::ip::tcp,
 		boost::asio::buffer,
 		boost::system::error_code,
+		http::HTTPRequestParcer,
+		http::HTTPRequestHandler,
+		http::HTTPRequest,
+		http::HTTPReply,
+		http::ParsingStatus,
 		std::enable_shared_from_this,
 		std::size_t,
 		std::array;
@@ -24,6 +35,10 @@ namespace AxxonsoftInternProject
 		private:
 			static const size_t bufferSize{ 1 * 1024 };
 			array<char, Conection::bufferSize> incomeBuffer;
+			shared_ptr<HTTPRequest> request;
+			shared_ptr<HTTPReply> reply;
+			HTTPRequestParcer parcer;
+			HTTPRequestHandler handler;
 			tcp::socket connectionSocket;
 
 		private:

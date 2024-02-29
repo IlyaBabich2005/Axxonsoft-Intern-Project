@@ -9,7 +9,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		class Serializable
+		class Serializator
 		{
 			virtual vector<boost::asio::const_buffer> Serialize() = 0;
 		};

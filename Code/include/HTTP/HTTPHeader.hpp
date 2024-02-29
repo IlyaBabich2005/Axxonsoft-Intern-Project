@@ -19,6 +19,9 @@ namespace AxxonsoftInternProject
 			string name;
 			string value;
 
+			HTTPHeader();
+			HTTPHeader(string name, string value);
+
 			vector<const_buffer> Serialize() override;
 		};
 	}
