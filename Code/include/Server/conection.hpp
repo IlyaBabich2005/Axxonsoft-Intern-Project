@@ -11,6 +11,7 @@
 
 #include "HTTPRequestParser.hpp"
 #include "HTTPRequestHandler.hpp"
+#include "HTTPReplySerializer.hpp"
 
 namespace http = AxxonsoftInternProject::http;
 
@@ -22,6 +23,7 @@ using	boost::asio::ip::tcp,
 		http::HTTPRequest,
 		http::HTTPReply,
 		http::ParsingStatus,
+		http::HTTPReplySerializer,
 		std::enable_shared_from_this,
 		std::size_t,
 		std::array;
@@ -39,6 +41,7 @@ namespace AxxonsoftInternProject
 			shared_ptr<HTTPReply> reply;
 			HTTPRequestParcer parcer;
 			HTTPRequestHandler handler;
+			HTTPReplySerializer serializer;
 			tcp::socket connectionSocket;
 
 		private:

@@ -112,7 +112,7 @@ namespace AxxonsoftInternProject
             }
             else
             {
-                this->status == ParsingStatus::endResultBad;
+                this->status = ParsingStatus::endResultBad;
             }
         }
 
@@ -146,7 +146,7 @@ namespace AxxonsoftInternProject
             }
             else
             {
-                this->status == ParsingStatus::endResultBad;
+                this->status = ParsingStatus::endResultBad;
             }
         }
     }

@@ -15,6 +15,8 @@ namespace AxxonsoftInternProject
 			vector<HTTPHeader> headers;
 			string version;
 			string body;
+
+			virtual ~HTTPDocument();
 		};
 	}
 }

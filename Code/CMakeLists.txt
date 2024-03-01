@@ -58,7 +58,8 @@ add_library(
 	include/HTTP/HTTPRequestHandler.hpp
 	include/HTTP/HTTPRequestParser.hpp
 	include/HTTP/InvalidHTTPVersionException.hpp
-	include/HTTP/Serializable.hpp
+	include/HTTP/HTTPSerializer.hpp
+	include/HTTP/HTTPReplySerializer.hpp
 	include/HTTP/Stock.hpp
 	src/HTTP/checks.cpp
 	src/HTTP/HTTPDocument.cpp
@@ -70,6 +71,8 @@ add_library(
 	src/HTTP/HTTPRequest.cpp
 	src/HTTP/HTTPRequestHandler.cpp
 	src/HTTP/HTTPRequestParser.cpp
+	src/HTTP/HTTPSerializer.cpp
+	src/HTTP/HTTPReplySerializer.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)

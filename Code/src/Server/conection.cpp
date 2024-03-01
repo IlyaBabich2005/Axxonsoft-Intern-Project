@@ -42,19 +42,13 @@ namespace AxxonsoftInternProject
 		{
 			std::cout << "Write\n";
 
-			//vector<const_buffer> buffer_;
-			//vector<const_buffer> buffer__;
-			//buffer_.push_back(buffer("HTTP/1.0 200 OK"));
-			//buffer__.push_back(buffer("\r\n\r\n"));
-			//buffer_.insert(std::end(buffer_), std::begin(buffer__), std::end(buffer__));
-			//
-
 			auto self(shared_from_this());
-			boost::asio::async_write(this->connectionSocket, this->reply->Serialize(),
+			boost::asio::async_write(this->connectionSocket, this->serializer.Serialize(this->reply),
 				[this, self](error_code ec, std::size_t)
 				{
 					if (!ec)
 					{
+						std::cout << "Written!\n";
 					}
 				});
 		}
