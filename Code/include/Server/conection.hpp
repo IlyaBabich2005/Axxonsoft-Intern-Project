@@ -35,7 +35,7 @@ namespace AxxonsoftInternProject
 		class Conection : public enable_shared_from_this<Conection>
 		{
 		private:
-			static const size_t bufferSize{ 1 };
+			static const size_t bufferSize{ 1 * 1024};
 			array<char, Conection::bufferSize> incomeBuffer;
 			shared_ptr<HTTPRequest> request;
 			shared_ptr<HTTPReply> reply;
