@@ -16,6 +16,9 @@ namespace stock = AxxonsoftInternProject::http::stock;
 using std::shared_ptr,
 	  std::dynamic_pointer_cast,
 	  std::filesystem::directory_iterator,
+	  std::filesystem::remove_all,
+	  std::filesystem::exists,
+	  std::filesystem::create_directory,
 	  std::ifstream,
 	  AxxonsoftInternProject::http::URIDecoder,
 	  AxxonsoftInternProject::http::DecoderStatus,
@@ -33,10 +36,14 @@ namespace AxxonsoftInternProject
 
 		private: 
 			void VerifyVersion() override;
-			void VerifyMethod();
+			void HandleMethod();
 			void HandleHeaders();
 			void PutDirectoryContentToReplyBody();
 			void PutFileToReplyBody(ifstream &sendedFile);
+			void DeleteFile();
+			void CreateDirectories(string finalPath);
+			void HandlePOSTMethod();
+			void HandleDELETEMethod();
 			void HandleGetFileMethod();
 			void HandleGETContentMethod();
 			void HandleGETMethod();

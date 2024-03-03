@@ -16,8 +16,13 @@ namespace AxxonsoftInternProject
 				{
 					if (character == '/' && !targer.isFile)
 					{
-						targer.components.push_back(temp);
-						temp = "";
+						if (temp != "")
+						{
+							targer.components.push_back(temp);
+							temp = "";
+						}
+						
+						continue;
 					}
 					else
 					{
@@ -28,13 +33,14 @@ namespace AxxonsoftInternProject
 				{	
 					targer.isFile = true;
 				}
-				else
-				{
-					temp.push_back(character);
-				}
+				temp.push_back(character);
 			}
 
-			targer.components.push_back(temp);
+			if (temp != "")
+			{
+				targer.components.push_back(temp);
+			}
+
 			return goodURI;
 		}
 	}

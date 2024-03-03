@@ -89,15 +89,14 @@ namespace AxxonsoftInternProject
 
         void HTTPParser::HandleBodySymbol(char curentSymbol)
         {
-            if (++this->handledContentSize >= this->contentSize)
+            this->handledContentSize++;
+            this->document->body.push_back(curentSymbol);
+
+            if (this->handledContentSize >= this->contentSize)
             {
                 this->status = ParsingStatus::endResultGood;
             }
-            else
-            {
-                this->document->body.push_back(curentSymbol);
-            }
-
+      
             std::cout << this->handledContentSize << " Symbols handled\n";
         }
 

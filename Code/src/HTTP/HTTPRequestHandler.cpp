@@ -28,17 +28,26 @@ namespace AxxonsoftInternProject
 		}
 	}
 
-	void http::HTTPRequestHandler::VerifyMethod()
+	void http::HTTPRequestHandler::HandleMethod()
 	{
-		for (auto method : requestMethods)
+		if (this->decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->uri, this->URITarget))
 		{
-			if (dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->method == method)
-			{
-				return;
-			}
-		}
+			string requestMethod = dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->method;
+			std::cout << "Decoded\n";
 
-		dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::methodNotAllowed;
+			if (requestMethod == "GET")
+				this->HandleGETMethod();
+			else if (requestMethod == "DELETE")
+				this->HandleDELETEMethod();
+			else if (requestMethod == "POST")
+				this->HandlePOSTMethod();
+			else
+				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::methodNotAllowed;
+		}
+		else
+		{
+			std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+		}
 	}
 
 	void http::HTTPRequestHandler::HandleHeaders()
@@ -57,59 +66,112 @@ namespace AxxonsoftInternProject
 		}
 	}
 
-	void http::HTTPRequestHandler::PutFileToReplyBody(ifstream &sendedFile)
+	void http::HTTPRequestHandler::CreateDirectories(string finalPath)
 	{
-		size_t buffer_size{ 1<<20 };
-		char* buffer{ new char[buffer_size] };
-		json sendedInfo;
-		string filename{ this->URITarget.components[this->URITarget.components.size() - 1] };
+		string currentPath = "./files/";
+		string endPath = finalPath;
 
-		while (sendedFile)
+		while (!exists("./files/" + finalPath))
 		{
-			sendedFile.read(buffer, buffer_size);
-
-			size_t count{ static_cast<size_t>(sendedFile.gcount()) };
-
-			if (!count)
+			if (!exists(currentPath))
 			{
-				break;
+				create_directory(currentPath);
+			}
+			else
+			{
+				if (endPath.find('/') == std::string::npos)
+				{
+					currentPath += endPath;
+				}
+				else
+				{
+					currentPath += endPath.substr(0, endPath.find('/')) + "/";
+					endPath.erase(0, endPath.find('/') + 1);
+				}
 			}
 		}
+	}
 
-		sendedInfo["file"] = string{ buffer };
-		sendedInfo["format"] = filename.substr(filename.find('.'));
+	void http::HTTPRequestHandler::HandlePOSTMethod()
+	{
+		if (this->URITarget.components.size() != 0)
+		{
+			std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			return;
+		}
+		else
+		{
+			try
+			{
+				json inputFileInfo = json::parse(this->handledDocument->body);
+				vector<unsigned char> bytes = inputFileInfo["data"];
+
+				this->CreateDirectories(string{ inputFileInfo["path"] });
+
+				string pathToFile = "./files/" + string{inputFileInfo["path"]} + "/" + string{inputFileInfo["filename"]};
+
+				std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc};
+
+				if (file.is_open())
+				{
+					std::copy(bytes.begin(), bytes.end(), std::ostreambuf_iterator<char>(file));
+				}
+
+				file.close();
+			}
+			catch (...)
+			{
+				std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			}
+		}
+	}
+
+	void http::HTTPRequestHandler::PutFileToReplyBody(ifstream &sendedFile)
+	{
+		json sendedInfo;
+		json gettedFileInfo = json::parse(this->handledDocument->body);
+
+		std::vector<unsigned char> bytes(std::istreambuf_iterator<char>(sendedFile), {});
+
+		std::cout << "Readed\n";
+
+		sendedInfo["data"] = bytes;
+		sendedInfo["filename"] = string{ gettedFileInfo["filename"] };
 
 		this->outputDocument->body = sendedInfo.dump(4);
 
-		delete[] buffer;
+		std::cout << "Writed in file\n";
 	}
 
 	void http::HTTPRequestHandler::HandleGetFileMethod()
 	{
-		if (!this->URITarget.isFile)
-		{
-			ifstream sendedFile{ "./" + std::dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->uri.substr(8)};
+		json fileInfo = json::parse(this->handledDocument->body);
 
-			if (sendedFile.is_open())
-			{
-				this->PutFileToReplyBody(sendedFile);
-			}
-			else
-			{
-				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
-			}
+		ifstream sendedFile{ "./files/" + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
+
+		if (sendedFile.is_open())
+		{
+			std::cout << "Openning file\n";
+
+			this->PutFileToReplyBody(sendedFile);
+			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::ok;
 		}
 		else
 		{
 			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
 		}
+		
+		sendedFile.close();
 	}
 
 	void http::HTTPRequestHandler::PutDirectoryContentToReplyBody()
 	{
+		json directoryInfo = json::parse(this->handledDocument->body);
 		json directoryContent;
 
-		for (const auto& file : directory_iterator("./" + std::dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->uri.substr(8)))
+		string path = directoryInfo["path"];
+
+		for (const auto& file : directory_iterator("./files" + path))
 		{
 			std::cout << file << "\n";
 			directoryContent["content"].push_back(file.path());
@@ -120,57 +182,85 @@ namespace AxxonsoftInternProject
 		this->outputDocument->body = directoryContent.dump(4);
 	}
 
+	void http::HTTPRequestHandler::DeleteFile()
+	{
+		json deletedFileInfo = json::parse(this->handledDocument->body);
+
+		if (exists("./files/" + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
+		{
+			remove_all("./files/" + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
+			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::ok;
+		}
+		else
+		{
+			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+		}
+	}
+
+	void http::HTTPRequestHandler::HandleDELETEMethod()
+	{
+		if (this->URITarget.components.size() != 0)
+		{
+			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			return;
+		}
+
+		try
+		{
+			this->DeleteFile();
+		}
+		catch(...)
+		{
+			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+		}
+	}
+
 	void http::HTTPRequestHandler::HandleGETContentMethod()
 	{
-			std::cout << "Content detected\n";
+			try
+			{
+				this->PutDirectoryContentToReplyBody();
 
-			if (this->URITarget.isFile)
+				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::ok;
+				std::cout << "Sucksessfully checked\n";
+			}
+			catch (...)
 			{
 				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
-			}
-			else
-			{
-				std::cout << "Checking directory\n";
-
-				try
-				{
-					this->PutDirectoryContentToReplyBody();
-
-					std::cout << "Sucksessfully checked\n";
-				}
-				catch (...)
-				{
-					dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
-				}
 			}
 	}
 
 	void http::HTTPRequestHandler::HandleGETMethod()
 	{
-		if (this->decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->uri, this->URITarget))
+		try
 		{
-			std::cout << "Decoded\n";
-
-			if (this->URITarget.components.size() > 1 && this->URITarget.components[1] == "content")
+			if (this->URITarget.components.size() == 1 && this->URITarget.components[1] == "content")
 			{
+				std::cout << "Scan directory\n";
+
 				this->HandleGETContentMethod();
 			}
-			else if (this->URITarget.isFile)
+			else if (this->URITarget.components.size() == 0)
 			{
+				std::cout << "Search file\n";
+
 				this->HandleGetFileMethod();
 			}
+			else
+			{
+				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			}
 		}
-		else
+		catch (...)
 		{
-			std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
 		}
 	}
 
 	void http::HTTPRequestHandler::Handle()
 	{
-		VerifyMethod();
 		VerifyVersion();
-		HandleGETMethod();
+		HandleMethod();
 		HandleHeaders();
 	}
 }
