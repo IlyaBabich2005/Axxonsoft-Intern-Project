@@ -16,6 +16,14 @@ namespace AxxonsoftInternProject
 
 		void Server::Run()
 		{
+			error_code ec;
+			create_directory("./files", ec);
+
+			if (!ec)
+			{
+				std::cout << "Directory created\n";
+			}
+
 			this->threadPool.join();
 		}
 
@@ -36,7 +44,7 @@ namespace AxxonsoftInternProject
 		void Server::Accept()
 		{
 			this->acceptor.async_accept(make_strand(this->threadPool.executor()),
-				[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket)
+				[this](error_code ec, tcp::socket connectionSocket)
 				{
 					if (!ec)
 					{

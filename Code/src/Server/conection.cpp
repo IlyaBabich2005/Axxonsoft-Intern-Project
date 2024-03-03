@@ -21,6 +21,7 @@ namespace AxxonsoftInternProject
 						if (status == ParsingStatus::endResultBad)
 						{
 							std::cout << "Parsed Bad\n";
+							*this->reply = stock::replyes::badRequest;
 						}
 						else if (status == ParsingStatus::endResultGood)
 						{

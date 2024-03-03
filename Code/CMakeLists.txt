@@ -12,6 +12,8 @@ project ("Server")
 add_subdirectory(src)
 add_subdirectory(include)
 
+add_definitions(-DBOOST_ALL_NO_LIB)
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -22,14 +24,18 @@ file(
   EXPECTED_HASH SHA256=cc155ce02e7945e7b8967ddfaff0b050e958a723ef7aad3766d368940cb15494
 )
 
+include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
+
+CPMAddPackage("gh:nlohmann/json@3.11.3")
+
 SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "G:/Libs/boost_1_84_0")
 SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "G:/Libs/boost_1_84_0/lib64-msvc-14.3")
 
-set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
+set(Boost_USE_STATIC_RUNTIME ON)
 
-find_package(Boost 1.84.0 REQUIRED COMPONENTS system filesystem)
+find_package(Boost 1.84.0 REQUIRED COMPONENTS system filesystem REQUIRED)
 
 FIND_PACKAGE(Boost)
 IF (Boost_FOUND)
@@ -61,18 +67,20 @@ add_library(
 	include/HTTP/HTTPSerializer.hpp
 	include/HTTP/HTTPReplySerializer.hpp
 	include/HTTP/Stock.hpp
+	include/HTTP/Target.hpp
+	include/HTTP/URIDecoder.hpp
 	src/HTTP/checks.cpp
-	src/HTTP/HTTPDocument.cpp
 	src/HTTP/HTTPHandler.cpp
 	src/HTTP/HTTPHeader.cpp
 	src/HTTP/HTTPParser.cpp
-	src/HTTP/HTTPReply.cpp
 	src/HTTP/HTTPReplyParser.cpp
-	src/HTTP/HTTPRequest.cpp
 	src/HTTP/HTTPRequestHandler.cpp
 	src/HTTP/HTTPRequestParser.cpp
 	src/HTTP/HTTPSerializer.cpp
 	src/HTTP/HTTPReplySerializer.cpp
+	src/HTTP/HTTPDocument.cpp
+	src/HTTP/HTTPReply.cpp
+	src/HTTP/URIDecoder.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)
@@ -89,3 +97,5 @@ add_executable(
 
 target_include_directories(Server PRIVATE include/Server)
 target_link_libraries(Server PRIVATE HTTP)
+
+target_link_libraries(HTTP nlohmann_json::nlohmann_json)

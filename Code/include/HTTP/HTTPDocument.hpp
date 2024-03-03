@@ -1,10 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <nlohmann/json.hpp>
 
 #include "HTTPHeader.hpp"
 
-using std::vector;
+using nlohmann::json,
+	  std::vector;
 
 namespace AxxonsoftInternProject
 {
@@ -16,6 +18,9 @@ namespace AxxonsoftInternProject
 			string version;
 			string body;
 
+			HTTPDocument();
+			HTTPDocument(string version);
+			
 			virtual ~HTTPDocument();
 		};
 	}

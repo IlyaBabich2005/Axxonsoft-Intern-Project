@@ -24,6 +24,8 @@ namespace AxxonsoftInternProject
 			{
 				const string badRequest { "400 BadRequest" };
 				const string ok{ "200 OK" };
+				const string notFound{ "404 Not Found" };
+				const string methodNotAllowed{ "405 Method Not Allowed" };
 			}
 		}
 	}

@@ -62,7 +62,7 @@ namespace AxxonsoftInternProject
 			}
 			else if (IsDigid(curentSymbol))
 			{
-				dynamic_pointer_cast<HTTPReply>(this->document)->code.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPReply>(this->document)->status.push_back(curentSymbol);
 			}
 			else
 			{

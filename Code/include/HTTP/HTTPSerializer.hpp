@@ -22,6 +22,7 @@ namespace AxxonsoftInternProject
 		{
 		private: 
 			vector<const_buffer> SerializeHeaders(shared_ptr<HTTPDocument> document);
+			const_buffer SerializeBody(shared_ptr<HTTPDocument> document);
 
 		public:
 			virtual vector<const_buffer> Serialize(shared_ptr<HTTPDocument> document);

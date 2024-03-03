@@ -12,11 +12,6 @@ namespace AxxonsoftInternProject
         {
         }
 
-        shared_ptr<HTTPDocument> HTTPParser::GetParsingResult()
-        {
-            return this->document;
-        }
-
         void HTTPParser::HandleSymbol(char curentSymbol)
         {
             switch (this->stage)
@@ -94,7 +89,7 @@ namespace AxxonsoftInternProject
 
         void HTTPParser::HandleBodySymbol(char curentSymbol)
         {
-            if (++this->handledContentSize > this->contentSize)
+            if (++this->handledContentSize >= this->contentSize)
             {
                 this->status = ParsingStatus::endResultGood;
             }
@@ -102,6 +97,8 @@ namespace AxxonsoftInternProject
             {
                 this->document->body.push_back(curentSymbol);
             }
+
+            std::cout << this->handledContentSize << " Symbols handled\n";
         }
 
         void HTTPParser::HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage)

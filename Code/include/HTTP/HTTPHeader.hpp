@@ -5,8 +5,9 @@
 
 namespace stock = AxxonsoftInternProject::http::stock;
 
-using stock::characters::separators::headerNameValueSeparator,
-	  std::string;
+using stock::characters::separators::headerNameValueSeparator;
+
+using std::string;
 
 namespace AxxonsoftInternProject
 {
@@ -14,11 +15,11 @@ namespace AxxonsoftInternProject
 	{
 		struct HTTPHeader
 		{
-			string name;
-			string value;
+			std::string name;
+			std::string value;
 
 			HTTPHeader();
-			HTTPHeader(string name, string value);
+			HTTPHeader(std::string name, std::string value);
 		};
 	}
 }
