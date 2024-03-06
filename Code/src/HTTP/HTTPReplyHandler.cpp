@@ -61,15 +61,22 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::HandleOk()
 		{
-			json body = json::parse(this->handledDocument->body);
-
 			if (this->requestType == ClientRequestType::checkTarget)
 			{
-				vector<string> content = body["content"];
+				json body = json::parse(this->handledDocument->body);
 
-				for (auto target : content)
+				try
 				{
-					std::cout << target << "\n";
+					vector<string> content = body["content"];
+
+					for (auto target : content)
+					{
+						std::cout << target << "\n";
+					}
+				}
+				catch (...)
+				{
+					std::cout << "empty\n";
 				}
 			}
 			else if (this->requestType == ClientRequestType::downloadTarget)

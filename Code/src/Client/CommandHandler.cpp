@@ -21,7 +21,10 @@ namespace AxxonsoftInternProject
 		void CommandHandler::ExtructTargetIntoRequestBody(string target)
 		{
 			string temp;
+			string path = "";
 			bool isFilename = false;
+			this->requestBody["path"] = "";
+			this->requestBody["filename"] = "";
 
 			for (auto character : target)
 			{
@@ -34,20 +37,28 @@ namespace AxxonsoftInternProject
 					}
 					else
 					{
-						this->requestBody["path"] += "/" + temp;
-						temp = " ";
+						path += temp;
+						temp = "";
 					}
 				}
 				else if (character == '.')
 				{
 					isFilename = true;
 				}
+
+				temp.push_back(character);
 			}
 
 			if (isFilename)
 			{
 				this->requestBody["filename"] = temp;
 			}
+			else
+			{
+				path += temp;
+			}
+
+			this->requestBody["path"] = path;
 		}
 
 		void CommandHandler::PutFileDataInRequestBody(std::ifstream& file)
@@ -67,7 +78,7 @@ namespace AxxonsoftInternProject
 		void CommandHandler::HandlePostCommand()
 		{
 			this->outputRequest->method = "POST";
-			std::ifstream file(this->comand.targer, std::ios::binary | std::ios::ate);
+			std::ifstream file("./files/" + this->comand.targer, std::ios::binary | std::ios::ate);
 			string filePath;
 			string filename;
 
@@ -77,14 +88,14 @@ namespace AxxonsoftInternProject
 
 				std::cout << "Input file path on server: \n";
 
-				if (std::cin >> filePath)
+				if (std::getline(std::cin, filePath))
 				{
 					this->requestBody["path"] = filePath;
 				}
 
 				std::cout << "Input file name on server: \n";
 
-				if (std::cin >> filename)
+				if (std::getline(std::cin, filename))
 				{
 					this->requestBody["filename"] = filename;
 				}
@@ -139,9 +150,13 @@ namespace AxxonsoftInternProject
 					{
 						this->HandleGetCommand();
 					}
-					else
+					else if(this->comand.command == "delete")
 					{
 						this->HandleDeleteCommand();
+					}
+					else
+					{
+						std::cout << "Invalid Method\n";
 					}
 				}
 				else
@@ -157,12 +172,12 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::Handle(Command command)
 		{
+			this->comand = command;
+
 			this->outputRequest->version = "HTTP/1.0";
 			this->HandleCommand();
 			this->outputRequest->body = this->requestBody.dump(4);
 			this->SetHeaders();
-			
-			this->comand = comand;
 		}
 	}
 }

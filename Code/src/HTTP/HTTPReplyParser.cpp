@@ -28,7 +28,7 @@ namespace AxxonsoftInternProject
 			{
 				this->stage = ParsingStage::code;
 			}
-			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+			else if (curentSymbol != '/' && (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol)))
 			{
 				this->status = ParsingStatus::endResultBad;
 			}

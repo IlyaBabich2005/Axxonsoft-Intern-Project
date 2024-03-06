@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		Client::Client(string serverIP, string serverPort) : 
+		Client::Client(string serverIP, string serverPort) :
 			connectionSocket{ this->context },
 			handler { this->outputRequest },
 			command{ new Command },
@@ -19,24 +19,21 @@ namespace AxxonsoftInternProject
 	{
 		string command;
 
-		if (std::cin >> command)
-		{ 
-			if (parcer.Parce(this->command, command) == ParsingStatus::endResultGood)
-			{
-				this->handler.Handle(*this->command);
-				this->Connect();
-			}
-			else
-			{
-				std::cout << "Bad command\n";
-				this->ReadCommand();
-			}
+		this->command = shared_ptr<Command>{ new Command };
+
+		std::getline(std::cin, command);
+			
+		if (parcer.Parce(this->command, command) == ParsingStatus::endResultGood)
+		{
+			this->handler.Handle(*this->command);
+			this->Connect();
 		}
 		else
 		{
 			std::cout << "Bad command\n";
 			this->ReadCommand();
 		}
+
 	}
 
 	void Client::Client::Connect()

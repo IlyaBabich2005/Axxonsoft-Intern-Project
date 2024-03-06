@@ -185,7 +185,7 @@ namespace AxxonsoftInternProject
 
 		string path = directoryInfo["path"];
 
-		for (const auto& file : directory_iterator("./files" + path))
+		for (const auto& file : directory_iterator("./files/" + path))
 		{
 			std::cout << file << "\n";
 			directoryContent["content"].push_back(file.path());
@@ -248,7 +248,7 @@ namespace AxxonsoftInternProject
 	{
 		try
 		{
-			if (this->URITarget.components.size() == 1 && this->URITarget.components[1] == "content")
+			if (this->URITarget.components.size() == 1 && this->URITarget.components[0] == "content")
 			{
 				std::cout << "Scan directory\n";
 

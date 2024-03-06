@@ -25,14 +25,7 @@ namespace AxxonsoftInternProject
 					}
 					else
 					{
-						if (symbol == ' ')
-						{
-							return ParsingStatus::endResultBad;
-						}
-						else
-						{
-							parcingResult->targer.push_back(symbol);
-						}
+						parcingResult->targer.push_back(symbol);
 					}
 				}
 				else
