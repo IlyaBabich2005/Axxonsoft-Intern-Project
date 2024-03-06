@@ -15,7 +15,7 @@ add_subdirectory(include)
 add_definitions(-DBOOST_ALL_NO_LIB)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Server)
 
 file(
   DOWNLOAD
@@ -47,6 +47,8 @@ include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
 
 include_directories(${CMAKE_SOURCE_DIR}/include/HTTP)
 include_directories(${CMAKE_SOURCE_DIR}/include/Server)
+include_directories(${CMAKE_SOURCE_DIR}/include/Client)
+link_directories(${CMAKE_SOURCE_DIR}/src/Client)
 link_directories(${CMAKE_SOURCE_DIR}/src/HTTP)
 link_directories(${CMAKE_SOURCE_DIR}/src/Server)
 
@@ -69,6 +71,8 @@ add_library(
 	include/HTTP/Stock.hpp
 	include/HTTP/Target.hpp
 	include/HTTP/URIDecoder.hpp
+	include/HTTP/HTTPReplyHandler.hpp
+	include/HTTP/HTTPRequestSerializer.hpp
 	src/HTTP/checks.cpp
 	src/HTTP/HTTPHandler.cpp
 	src/HTTP/HTTPHeader.cpp
@@ -78,9 +82,11 @@ add_library(
 	src/HTTP/HTTPRequestParser.cpp
 	src/HTTP/HTTPSerializer.cpp
 	src/HTTP/HTTPReplySerializer.cpp
+	src/HTTP/HTTPRequestSerializer.cpp
 	src/HTTP/HTTPDocument.cpp
 	src/HTTP/HTTPReply.cpp
 	src/HTTP/URIDecoder.cpp
+	src/HTTP/HTTPReplyHandler.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)
@@ -97,5 +103,24 @@ add_executable(
 
 target_include_directories(Server PRIVATE include/Server)
 target_link_libraries(Server PRIVATE HTTP)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Client)
+
+add_executable(
+	Client
+	src/Client/main.cpp 
+	src/Client/ClientConnection.cpp
+	src/Client/CommandParcer.cpp
+	src/Client/Client.cpp
+	src/Client/CommandHandler.cpp
+	include/Client/Client.hpp 
+	include/Client/command.hpp 
+	include/Client/ClientConnection.hpp
+	include/Client/CommandParcer.hpp
+	include/Client/CommandHandler.hpp
+)
+
+target_include_directories(Client PRIVATE include/Client)
+target_link_libraries(Client PRIVATE HTTP)
 
 target_link_libraries(HTTP nlohmann_json::nlohmann_json)

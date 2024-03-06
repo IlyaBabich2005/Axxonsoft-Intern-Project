@@ -31,6 +31,7 @@ namespace AxxonsoftInternProject
 		class HTTPRequestHandler : public HTTPHandler
 		{
 		private: 
+			shared_ptr<HTTPReply> outputDocument;
 			URIDecoder decoder;
 			Target URITarget;
 
@@ -38,6 +39,7 @@ namespace AxxonsoftInternProject
 			void VerifyVersion() override;
 			void HandleMethod();
 			void HandleHeaders();
+			vector<std::byte> ReadFileInBinates(string pathToFile);
 			void PutDirectoryContentToReplyBody();
 			void PutFileToReplyBody(ifstream &sendedFile);
 			void DeleteFile();

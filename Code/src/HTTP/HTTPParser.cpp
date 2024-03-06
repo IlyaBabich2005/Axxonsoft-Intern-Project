@@ -16,25 +16,16 @@ namespace AxxonsoftInternProject
         {
             switch (this->stage)
             {
-            case httpVersion: std::cout << "handle version\n";
-                this->HandleVersionSymbol(curentSymbol); break;
-            case expectingHeaderNewLine: std::cout << "handle NewLine expected\n"; 
-                this->HandleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); break;
-            case newLineStart: std::cout << "handle new line start symbol \n"; 
-               this->HandleNewLineStartSymbol(curentSymbol); break;
-            case headerName: std::cout << "handle header name \n"; 
-                this->HandleHeaderNameSymbol(curentSymbol); break;
-            case spaceBeforeHaderValue: std::cout << "handle space before header value\n"; 
-                this->HandleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
-            case headerValue: std::cout << "handle header value\n"; 
-                this->HandleHeaderValueSymbol(curentSymbol); break;
-            case expectingLineBeforeBody: std::cout << "handle line before body\n"; 
-                this->HandleSymbolBeforeBody(curentSymbol); break;
-            case body: std::cout << "handle body\n"; 
-                this->HandleBodySymbol(curentSymbol); break;
+            case httpVersion: this->HandleVersionSymbol(curentSymbol); break;
+            case expectingHeaderNewLine: this->HandleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); break;
+            case newLineStart: this->HandleNewLineStartSymbol(curentSymbol); break;
+            case headerName: this->HandleHeaderNameSymbol(curentSymbol); break;
+            case spaceBeforeHaderValue: this->HandleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
+            case headerValue: this->HandleHeaderValueSymbol(curentSymbol); break;
+            case expectingLineBeforeBody: this->HandleSymbolBeforeBody(curentSymbol); break;
+            case body: this->HandleBodySymbol(curentSymbol); break;
             }
 
-            std::cout << "Status " << this->status << "\n";
         }
 
         void HTTPParser::HandleNewLineStartSymbol(char curentSymbol)
@@ -96,8 +87,6 @@ namespace AxxonsoftInternProject
             {
                 this->status = ParsingStatus::endResultGood;
             }
-      
-            std::cout << this->handledContentSize << " Symbols handled\n";
         }
 
         void HTTPParser::HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage)

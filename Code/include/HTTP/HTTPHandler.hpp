@@ -14,13 +14,12 @@ namespace AxxonsoftInternProject
 		{
 		protected:
 			shared_ptr<HTTPDocument> handledDocument;
-			shared_ptr<HTTPDocument> outputDocument;
 
 		protected: 
 			virtual void VerifyVersion() = 0;
 
 		public: 
-			HTTPHandler(shared_ptr<HTTPDocument> handledDocument, shared_ptr<HTTPDocument> outputDocument);
+			HTTPHandler(shared_ptr<HTTPDocument> handledDocument);
 
 			virtual void Handle() = 0;
 		};

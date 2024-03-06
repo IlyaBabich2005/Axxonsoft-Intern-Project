@@ -13,10 +13,19 @@ namespace AxxonsoftInternProject
 			"DELETE"
 		};
 
+		enum ClientRequestType
+		{
+			deleteTarget = 0,
+			downloadTarget,
+			checkTarget,
+			sendTarget
+		};
+
 		struct HTTPRequest : public HTTPDocument
 		{
 			string method;
 			string uri;
+			ClientRequestType type;
 		};
 	}
 }

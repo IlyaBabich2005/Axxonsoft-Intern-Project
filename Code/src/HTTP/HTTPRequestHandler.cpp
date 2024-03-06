@@ -3,7 +3,8 @@
 namespace AxxonsoftInternProject
 {
 	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument, shared_ptr<HTTPReply> outputDocument) :
-		HTTPHandler{std::dynamic_pointer_cast<HTTPDocument>(handledDocument), std::dynamic_pointer_cast<HTTPDocument>(outputDocument) }
+		HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
+		outputDocument{ outputDocument }
 	{
 	}
 
@@ -96,7 +97,7 @@ namespace AxxonsoftInternProject
 	{
 		if (this->URITarget.components.size() != 0)
 		{
-			std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			this->outputDocument->status = stock::replyStatuses::notFound;
 			return;
 		}
 		else
@@ -121,9 +122,24 @@ namespace AxxonsoftInternProject
 			}
 			catch (...)
 			{
-				std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+				this->outputDocument->status = stock::replyStatuses::notFound;
 			}
 		}
+	}
+
+	vector<std::byte> http::HTTPRequestHandler::ReadFileInBinates(string pathToFile)
+	{
+		std::ifstream file(pathToFile, std::ios::binary | std::ios::ate);
+
+		auto end = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		auto size = std::size_t(end - file.tellg());
+		vector<std::byte> buffer(size);
+
+		file.read((char*)buffer.data(), buffer.size());
+
+		return buffer;
 	}
 
 	void http::HTTPRequestHandler::PutFileToReplyBody(ifstream &sendedFile)
@@ -131,20 +147,9 @@ namespace AxxonsoftInternProject
 		json sendedInfo;
 		json gettedFileInfo = json::parse(this->handledDocument->body);
 
-		std::ifstream file("./files/" + string{ gettedFileInfo["path"] } + "/" + string{gettedFileInfo["filename"]}, std::ios::binary | std::ios::ate);
-		
-		auto end = file.tellg();
-		file.seekg(0, std::ios::beg);
-
-		auto size = std::size_t(end - file.tellg());
-
-		vector<std::byte> buffer(size);
-
-		file.read((char*)buffer.data(), buffer.size());
-
 		std::cout << "Readed\n";
 
-		sendedInfo["data"] = buffer;
+		sendedInfo["data"] = this->ReadFileInBinates("./files/" + string{gettedFileInfo["path"]} + "/" + string{ gettedFileInfo["filename"] });
 		sendedInfo["filename"] = string{ gettedFileInfo["filename"] };
 
 		this->outputDocument->body = sendedInfo.dump(4);
@@ -163,11 +168,11 @@ namespace AxxonsoftInternProject
 			std::cout << "Openning file\n";
 
 			this->PutFileToReplyBody(sendedFile);
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::ok;
+			this->outputDocument->status = stock::replyStatuses::ok;
 		}
 		else
 		{
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			this->outputDocument->status = stock::replyStatuses::notFound;
 		}
 		
 		sendedFile.close();
@@ -198,11 +203,11 @@ namespace AxxonsoftInternProject
 		if (exists("./files/" + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
 		{
 			remove_all("./files/" + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::ok;
+			this->outputDocument->status = stock::replyStatuses::ok;
 		}
 		else
 		{
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			this->outputDocument->status = stock::replyStatuses::notFound;
 		}
 	}
 
@@ -210,7 +215,7 @@ namespace AxxonsoftInternProject
 	{
 		if (this->URITarget.components.size() != 0)
 		{
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			this->outputDocument->status = stock::replyStatuses::notFound;
 			return;
 		}
 
@@ -220,7 +225,7 @@ namespace AxxonsoftInternProject
 		}
 		catch(...)
 		{
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			this->outputDocument->status = stock::replyStatuses::notFound;
 		}
 	}
 
@@ -230,12 +235,12 @@ namespace AxxonsoftInternProject
 			{
 				this->PutDirectoryContentToReplyBody();
 
-				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::ok;
+				this->outputDocument->status = stock::replyStatuses::ok;
 				std::cout << "Sucksessfully checked\n";
 			}
 			catch (...)
 			{
-				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+				this->outputDocument->status = stock::replyStatuses::notFound;
 			}
 	}
 
@@ -257,12 +262,12 @@ namespace AxxonsoftInternProject
 			}
 			else
 			{
-				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+				this->outputDocument->status = stock::replyStatuses::notFound;
 			}
 		}
 		catch (...)
 		{
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			this->outputDocument->status = stock::replyStatuses::notFound;
 		}
 	}
 

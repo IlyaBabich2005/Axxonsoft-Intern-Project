@@ -48,12 +48,9 @@ namespace AxxonsoftInternProject
 				{
 					if (!ec)
 					{
-						std::make_shared<Conection>(
-							std::move(connectionSocket))->Run();
-						//conection.Run();
+						std::make_shared<Conection>(std::move(connectionSocket))->Run();
 					}
 
-					//std::this_thread::sleep_for(std::chrono::seconds{ 4 });
 					this->Accept();
 				});
 		}

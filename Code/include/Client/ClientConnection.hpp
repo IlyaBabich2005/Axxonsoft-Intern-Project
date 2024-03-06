@@ -9,39 +9,40 @@
 #include <boost/system/error_code.hpp>
 #include <boost/asio/impl/write.hpp>
 
-#include "HTTPRequestParser.hpp"
-#include "HTTPRequestHandler.hpp"
-#include "HTTPReplySerializer.hpp"
+#include "HTTPReplyParser.hpp"
+#include "HTTPReplyHandler.hpp"
+#include "HTTPRequestSerializer.hpp"
+#include "HTTPReply.hpp"
 
 namespace http = AxxonsoftInternProject::http;
 
 using	boost::asio::ip::tcp,
 		boost::asio::buffer,
 		boost::system::error_code,
-		http::HTTPRequestParcer,
-		http::HTTPRequestHandler,
+		http::HTTPReplyParser,
+		http::HTTPReplyHandler,
 		http::HTTPRequest,
 		http::HTTPReply,
 		http::ParsingStatus,
-		http::HTTPReplySerializer,
+		http::HTTPRequestSerializer,
 		std::enable_shared_from_this,
 		std::size_t,
 		std::array;
 
 namespace AxxonsoftInternProject
 {
-	namespace SERVER
+	namespace Client
 	{
-		class Conection : public enable_shared_from_this<Conection>
+		class ClientConection : public enable_shared_from_this<ClientConection>
 		{
 		private:
-			static const size_t bufferSize{ 10 * 1024};
-			array<char, Conection::bufferSize> incomeBuffer;
+			static const size_t bufferSize{ 10 * 1024 };
+			array<char, ClientConection::bufferSize> incomeBuffer;
 			shared_ptr<HTTPRequest> request;
 			shared_ptr<HTTPReply> reply;
-			HTTPRequestParcer parcer;
-			HTTPRequestHandler handler;
-			HTTPReplySerializer serializer;
+			HTTPReplyParser parser;
+			HTTPReplyHandler handler;
+			HTTPRequestSerializer serializer;
 			tcp::socket connectionSocket;
 
 		private:
@@ -49,9 +50,10 @@ namespace AxxonsoftInternProject
 			void Write();
 
 		public:
-			Conection(tcp::socket connectionSocket);
+			ClientConection(tcp::socket connectionSocket, shared_ptr<HTTPRequest> request);
 
 			void Run();
 		};
 	}
 }
+

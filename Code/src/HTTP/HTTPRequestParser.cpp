@@ -12,7 +12,6 @@ namespace AxxonsoftInternProject
 
 		void HTTPRequestParcer::HandleSymbol(char curentSymbol)
 		{
-			std::cout << "Handle symbol " << curentSymbol << "\n";
 			__super::HandleSymbol(curentSymbol);
 
 			switch (this->stage)
