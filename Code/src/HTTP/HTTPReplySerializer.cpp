@@ -10,9 +10,9 @@ namespace AxxonsoftInternProject
 			vector<const_buffer> serializedDocument;
 
 			serializedDocument.push_back(buffer(document->version));
-			serializedDocument.push_back(buffer(whiteSpaceSeparator));
+			serializedDocument.push_back(buffer(g_whiteSpaceSeparator));
 			serializedDocument.push_back(buffer(dynamic_pointer_cast<HTTPReply>(document)->status));
-			serializedDocument.push_back(buffer(httpDocumentLineSeparator));
+			serializedDocument.push_back(buffer(g_httpDocumentLineSeparator));
 
 			serializedDocument.insert(end(serializedDocument), begin(serializedHeadersAndBody), end(serializedHeadersAndBody));
 

@@ -5,7 +5,7 @@
 
 namespace stock = AxxonsoftInternProject::http::stock;
 
-using stock::characters::separators::headerNameValueSeparator;
+using stock::characters::separators::g_headerNameValueSeparator;
 
 using std::string;
 

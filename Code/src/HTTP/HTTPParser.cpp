@@ -5,133 +5,133 @@ namespace AxxonsoftInternProject
     namespace http
     {
         HTTPParser::HTTPParser(shared_ptr<HTTPDocument> document) :
-            document{ document },
-            status{ ParsingStatus::indeterminate },
-            contentSize{ 0 },
-            handledContentSize{ 0 }
+            m_document{ document },
+            m_status{ ParsingStatus::indeterminate },
+            m_contentSize{ 0 },
+            m_handledContentSize{ 0 }
         {
         }
 
-        void HTTPParser::HandleSymbol(char curentSymbol)
+        void HTTPParser::handleSymbol(char curentSymbol)
         {
-            switch (this->stage)
+            switch (m_stage)
             {
-            case httpVersion: this->HandleVersionSymbol(curentSymbol); break;
-            case expectingHeaderNewLine: this->HandleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); break;
-            case newLineStart: this->HandleNewLineStartSymbol(curentSymbol); break;
-            case headerName: this->HandleHeaderNameSymbol(curentSymbol); break;
-            case spaceBeforeHaderValue: this->HandleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
-            case headerValue: this->HandleHeaderValueSymbol(curentSymbol); break;
-            case expectingLineBeforeBody: this->HandleSymbolBeforeBody(curentSymbol); break;
-            case body: this->HandleBodySymbol(curentSymbol); break;
+            case httpVersion: handleVersionSymbol(curentSymbol); break;
+            case expectingHeaderNewLine: handleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); break;
+            case newLineStart: handleNewLineStartSymbol(curentSymbol); break;
+            case headerName: handleHeaderNameSymbol(curentSymbol); break;
+            case spaceBeforeHaderValue: handleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
+            case headerValue: handleHeaderValueSymbol(curentSymbol); break;
+            case expectingLineBeforeBody: handleSymbolBeforeBody(curentSymbol); break;
+            case body: handleBodySymbol(curentSymbol); break;
             }
 
         }
 
-        void HTTPParser::HandleNewLineStartSymbol(char curentSymbol)
+        void HTTPParser::handleNewLineStartSymbol(char curentSymbol)
         {
             if (curentSymbol == '\r')
             {
-                this->stage = ParsingStage::expectingLineBeforeBody;
+                m_stage = ParsingStage::expectingLineBeforeBody;
             }
             else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
             {
-                this->status = ParsingStatus::endResultBad;
+                m_status = ParsingStatus::endResultBad;
             }
             else
             {
-                this->document->headers.push_back(HTTPHeader{});
-                this->document->headers.back().name.push_back(curentSymbol);
-                this->stage = ParsingStage::headerName;
+                m_document->headers.push_back(HTTPHeader{});
+                m_document->headers.back().name.push_back(curentSymbol);
+                m_stage = ParsingStage::headerName;
             }
         }
 
-        void HTTPParser::HandleHeaderNameSymbol(char curentSymbol)
+        void HTTPParser::handleHeaderNameSymbol(char curentSymbol)
         {
             if (curentSymbol == ':')
             {
-                this->stage = ParsingStage::spaceBeforeHaderValue;
+                m_stage = ParsingStage::spaceBeforeHaderValue;
             }
             else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
             {
-                this->status = ParsingStatus::endResultBad;
+                m_status = ParsingStatus::endResultBad;
             }
             else
             {
-                this->document->headers.back().name.push_back(curentSymbol);
+                m_document->headers.back().name.push_back(curentSymbol);
             }
         }
 
-        void HTTPParser::HandleHeaderValueSymbol(char curentSymbol)
+        void HTTPParser::handleHeaderValueSymbol(char curentSymbol)
         {
             if (curentSymbol == '\r')
             {
-                this->stage = ParsingStage::expectingHeaderNewLine;
+                m_stage = ParsingStage::expectingHeaderNewLine;
             }
             else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol))
             {
-                this->status = ParsingStatus::endResultBad;
+                m_status = ParsingStatus::endResultBad;
             }
             else
             {
-                this->document->headers.back().value.push_back(curentSymbol);
+                m_document->headers.back().value.push_back(curentSymbol);
             }
         }
 
-        void HTTPParser::HandleBodySymbol(char curentSymbol)
+        void HTTPParser::handleBodySymbol(char curentSymbol)
         {
-            this->handledContentSize++;
-            this->document->body.push_back(curentSymbol);
+            m_handledContentSize++;
+            m_document->body.push_back(curentSymbol);
 
-            if (this->handledContentSize >= this->contentSize)
+            if (m_handledContentSize >= m_contentSize)
             {
-                this->status = ParsingStatus::endResultGood;
+                m_status = ParsingStatus::endResultGood;
             }
         }
 
-        void HTTPParser::HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage)
+        void HTTPParser::handleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage)
         {
             if (curentSymbol == requiredSymbol)
             {
-                this->stage = nextStage;
+                m_stage = nextStage;
             }
             else
             {
-                this->status = ParsingStatus::endResultBad;
+                m_status = ParsingStatus::endResultBad;
             }
         }
 
-        void HTTPParser::HandleSymbolBeforeBody(char currentSymbol)
+        void HTTPParser::handleSymbolBeforeBody(char currentSymbol)
         {
             if (currentSymbol == '\n')
             {
-                for (auto header : this->document->headers)
+                for (auto header : m_document->headers)
                 {
-                    if (header.name == "Content-Length")
+                    if (header.name == g_contentLength)
                     {
                         try
                         {
-                            this->contentSize = std::stoi(header.value);
+                            m_contentSize = std::stoi(header.value);
                         }
-                        catch (...)
+                        catch (exception& ex)
                         {
-                            this->status = ParsingStatus::endResultBad;
+                           m_status = ParsingStatus::endResultBad;
                         }
                     }
                 }
 
-                if (this->contentSize <= 0)
+                if (m_contentSize <= 0)
                 {
-                    this->status = ParsingStatus::endResultGood;
+                    m_status = ParsingStatus::endResultGood;
                 }
                 else
                 {
-                    this->stage = ParsingStage::body;
+                    m_stage = ParsingStage::body;
                 }
             }
             else
             {
-                this->status = ParsingStatus::endResultBad;
+                m_status = ParsingStatus::endResultBad;
             }
         }
     }

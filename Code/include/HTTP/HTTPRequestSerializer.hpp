@@ -6,7 +6,7 @@
 using std::dynamic_pointer_cast,
 std::begin,
 std::end,
-stock::characters::separators::whiteSpaceSeparator;
+stock::characters::separators::g_whiteSpaceSeparator;
 
 
 namespace AxxonsoftInternProject

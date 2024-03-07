@@ -7,61 +7,61 @@ namespace AxxonsoftInternProject
 		HTTPRequestParcer::HTTPRequestParcer(shared_ptr<HTTPRequest> request) :
 			HTTPParser{ dynamic_pointer_cast<HTTPDocument>(request) }
 		{
-			this->stage = ParsingStage::method;
+			m_stage = ParsingStage::method;
 		}
 
-		void HTTPRequestParcer::HandleSymbol(char curentSymbol)
+		void HTTPRequestParcer::handleSymbol(char curentSymbol)
 		{
-			__super::HandleSymbol(curentSymbol);
+			__super::handleSymbol(curentSymbol);
 
-			switch (this->stage)
+			switch (m_stage)
 			{
-			case method: this->HandleMethodSymbool(curentSymbol); break;
-			case uri: this->HandleURISymbol(curentSymbol); break;
+			case method: handleMethodSymbool(curentSymbol); break;
+			case uri: handleURISymbol(curentSymbol); break;
 			default: break;
 			}
 		}
 
-		void HTTPRequestParcer::HandleVersionSymbol(char curentSymbol)
+		void HTTPRequestParcer::handleVersionSymbol(char curentSymbol)
 		{
 			if (curentSymbol == '\r')
 			{
-				stage = ParsingStage::expectingHeaderNewLine;
+				m_stage = ParsingStage::expectingHeaderNewLine;
 			}
 			else if (curentSymbol != '/' && 
 				(!IsChar(curentSymbol) || 
 				IsControlChar(curentSymbol) || 
 				IsSpesialChar(curentSymbol)))
 			{
-				status = ParsingStatus::endResultBad;
+				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				document->version.push_back(curentSymbol);
+				m_document->version.push_back(curentSymbol);
 			}
 		}
 
-		void HTTPRequestParcer::HandleMethodSymbool(char curentSymbol)
+		void HTTPRequestParcer::handleMethodSymbool(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{
-				stage = ParsingStage::uri;
+				m_stage = ParsingStage::uri;
 			}
 			else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
 			{
-				status = ParsingStatus::endResultBad;
+				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				dynamic_pointer_cast<HTTPRequest>(this->document)->method.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPRequest>(m_document)->method.push_back(curentSymbol);
 			}
 		}
 
-		void HTTPRequestParcer::HandleURISymbol(char curentSymbol)
+		void HTTPRequestParcer::handleURISymbol(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{
-				this->stage = ParsingStage::httpVersion;
+				m_stage = ParsingStage::httpVersion;
 			}
 			else if (curentSymbol != ':' && 
 					curentSymbol != '/' && 
@@ -70,11 +70,11 @@ namespace AxxonsoftInternProject
 					IsSpesialChar(curentSymbol))
 				)
 			{
-				this->status = ParsingStatus::endResultBad;
+				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				dynamic_pointer_cast<HTTPRequest>(this->document)->uri.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPRequest>(m_document)->uri.push_back(curentSymbol);
 			}
 		}
 

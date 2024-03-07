@@ -5,56 +5,56 @@ namespace AxxonsoftInternProject
 	namespace Client
 	{
 		Client::Client(string serverIP, string serverPort) :
-			connectionSocket{ this->context },
-			handler { this->outputRequest },
-			command{ new Command },
-			outputRequest { new HTTPRequest }
+			m_connectionSocket{ m_context },
+			m_handler { m_outputRequest },
+			m_command{ new Command },
+			m_outputRequest { new HTTPRequest }
 		{
-			tcp::resolver resolver{ this->context };
-			this->serverEndpoint = *resolver.resolve(serverIP, serverPort).begin();
+			tcp::resolver resolver{ m_context };
+			m_serverEndpoint = *resolver.resolve(serverIP, serverPort).begin();
 		}
 	}
 
-	void Client::Client::ReadCommand()
+	void Client::Client::readCommand()
 	{
 		string command;
 
-		this->command = shared_ptr<Command>{ new Command };
+		m_command = shared_ptr<Command>{ new Command };
 
-		std::getline(std::cin, command);
+		getline(cin, command);
 			
-		if (parcer.Parce(this->command, command) == ParsingStatus::endResultGood)
+		if (m_parcer.Parce(m_command, command) == ParsingStatus::endResultGood)
 		{
-			this->handler.Handle(*this->command);
-			this->Connect();
+			m_handler.Handle(*m_command);
+			connect();
 		}
 		else
 		{
 			std::cout << "Bad command\n";
-			this->ReadCommand();
+			readCommand();
 		}
 
 	}
 
-	void Client::Client::Connect()
+	void Client::Client::connect()
 	{
-		connectionSocket.async_connect(this->serverEndpoint,
+		m_connectionSocket.async_connect(m_serverEndpoint,
 			[this](error_code ec)
 			{
 				if (!ec)
 				{
-					std::make_shared<ClientConection>(std::move(connectionSocket), this->outputRequest)->Run();
+					make_shared<ClientConection>(move(m_connectionSocket), m_outputRequest)->Run();
 				}
 				else
 				{
-					std::cout << "Can't connect\n";
+					cout << "Can't connect\n";
 				}
 			});
 	}
 
 	void Client::Client::Run()
 	{
-		this->ReadCommand();
-		this->context.run();
+		readCommand();
+		m_context.run();
 	}
 }

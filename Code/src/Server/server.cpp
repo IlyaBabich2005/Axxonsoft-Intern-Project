@@ -4,54 +4,54 @@ namespace AxxonsoftInternProject
 {
 	namespace SERVER
 	{
-		Server::Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize) :
-			numOfConnectedClients{ 0 },
-			threadPool{ threadPoolSize },
-			acceptor{ this->threadPool.executor() }
+		Server::Server(const string& adress, const string& port, const size_t& threadPoolSize) :
+			m_numOfConnectedClients{ 0 },
+			m_threadPool{ threadPoolSize },
+			m_acceptor{ m_threadPool.executor() }
 		{
-			this->ConfigurateAcceptor(adress, port);
+			configurateAcceptor(adress, port);
 
-			Accept();
+			accept();
 		}
 
 		void Server::Run()
 		{
 			error_code ec;
-			create_directory("./files", ec);
+			create_directory(g_serverRootDirectory, ec);
 
 			if (!ec)
 			{
-				std::cout << "Directory created\n";
+				cout << "Directory created\n";
 			}
 
-			this->threadPool.join();
+			m_threadPool.join();
 		}
 
 		Server::~Server()
 		{
 		}
 
-		void Server::ConfigurateAcceptor(const std::string& adress, const std::string& port)
+		void Server::configurateAcceptor(const string& adress, const string& port)
 		{
-			tcp::resolver resolver{ this->threadPool.executor() };
+			tcp::resolver resolver{ m_threadPool.executor() };
 			tcp::endpoint serverEndpoint{ *resolver.resolve(adress, port).begin() };
 
-			this->acceptor.open(serverEndpoint.protocol());
-			this->acceptor.bind(serverEndpoint);
-			this->acceptor.listen();
+			m_acceptor.open(serverEndpoint.protocol());
+			m_acceptor.bind(serverEndpoint);
+			m_acceptor.listen();
 		}
 
-		void Server::Accept()
+		void Server::accept()
 		{
-			this->acceptor.async_accept(make_strand(this->threadPool.executor()),
+			m_acceptor.async_accept(make_strand(m_threadPool.executor()),
 				[this](error_code ec, tcp::socket connectionSocket)
 				{
 					if (!ec)
 					{
-						std::make_shared<Conection>(std::move(connectionSocket))->Run();
+						make_shared<Conection>(move(connectionSocket))->Run();
 					}
 
-					this->Accept();
+					accept();
 				});
 		}
 	}

@@ -8,7 +8,11 @@
 #include "CommandParcer.hpp"
 #include "CommandHandler.hpp"
 
-using //boost::asio::async_connect,
+using std::cout,
+	  std::getline,
+	  std::cin,
+	  std::make_shared,
+	  std::move,
 	  boost::asio::io_context,
 	  std::string;
 
@@ -19,17 +23,17 @@ namespace AxxonsoftInternProject
 		class Client
 		{
 		private: 
-			io_context context;
-			tcp::endpoint serverEndpoint;
-			tcp::socket connectionSocket;
-			CommandParcer parcer;
-			shared_ptr<Command> command;
-			shared_ptr<HTTPRequest> outputRequest;
-			CommandHandler handler;
+			io_context m_context;
+			tcp::endpoint m_serverEndpoint;
+			tcp::socket m_connectionSocket;
+			CommandParcer m_parcer;
+			shared_ptr<Command> m_command;
+			shared_ptr<HTTPRequest> m_outputRequest;
+			CommandHandler m_handler;
 
 		private:
-			void ReadCommand();
-			void Connect();
+			void readCommand();
+			void connect();
 
 		public:
 			Client(string serverIP, string serverPort);

@@ -4,68 +4,68 @@ namespace AxxonsoftInternProject
 {
 	namespace SERVER
 	{
-		void Conection::Read()
+		void Conection::read()
 		{
 			auto self(shared_from_this());
-			this->connectionSocket.async_read_some(buffer(this->incomeBuffer),
+			m_connectionSocket.async_read_some(buffer(m_incomeBuffer),
 				[self, this](error_code ec, size_t bytesTransferred)
 				{
-					std::cout << "Get " << bytesTransferred << " bytes \n";
+					cout << "Get " << bytesTransferred << " bytes \n";
 
 					if (!ec)
 					{
-						ParsingStatus status = parcer.Parse(this->incomeBuffer.data(), this->incomeBuffer.data() + bytesTransferred);
+						ParsingStatus status = m_parcer.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
 
-						std::cout << "Parsed\n";
+						cout << "Parsed\n";
 
 						if (status == ParsingStatus::endResultBad)
 						{
-							std::cout << "Parsed Bad\n";
-							*this->reply = stock::replyes::badRequest;
+							cout << "Parsed Bad\n";
+							*m_reply = g_badRequest;
 						}
 						else if (status == ParsingStatus::endResultGood)
 						{
-							std::cout << "Parsed GOOD\n";
-							this->handler.Handle();
-							std::cout << "Handling\n";
-							this->Write();
+							cout << "Parsed GOOD\n";
+							m_handler.Handle();
+							cout << "Handling\n";
+							write();
 						}
 						else
 						{
-							std::cout << "Parsing Continue\n";
-							this->Read();
+							cout << "Parsing Continue\n";
+							read();
 						}
 					}
 				});
 		}
 
-		void Conection::Write()
+		void Conection::write()
 		{
-			std::cout << "Write\n";
+			cout << "Write\n";
 
 			auto self(shared_from_this());
-			boost::asio::async_write(this->connectionSocket, this->serializer.Serialize(this->reply),
-				[this, self](error_code ec, std::size_t)
+			async_write(m_connectionSocket, m_serializer.Serialize(m_reply),
+				[this, self](error_code ec, size_t)
 				{
 					if (!ec)
 					{
-						std::cout << "Written!\n";
+						cout << "Written!\n";
 					}
 				});
 		}
 
 		Conection::Conection(tcp::socket connectionSocket) :
-			connectionSocket{ std::move(connectionSocket) },
-			request{new HTTPRequest},
-			reply{new HTTPReply},
-			parcer{this->request},
-			handler{this->request, this->reply}
+			m_connectionSocket{ move(connectionSocket) },
+			m_request{new HTTPRequest},
+			m_reply{new HTTPReply},
+			m_parcer{m_request},
+			m_handler{m_request, m_reply}
 		{
 		}
 
 		void Conection::Run()
 		{
-			this->Read();
+			this->read();
 		}
 	}
 }

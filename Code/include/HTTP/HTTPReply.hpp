@@ -18,7 +18,7 @@ namespace AxxonsoftInternProject
 		{
 			namespace replyes
 			{
-				const HTTPReply badRequest{ string{"HTTP/1.0"}, stock::replyStatuses::badRequest };
+				const HTTPReply g_badRequest{ string{"HTTP/1.0"}, stock::replyStatuses::g_badRequest };
 			}
 		}
 	}

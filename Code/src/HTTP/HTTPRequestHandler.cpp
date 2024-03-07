@@ -4,75 +4,75 @@ namespace AxxonsoftInternProject
 {
 	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument, shared_ptr<HTTPReply> outputDocument) :
 		HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
-		outputDocument{ outputDocument }
+		m_outputDocument{ outputDocument }
 	{
 	}
 
-	void http::HTTPRequestHandler::VerifyVersion()
+	void http::HTTPRequestHandler::verifyVersion()
 	{
 		try
 		{
-			std::stod(this->handledDocument->version.substr(5));
+			std::stod(handledDocument->version.substr(5));
 
-			if (this->handledDocument->version.substr(0, 5) != "HTTP/")
+			if (handledDocument->version.substr(0, 5) != "HTTP/")
 			{
 				throw new InvalidHTTPVersionException{};
 			}
 
-			this->outputDocument->version = this->handledDocument->version;
+			m_outputDocument->version = handledDocument->version;
 		}
-		catch (...)
+		catch (exception& ex)
 		{
-			dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::badRequest;
+			dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
 
-			this->handledDocument->version = "HTTP/1.0";
+			handledDocument->version = g_httpVersion;
 		}
 	}
 
-	void http::HTTPRequestHandler::HandleMethod()
+	void http::HTTPRequestHandler::handleMethod()
 	{
-		if (this->decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->uri, this->URITarget))
+		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(handledDocument)->uri, m_URITarget))
 		{
-			string requestMethod = dynamic_pointer_cast<HTTPRequest>(this->handledDocument)->method;
+			string requestMethod = dynamic_pointer_cast<HTTPRequest>(handledDocument)->method;
 			std::cout << "Decoded\n";
 
-			if (requestMethod == "GET")
-				this->HandleGETMethod();
-			else if (requestMethod == "DELETE")
-				this->HandleDELETEMethod();
-			else if (requestMethod == "POST")
-				this->HandlePOSTMethod();
+			if (requestMethod == g_GET)
+				handleGETMethod();
+			else if (requestMethod == g_DELETE)
+				handleDELETEMethod();
+			else if (requestMethod == g_POST)
+				handlePOSTMethod();
 			else
-				dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::methodNotAllowed;
+				dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_methodNotAllowed;
 		}
 		else
 		{
-			std::dynamic_pointer_cast<HTTPReply>(this->outputDocument)->status = stock::replyStatuses::notFound;
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_notFound;
 		}
 	}
 
-	void http::HTTPRequestHandler::HandleHeaders()
+	void http::HTTPRequestHandler::handleHeaders()
 	{
-		for (auto header : this->handledDocument->headers)
+		for (auto header : handledDocument->headers)
 		{
-			if (header.name == "Connection" && header.value == "keep-alive")
+			if (header.name == g_connection&& header.value == g_keepAlive)
 			{
-				this->outputDocument->headers.push_back(header);
+				m_outputDocument->headers.push_back(header);
 			}
 		}
 
-		if (this->outputDocument->body.size() != 0)
+		if (m_outputDocument->body.size() != 0)
 		{
-			this->outputDocument->headers.push_back(HTTPHeader{ "Content-Length", std::to_string(this->outputDocument->body.size()) });
+			m_outputDocument->headers.push_back(HTTPHeader{ g_contentLength, std::to_string(m_outputDocument->body.size()) });
 		}
 	}
 
-	void http::HTTPRequestHandler::CreateDirectories(string finalPath)
+	void http::HTTPRequestHandler::createDirectories(string finalPath)
 	{
-		string currentPath = "./files/";
+		string currentPath = g_serverRootDirectory;
 		string endPath = finalPath;
 
-		while (!exists("./files/" + finalPath))
+		while (!exists(g_serverRootDirectory + finalPath))
 		{
 			if (!exists(currentPath))
 			{
@@ -80,7 +80,7 @@ namespace AxxonsoftInternProject
 			}
 			else
 			{
-				if (endPath.find('/') == std::string::npos)
+				if (endPath.find('/') == string::npos)
 				{
 					currentPath += endPath;
 				}
@@ -93,25 +93,25 @@ namespace AxxonsoftInternProject
 		}
 	}
 
-	void http::HTTPRequestHandler::HandlePOSTMethod()
+	void http::HTTPRequestHandler::handlePOSTMethod()
 	{
-		if (this->URITarget.components.size() != 0)
+		if (m_URITarget.components.size() != 0)
 		{
-			this->outputDocument->status = stock::replyStatuses::notFound;
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
 			return;
 		}
 		else
 		{
 			try
 			{
-				json inputFileInfo = json::parse(this->handledDocument->body);
-				vector<std::byte> bytes = inputFileInfo["data"];
+				json inputFileInfo = json::parse(handledDocument->body);
+				vector<byte> bytes = inputFileInfo["data"];
 
-				this->CreateDirectories(string{ inputFileInfo["path"] });
+				createDirectories(string{ inputFileInfo["path"] });
 
-				string pathToFile = "./files/" + string{inputFileInfo["path"]} + "/" + string{inputFileInfo["filename"]};
+				string pathToFile = g_serverRootDirectory + string{inputFileInfo["path"]} + "/" + string{inputFileInfo["filename"]};
 
-				std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc};
+				ofstream file{ pathToFile, ios::binary | ios::trunc};
 
 				if (file.is_open())
 				{
@@ -120,72 +120,72 @@ namespace AxxonsoftInternProject
 
 				file.close();
 			}
-			catch (...)
+			catch (exception& ex)
 			{
-				this->outputDocument->status = stock::replyStatuses::notFound;
+				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 		}
 	}
 
-	vector<std::byte> http::HTTPRequestHandler::ReadFileInBinates(string pathToFile)
+	vector<byte> http::HTTPRequestHandler::readFileInBinates(string pathToFile)
 	{
-		std::ifstream file(pathToFile, std::ios::binary | std::ios::ate);
+		ifstream file(pathToFile, ios::binary | ios::ate);
 
 		auto end = file.tellg();
-		file.seekg(0, std::ios::beg);
+		file.seekg(0, ios::beg);
 
-		auto size = std::size_t(end - file.tellg());
-		vector<std::byte> buffer(size);
+		auto size = size_t(end - file.tellg());
+		vector<byte> buffer(size);
 
 		file.read((char*)buffer.data(), buffer.size());
 
 		return buffer;
 	}
 
-	void http::HTTPRequestHandler::PutFileToReplyBody(ifstream &sendedFile)
+	void http::HTTPRequestHandler::putFileToReplyBody(ifstream &sendedFile)
 	{
 		json sendedInfo;
-		json gettedFileInfo = json::parse(this->handledDocument->body);
+		json gettedFileInfo = json::parse(handledDocument->body);
 
 		std::cout << "Readed\n";
 
-		sendedInfo["data"] = this->ReadFileInBinates("./files/" + string{gettedFileInfo["path"]} + "/" + string{ gettedFileInfo["filename"] });
+		sendedInfo["data"] = readFileInBinates(g_serverRootDirectory + string{gettedFileInfo["path"]} + "/" + string{ gettedFileInfo["filename"] });
 		sendedInfo["filename"] = string{ gettedFileInfo["filename"] };
 
-		this->outputDocument->body = sendedInfo.dump(4);
+		m_outputDocument->body = sendedInfo.dump(4);
 
 		std::cout << "Writed in file\n";
 	}
 
-	void http::HTTPRequestHandler::HandleGetFileMethod()
+	void http::HTTPRequestHandler::handleGetFileMethod()
 	{
-		json fileInfo = json::parse(this->handledDocument->body);
+		json fileInfo = json::parse(handledDocument->body);
 
-		ifstream sendedFile{ "./files/" + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
+		ifstream sendedFile{ g_serverRootDirectory + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
 
 		if (sendedFile.is_open())
 		{
 			std::cout << "Openning file\n";
 
-			this->PutFileToReplyBody(sendedFile);
-			this->outputDocument->status = stock::replyStatuses::ok;
+			putFileToReplyBody(sendedFile);
+			m_outputDocument->status = stock::replyStatuses::g_ok;
 		}
 		else
 		{
-			this->outputDocument->status = stock::replyStatuses::notFound;
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
 		
 		sendedFile.close();
 	}
 
-	void http::HTTPRequestHandler::PutDirectoryContentToReplyBody()
+	void http::HTTPRequestHandler::putDirectoryContentToReplyBody()
 	{
-		json directoryInfo = json::parse(this->handledDocument->body);
+		json directoryInfo = json::parse(handledDocument->body);
 		json directoryContent;
 
 		string path = directoryInfo["path"];
 
-		for (const auto& file : directory_iterator("./files/" + path))
+		for (const auto& file : directory_iterator(g_serverRootDirectory + path))
 		{
 			std::cout << file << "\n";
 			directoryContent["content"].push_back(file.path());
@@ -193,88 +193,88 @@ namespace AxxonsoftInternProject
 
 		std::cout << "Serializing body\n";
 
-		this->outputDocument->body = directoryContent.dump(4);
+		m_outputDocument->body = directoryContent.dump(4);
 	}
 
-	void http::HTTPRequestHandler::DeleteFile()
+	void http::HTTPRequestHandler::deleteFile()
 	{
-		json deletedFileInfo = json::parse(this->handledDocument->body);
+		json deletedFileInfo = json::parse(handledDocument->body);
 
-		if (exists("./files/" + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
+		if (exists(g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
 		{
-			remove_all("./files/" + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
-			this->outputDocument->status = stock::replyStatuses::ok;
+			remove_all(g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
+			m_outputDocument->status = stock::replyStatuses::g_ok;
 		}
 		else
 		{
-			this->outputDocument->status = stock::replyStatuses::notFound;
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
 	}
 
-	void http::HTTPRequestHandler::HandleDELETEMethod()
+	void http::HTTPRequestHandler::handleDELETEMethod()
 	{
-		if (this->URITarget.components.size() != 0)
+		if (m_URITarget.components.size() != 0)
 		{
-			this->outputDocument->status = stock::replyStatuses::notFound;
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
 			return;
 		}
 
 		try
 		{
-			this->DeleteFile();
+			deleteFile();
 		}
-		catch(...)
+		catch(exception& ex)
 		{
-			this->outputDocument->status = stock::replyStatuses::notFound;
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
 	}
 
-	void http::HTTPRequestHandler::HandleGETContentMethod()
+	void http::HTTPRequestHandler::handleGETContentMethod()
 	{
 			try
 			{
-				this->PutDirectoryContentToReplyBody();
+				putDirectoryContentToReplyBody();
 
-				this->outputDocument->status = stock::replyStatuses::ok;
-				std::cout << "Sucksessfully checked\n";
+				m_outputDocument->status = stock::replyStatuses::g_ok;
+				cout << "Sucksessfully checked\n";
 			}
-			catch (...)
+			catch (exception& ex)
 			{
-				this->outputDocument->status = stock::replyStatuses::notFound;
+				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 	}
 
-	void http::HTTPRequestHandler::HandleGETMethod()
+	void http::HTTPRequestHandler::handleGETMethod()
 	{
 		try
 		{
-			if (this->URITarget.components.size() == 1 && this->URITarget.components[0] == "content")
+			if (m_URITarget.components.size() == 1 && m_URITarget.components[0] == g_content)
 			{
 				std::cout << "Scan directory\n";
 
-				this->HandleGETContentMethod();
+				handleGETContentMethod();
 			}
-			else if (this->URITarget.components.size() == 0)
+			else if (m_URITarget.components.size() == 0)
 			{
 				std::cout << "Search file\n";
 
-				this->HandleGetFileMethod();
+				handleGetFileMethod();
 			}
 			else
 			{
-				this->outputDocument->status = stock::replyStatuses::notFound;
+				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 		}
-		catch (...)
+		catch (exception& ex)
 		{
-			this->outputDocument->status = stock::replyStatuses::notFound;
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
 	}
 
 	void http::HTTPRequestHandler::Handle()
 	{
-		VerifyVersion();
-		HandleMethod();
-		HandleHeaders();
+		verifyVersion();
+		handleMethod();
+		handleHeaders();
 	}
 }

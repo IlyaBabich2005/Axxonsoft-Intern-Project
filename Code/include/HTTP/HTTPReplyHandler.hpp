@@ -9,12 +9,20 @@
 #include "HTTPRequest.hpp"
 #include "InvalidHTTPVersionException.hpp"
 #include "Stock.hpp"
+#include "Configuration.hpp"
 
 namespace exceptions = AxxonsoftInternProject::http::exceptions;
 namespace stock = AxxonsoftInternProject::http::stock;
 
 using std::shared_ptr,
+	  std::stod,
+	  std::cout,
+	  std::ofstream, 
+	  std::ios,
+	  std::byte,
 	  std::dynamic_pointer_cast,
+	  AxxonsoftInternProject::SERVER::Configuration::g_httpVersion,
+	  AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory,
 	  exceptions::InvalidHTTPVersionException;
 
 namespace AxxonsoftInternProject
@@ -24,15 +32,15 @@ namespace AxxonsoftInternProject
 		class HTTPReplyHandler : public HTTPHandler
 		{
 		private:
-			ClientRequestType requestType;
+			ClientRequestType m_requestType;
 
 		private:
-			void DownloadGettedFile();
-			void VerifyVersion() override;
-			void HandleBadRequest();
-			void HandleNotFound();
-			void HandleOk();
-			void HandleStatus();
+			void downloadGettedFile();
+			void verifyVersion() override;
+			void handleBadRequest();
+			void handleNotFound();
+			void handleOk();
+			void handleStatus();
 
 		public:
 			HTTPReplyHandler(shared_ptr<HTTPReply> handledDocument, ClientRequestType requestType);

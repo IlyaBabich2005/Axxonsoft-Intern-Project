@@ -10,6 +10,7 @@
 #include "conection.hpp"
 
 using	boost::system::error_code,
+		std::make_shared,
 		std::filesystem::create_directory,
 		boost::asio::thread_pool,
 		boost::asio::io_context,
@@ -25,14 +26,14 @@ namespace AxxonsoftInternProject
 		class Server
 		{
 		private:
-			int	numOfConnectedClients;
-			thread_pool	threadPool;
-			tcp::acceptor acceptor;
+			int	m_numOfConnectedClients;
+			thread_pool	m_threadPool;
+			tcp::acceptor m_acceptor;
 
 		private:
-			void ConfigurateAcceptor(const std::string& adress, const std::string& port);
+			void configurateAcceptor(const std::string& adress, const std::string& port);
 
-			void Accept();
+			void accept();
 
 		public:
 			Server(const std::string& adress, const std::string& port, const size_t& threadPoolSize);

@@ -11,6 +11,9 @@
 namespace charChecks = AxxonsoftInternProject::checks::characters;
 
 using std::shared_ptr,
+	  std::exception,
+	  std::stoi,
+	  stock::headers::names::g_contentLength,
 	  charChecks::IsChar,
 	  charChecks::IsControlChar,
 	  charChecks::IsDigid,
@@ -46,30 +49,28 @@ namespace AxxonsoftInternProject
 		class HTTPParser
 		{
 		protected:
-			shared_ptr<HTTPDocument> document;
-			ParsingStatus status;
-			ParsingStage stage;
-			int contentSize;
-			int handledContentSize;
+			shared_ptr<HTTPDocument> m_document;
+			ParsingStatus m_status;
+			ParsingStage m_stage;
+			int m_contentSize;
+			int m_handledContentSize;
 
 		private:
-			void HandleNewLineStartSymbol(char curentSymbol);
-			void HandleHeaderNameSymbol(char curentSymbol);
-			void HandleHeaderValueSymbol(char curentSymbol);
-			void HandleSymbolBeforeBody(char curentSymbol);
-			void HandleBodySymbol(char curentSymbol);
+			void handleNewLineStartSymbol(char curentSymbol);
+			void handleHeaderNameSymbol(char curentSymbol);
+			void handleHeaderValueSymbol(char curentSymbol);
+			void handleSymbolBeforeBody(char curentSymbol);
+			void handleBodySymbol(char curentSymbol);
 
-			void HandleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage);
+			void handleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage);
 
 		protected: 
-			virtual void HandleSymbol(char curentSymbol);
+			virtual void handleSymbol(char curentSymbol);
 
-			virtual void HandleVersionSymbol(char curentSymbol) = 0;
+			virtual void handleVersionSymbol(char curentSymbol) = 0;
 
 		public:
 			HTTPParser(shared_ptr<HTTPDocument> document);
-
-			shared_ptr<HTTPDocument> GetParsingResult();
 
 			template <typename InputIterator>
 			ParsingStatus Parse(InputIterator begin, InputIterator end);
@@ -80,16 +81,16 @@ namespace AxxonsoftInternProject
 		{
 			while (begin != end)
 			{
-				this->HandleSymbol(*begin++);
+				handleSymbol(*begin++);
 
-				if (this->status == endResultBad ||
-					this->status == endResultGood)
+				if (m_status == endResultBad ||
+					m_status == endResultGood)
 				{
-					return this->status;
+					return m_status;
 				}
 			}
 
-			return this->status;
+			return m_status;
 		}
 	}
 }

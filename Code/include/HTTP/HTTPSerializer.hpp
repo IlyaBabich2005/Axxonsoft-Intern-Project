@@ -9,8 +9,8 @@ namespace stock = AxxonsoftInternProject::http::stock;
 
 using std::vector,
 	  std::shared_ptr,
-	  stock::characters::separators::headerNameValueSeparator,
-	  stock::characters::separators::httpDocumentLineSeparator,
+	  stock::characters::separators::g_headerNameValueSeparator,
+	  stock::characters::separators::g_httpDocumentLineSeparator,
 	  boost::asio::buffer,
 	  boost::asio::const_buffer;
 
@@ -21,8 +21,8 @@ namespace AxxonsoftInternProject
 		class HTTPSerializer
 		{
 		private: 
-			vector<const_buffer> SerializeHeaders(shared_ptr<HTTPDocument> document);
-			const_buffer SerializeBody(shared_ptr<HTTPDocument> document);
+			vector<const_buffer> serializeHeaders(shared_ptr<HTTPDocument> document);
+			const_buffer serializeBody(shared_ptr<HTTPDocument> document);
 
 		public:
 			virtual vector<const_buffer> Serialize(shared_ptr<HTTPDocument> document);

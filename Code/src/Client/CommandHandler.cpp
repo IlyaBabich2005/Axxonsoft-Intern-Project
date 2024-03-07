@@ -10,21 +10,21 @@ namespace AxxonsoftInternProject
 
 		}
 
-		void CommandHandler::SetHeaders()
+		void CommandHandler::setHeaders()
 		{
-			if (this->outputRequest->body.size() != 0)
+			if (outputRequest->body.size() != 0)
 			{
-				this->outputRequest->headers.push_back(http::HTTPHeader{ "Content-Length", std::to_string(this->outputRequest->body.size()) });
+				outputRequest->headers.push_back(http::HTTPHeader{ g_contentLength, std::to_string(outputRequest->body.size()) });
 			}
 		}
 
-		void CommandHandler::ExtructTargetIntoRequestBody(string target)
+		void CommandHandler::extructTargetIntoRequestBody(string target)
 		{
 			string temp;
 			string path = "";
 			bool isFilename = false;
-			this->requestBody["path"] = "";
-			this->requestBody["filename"] = "";
+			requestBody["path"] = "";
+			requestBody["filename"] = "";
 
 			for (auto character : target)
 			{
@@ -33,7 +33,7 @@ namespace AxxonsoftInternProject
 					if (isFilename)
 					{
 						std::cout << "Invalid Target format\n";
-						throw new _exception;
+						throw new InvalidTargetException;
 					}
 					else
 					{
@@ -51,122 +51,135 @@ namespace AxxonsoftInternProject
 
 			if (isFilename)
 			{
-				this->requestBody["filename"] = temp;
+				requestBody["filename"] = temp;
 			}
 			else
 			{
 				path += temp;
 			}
 
-			this->requestBody["path"] = path;
+			requestBody["path"] = path;
 		}
 
-		void CommandHandler::PutFileDataInRequestBody(std::ifstream& file)
+		void CommandHandler::putFileDataInRequestBody(std::ifstream& file)
 		{
 			auto end = file.tellg();
-			file.seekg(0, std::ios::beg);
+			file.seekg(0, ios::beg);
 
-			auto size = std::size_t(end - file.tellg());
-			vector<std::byte> buffer(size);
+			auto size = size_t(end - file.tellg());
+			vector<byte> buffer(size);
 
 			file.read((char*)buffer.data(), buffer.size());
 
-			this->requestBody["data"] = buffer;
-			file.close();
+			requestBody["data"] = buffer;
 		}
 
-		void CommandHandler::HandlePostCommand()
+		void CommandHandler::getFileData(ifstream& file)
 		{
-			this->outputRequest->method = "POST";
-			std::ifstream file("./files/" + this->comand.targer, std::ios::binary | std::ios::ate);
 			string filePath;
 			string filename;
 
-			if (file.is_open())
+			putFileDataInRequestBody(file);
+
+			std::cout << "Input file path on server: \n";
+
+			if (std::getline(std::cin, filePath))
 			{
-				this->PutFileDataInRequestBody(file);
+				requestBody["path"] = filePath;
+			}
 
-				std::cout << "Input file path on server: \n";
+			std::cout << "Input file name on server: \n";
 
-				if (std::getline(std::cin, filePath))
+			if (std::getline(std::cin, filename))
+			{
+				requestBody["filename"] = filename;
+			}
+		}
+
+		void CommandHandler::handlePostCommand()
+		{
+			setRequestUriAndMethod(g_POST, "/", ClientRequestType::sendTarget);
+			string pathToPostedFile = comand.targer;
+
+			if (exists(pathToPostedFile))
+			{
+				ifstream file(pathToPostedFile, ios::binary | ios::ate);
+
+				if (file.is_open())
 				{
-					this->requestBody["path"] = filePath;
+					getFileData(file);
+
+					file.close();
 				}
-
-				std::cout << "Input file name on server: \n";
-
-				if (std::getline(std::cin, filename))
+				else
 				{
-					this->requestBody["filename"] = filename;
+					cout << "Cant open posted file\n";
+					file.close();
+					throw new CantOpenPostedFileException;
 				}
-
-				this->outputRequest->type = http::ClientRequestType::sendTarget;
 			}
 			else
 			{
-				std::cout << "No file to post\n";
-				file.close();
-				throw new _exception;
+				cout << "Cant open posted file\n";
+				throw new NoFileToPostException;
 			}
 		}
 
-		void CommandHandler::HandleGetCommand()
+		void CommandHandler::setRequestUriAndMethod(const string& method, const string& uri, const ClientRequestType& type)
 		{
-			this->outputRequest->method = "GET";
-			this->outputRequest->uri = "/";
-
-			this->outputRequest->type = http::ClientRequestType::downloadTarget;
+			outputRequest->method = method;
+			outputRequest->uri = uri;
+			outputRequest->type = type;
 		}
 
-		void CommandHandler::HandleLSCommand()
+		void CommandHandler::handleGetCommand()
 		{
-			this->outputRequest->method = "GET";
-			this->outputRequest->uri = "/content";
-
-			this->outputRequest->type = http::ClientRequestType::checkTarget;
+			setRequestUriAndMethod(g_GET, "/", ClientRequestType::downloadTarget);
 		}
 
-		void CommandHandler::HandleDeleteCommand()
+		void CommandHandler::handleLSCommand()
 		{
-			this->outputRequest->method = "DELETE";
-			this->outputRequest->uri = "/";
-
-			this->outputRequest->type = http::ClientRequestType::deleteTarget;
+			setRequestUriAndMethod(g_GET, "/content", ClientRequestType::checkTarget);
 		}
 
-		void CommandHandler::HandleCommand()
+		void CommandHandler::handleDeleteCommand()
+		{
+			setRequestUriAndMethod(g_DELETE, "/content", ClientRequestType::deleteTarget);
+		}
+
+		void CommandHandler::handleCommand()
 		{
 			try
 			{
-				if (this->comand.command != "post")
+				if (this->comand.command != g_post)
 				{
-					this->ExtructTargetIntoRequestBody(this->comand.targer);
+					this->extructTargetIntoRequestBody(this->comand.targer);
 
-					if (this->comand.command == "ls")
+					if (this->comand.command == g_ls)
 					{
-						this->HandleLSCommand();
+						this->handleLSCommand();
 					}
-					else if (this->comand.command == "get")
+					else if (this->comand.command == g_get)
 					{
-						this->HandleGetCommand();
+						this->handleGetCommand();
 					}
-					else if(this->comand.command == "delete")
+					else if(this->comand.command == g_delete)
 					{
-						this->HandleDeleteCommand();
+						this->handleDeleteCommand();
 					}
 					else
 					{
-						std::cout << "Invalid Method\n";
+						cout << "Invalid Method\n";
 					}
 				}
 				else
 				{
-					this->HandlePostCommand();
+					handlePostCommand();
 				}
 			}
-			catch (...)
+			catch (exception& ex)
 			{
-				std::cout << "Invalid command\n";
+				cout << "Invalid command\n";
 			}
 		}
 
@@ -175,9 +188,9 @@ namespace AxxonsoftInternProject
 			this->comand = command;
 
 			this->outputRequest->version = "HTTP/1.0";
-			this->HandleCommand();
+			this->handleCommand();
 			this->outputRequest->body = this->requestBody.dump(4);
-			this->SetHeaders();
+			this->setHeaders();
 		}
 	}
 }

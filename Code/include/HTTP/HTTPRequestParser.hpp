@@ -17,10 +17,10 @@ namespace AxxonsoftInternProject
 			HTTPRequestParcer(shared_ptr<HTTPRequest> request);
 
 		private:
-			void HandleMethodSymbool(char curentSymbol);
-			void HandleURISymbol(char curentSymbol);
-			void HandleSymbol(char curentSymbol) override;
-			void HandleVersionSymbol(char curentSymbol) override;
+			void handleMethodSymbool(char curentSymbol);
+			void handleURISymbol(char curentSymbol);
+			void handleSymbol(char curentSymbol) override;
+			void handleVersionSymbol(char curentSymbol) override;
 
 		};
 	}

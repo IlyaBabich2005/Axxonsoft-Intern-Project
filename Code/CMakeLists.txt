@@ -99,6 +99,7 @@ add_executable(
 	src/Server/server.cpp 
 	include/Server/conection.hpp 
 	src/Server/conection.cpp 
+	include/Server/Configuration.hpp
 )
 
 target_include_directories(Server PRIVATE include/Server)
@@ -118,6 +119,9 @@ add_executable(
 	include/Client/ClientConnection.hpp
 	include/Client/CommandParcer.hpp
 	include/Client/CommandHandler.hpp
+	include/Client/InvalidTargetFormatException.hpp
+	include/Client/NoFileToPostException.hpp
+	include/Client/CantOpenPostedFileException.hpp
 )
 
 target_include_directories(Client PRIVATE include/Client)

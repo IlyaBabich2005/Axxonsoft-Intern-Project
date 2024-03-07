@@ -16,7 +16,9 @@
 
 namespace http = AxxonsoftInternProject::http;
 
-using	boost::asio::ip::tcp,
+using	
+		boost::asio::async_write,
+		boost::asio::ip::tcp,
 		boost::asio::buffer,
 		boost::system::error_code,
 		http::HTTPReplyParser,
@@ -26,6 +28,8 @@ using	boost::asio::ip::tcp,
 		http::ParsingStatus,
 		http::HTTPRequestSerializer,
 		std::enable_shared_from_this,
+		std::cout,
+		std::move,
 		std::size_t,
 		std::array;
 
@@ -36,18 +40,18 @@ namespace AxxonsoftInternProject
 		class ClientConection : public enable_shared_from_this<ClientConection>
 		{
 		private:
-			static const size_t bufferSize{ 10 * 1024 };
-			array<char, ClientConection::bufferSize> incomeBuffer;
-			shared_ptr<HTTPRequest> request;
-			shared_ptr<HTTPReply> reply;
-			HTTPReplyParser parser;
-			HTTPReplyHandler handler;
-			HTTPRequestSerializer serializer;
-			tcp::socket connectionSocket;
+			static const size_t m_bufferSize{ 10 * 1024 };
+			array<char, ClientConection::m_bufferSize> m_incomeBuffer;
+			shared_ptr<HTTPRequest> m_request;
+			shared_ptr<HTTPReply> m_reply;
+			HTTPReplyParser m_parser;
+			HTTPReplyHandler m_handler;
+			HTTPRequestSerializer m_serializer;
+			tcp::socket m_connectionSocket;
 
 		private:
-			void Read();
-			void Write();
+			void read();
+			void write();
 
 		public:
 			ClientConection(tcp::socket connectionSocket, shared_ptr<HTTPRequest> request);

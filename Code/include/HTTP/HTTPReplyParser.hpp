@@ -15,10 +15,10 @@ namespace AxxonsoftInternProject
 			HTTPReplyParser(shared_ptr<HTTPReply> reply);
 
 		private:
-			void HandleStatusSymbool(char curentSymbol);
-			void HandleCodeSymbol(char curentSymbol);
-			void HandleSymbol(char curentSymbol) override;
-			void HandleVersionSymbol(char curentSymbol) override;
+			void handleStatusSymbool(char curentSymbol);
+			void handleCodeSymbol(char curentSymbol);
+			void handleSymbol(char curentSymbol) override;
+			void handleVersionSymbol(char curentSymbol) override;
 		};
 	}
 }

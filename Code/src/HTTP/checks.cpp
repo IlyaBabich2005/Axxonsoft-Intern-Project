@@ -9,12 +9,19 @@ namespace AxxonsoftInternProject
 
     bool checks::characters::IsChar(char symbol)
     {
-        return symbol >= 0 && symbol <= 127;
+        int firestCharacterCode = 0;
+        int lastCharacterCode = 127;
+
+        return symbol >= firestCharacterCode && symbol <= lastCharacterCode;
     }
 
     bool checks::characters::IsControlChar(char symbol)
     {
-        return symbol >= 0 && symbol <= 31 || symbol == 127;
+        int firestCharacterCode = 0;
+        int lastCharacterCode = 127;
+        int lastControlCharCharacterCode = 31;
+
+        return symbol >= firestCharacterCode && symbol <= lastControlCharCharacterCode || symbol == lastCharacterCode;
     }
 
     bool checks::characters::IsSpesialChar(char symbol)

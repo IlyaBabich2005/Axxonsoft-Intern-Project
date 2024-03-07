@@ -7,66 +7,66 @@ namespace AxxonsoftInternProject
 		HTTPReplyParser::HTTPReplyParser(shared_ptr<HTTPReply> reply) :
 			HTTPParser{ dynamic_pointer_cast<HTTPDocument>(reply)}
 		{
-			this->stage = ParsingStage::httpVersion;
+			this->m_stage = ParsingStage::httpVersion;
 		}
 
-		void HTTPReplyParser::HandleSymbol(char curentSymbol)
+		void HTTPReplyParser::handleSymbol(char curentSymbol)
 		{
-			__super::HandleSymbol(curentSymbol);
+			__super::handleSymbol(curentSymbol);
 
-			switch (this->stage)
+			switch (m_stage)
 			{
-			case code: this->HandleCodeSymbol(curentSymbol); break;
-			case httpStatus: this->HandleStatusSymbool(curentSymbol); break;
+			case code: handleCodeSymbol(curentSymbol); break;
+			case httpStatus: handleStatusSymbool(curentSymbol); break;
 			default: break;
 			}
 		}
 
-		void HTTPReplyParser::HandleVersionSymbol(char curentSymbol)
+		void HTTPReplyParser::handleVersionSymbol(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{
-				this->stage = ParsingStage::code;
+				m_stage = ParsingStage::code;
 			}
 			else if (curentSymbol != '/' && (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol)))
 			{
-				this->status = ParsingStatus::endResultBad;
+				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				this->document->version.push_back(curentSymbol);
+				m_document->version.push_back(curentSymbol);
 			}
 		}
 
-		void HTTPReplyParser::HandleStatusSymbool(char curentSymbol)
+		void HTTPReplyParser::handleStatusSymbool(char curentSymbol)
 		{
 			if (curentSymbol == '\r')
 			{
-				this->stage = ParsingStage::expectingHeaderNewLine;
+				m_stage = ParsingStage::expectingHeaderNewLine;
 			}
 			else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
 			{
-				dynamic_pointer_cast<HTTPReply>(document)->status.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPReply>(m_document)->status.push_back(curentSymbol);
 			}
 			else
 			{
-				this->status = ParsingStatus::endResultBad;
+				m_status = ParsingStatus::endResultBad;
 			}
 		}
 
-		void HTTPReplyParser::HandleCodeSymbol(char curentSymbol)
+		void HTTPReplyParser::handleCodeSymbol(char curentSymbol)
 		{
 			if (curentSymbol == ' ')
 			{
-				this->stage = ParsingStage::httpStatus;
+				m_stage = ParsingStage::httpStatus;
 			}
 			else if (IsDigid(curentSymbol))
 			{
-				dynamic_pointer_cast<HTTPReply>(this->document)->status.push_back(curentSymbol);
+				dynamic_pointer_cast<HTTPReply>(this->m_document)->status.push_back(curentSymbol);
 			}
 			else
 			{
-				this->status = ParsingStatus::endResultBad;
+				m_status = ParsingStatus::endResultBad;
 			}
 		}
 	}
