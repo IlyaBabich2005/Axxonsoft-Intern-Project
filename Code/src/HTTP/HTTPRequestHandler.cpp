@@ -2,7 +2,7 @@
 
 namespace AxxonsoftInternProject
 {
-	http::HTTPRequestHandler::HTTPRequestHandler(shared_ptr<HTTPRequest> handledDocument, shared_ptr<HTTPReply> outputDocument) :
+	http::HTTPRequestHandler::HTTPRequestHandler(std::shared_ptr<HTTPRequest> handledDocument, std::shared_ptr<HTTPReply> outputDocument) :
 		HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
 		m_outputDocument{ outputDocument }
 	{
@@ -16,16 +16,16 @@ namespace AxxonsoftInternProject
 
 			if (handledDocument->version.substr(0, 5) != "HTTP/")
 			{
-				throw new InvalidHTTPVersionException{};
+				throw new exceptions::InvalidHTTPVersionException{};
 			}
 
 			m_outputDocument->version = handledDocument->version;
 		}
-		catch (exception& ex)
+		catch (std::exception& ex)
 		{
-			dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
 
-			handledDocument->version = g_httpVersion;
+			handledDocument->version = serverConfiguration::g_httpVersion;
 		}
 	}
 
@@ -33,17 +33,17 @@ namespace AxxonsoftInternProject
 	{
 		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(handledDocument)->uri, m_URITarget))
 		{
-			string requestMethod = dynamic_pointer_cast<HTTPRequest>(handledDocument)->method;
+			string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(handledDocument)->method;
 			std::cout << "Decoded\n";
 
-			if (requestMethod == g_GET)
+			if (requestMethod == requestMethods::g_GET)
 				handleGETMethod();
-			else if (requestMethod == g_DELETE)
+			else if (requestMethod == requestMethods::g_DELETE)
 				handleDELETEMethod();
-			else if (requestMethod == g_POST)
+			else if (requestMethod == requestMethods::g_POST)
 				handlePOSTMethod();
 			else
-				dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_methodNotAllowed;
+				std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_methodNotAllowed;
 		}
 		else
 		{
@@ -55,7 +55,7 @@ namespace AxxonsoftInternProject
 	{
 		for (auto header : handledDocument->headers)
 		{
-			if (header.name == g_connection&& header.value == g_keepAlive)
+			if (header.name == headers::names::g_connection&& header.value == headers::values::g_keepAlive)
 			{
 				m_outputDocument->headers.push_back(header);
 			}
@@ -63,20 +63,20 @@ namespace AxxonsoftInternProject
 
 		if (m_outputDocument->body.size() != 0)
 		{
-			m_outputDocument->headers.push_back(HTTPHeader{ g_contentLength, std::to_string(m_outputDocument->body.size()) });
+			m_outputDocument->headers.push_back(HTTPHeader{ headers::names::g_contentLength, std::to_string(m_outputDocument->body.size()) });
 		}
 	}
 
 	void http::HTTPRequestHandler::createDirectories(string finalPath)
 	{
-		string currentPath = g_serverRootDirectory;
+		string currentPath = serverConfiguration::g_serverRootDirectory;
 		string endPath = finalPath;
 
-		while (!exists(g_serverRootDirectory + finalPath))
+		while (filesystem::exists(serverConfiguration::g_serverRootDirectory + finalPath))
 		{
-			if (!exists(currentPath))
+			if (!filesystem::exists(currentPath))
 			{
-				create_directory(currentPath);
+				filesystem::create_directory(currentPath);
 			}
 			else
 			{
@@ -104,14 +104,14 @@ namespace AxxonsoftInternProject
 		{
 			try
 			{
-				json inputFileInfo = json::parse(handledDocument->body);
-				vector<byte> bytes = inputFileInfo["data"];
+				nlohmann::json inputFileInfo = nlohmann::json::parse(handledDocument->body);
+				std::vector<std::byte> bytes = inputFileInfo["data"];
 
 				createDirectories(string{ inputFileInfo["path"] });
 
-				string pathToFile = g_serverRootDirectory + string{inputFileInfo["path"]} + "/" + string{inputFileInfo["filename"]};
+				string pathToFile = serverConfiguration::g_serverRootDirectory + string{inputFileInfo["path"]} + "/" + string{inputFileInfo["filename"]};
 
-				ofstream file{ pathToFile, ios::binary | ios::trunc};
+				std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc};
 
 				if (file.is_open())
 				{
@@ -120,36 +120,36 @@ namespace AxxonsoftInternProject
 
 				file.close();
 			}
-			catch (exception& ex)
+			catch (std::exception& ex)
 			{
 				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 		}
 	}
 
-	vector<byte> http::HTTPRequestHandler::readFileInBinates(string pathToFile)
+	std::vector<std::byte> http::HTTPRequestHandler::readFileInBinates(string pathToFile)
 	{
-		ifstream file(pathToFile, ios::binary | ios::ate);
+		std::ifstream file(pathToFile, std::ios::binary | std::ios::ate);
 
 		auto end = file.tellg();
-		file.seekg(0, ios::beg);
+		file.seekg(0, std::ios::beg);
 
 		auto size = size_t(end - file.tellg());
-		vector<byte> buffer(size);
+		std::vector<std::byte> buffer(size);
 
 		file.read((char*)buffer.data(), buffer.size());
 
 		return buffer;
 	}
 
-	void http::HTTPRequestHandler::putFileToReplyBody(ifstream &sendedFile)
+	void http::HTTPRequestHandler::putFileToReplyBody(std::ifstream &sendedFile)
 	{
-		json sendedInfo;
-		json gettedFileInfo = json::parse(handledDocument->body);
+		nlohmann::json sendedInfo;
+		nlohmann::json gettedFileInfo = nlohmann::json::parse(handledDocument->body);
 
 		std::cout << "Readed\n";
 
-		sendedInfo["data"] = readFileInBinates(g_serverRootDirectory + string{gettedFileInfo["path"]} + "/" + string{ gettedFileInfo["filename"] });
+		sendedInfo["data"] = readFileInBinates(serverConfiguration::g_serverRootDirectory + string{gettedFileInfo["path"]} + "/" + string{ gettedFileInfo["filename"] });
 		sendedInfo["filename"] = string{ gettedFileInfo["filename"] };
 
 		m_outputDocument->body = sendedInfo.dump(4);
@@ -159,9 +159,9 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::handleGetFileMethod()
 	{
-		json fileInfo = json::parse(handledDocument->body);
+		nlohmann::json fileInfo = nlohmann::json::parse(handledDocument->body);
 
-		ifstream sendedFile{ g_serverRootDirectory + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
+		std::ifstream sendedFile{ serverConfiguration::g_serverRootDirectory + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
 
 		if (sendedFile.is_open())
 		{
@@ -180,12 +180,12 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::putDirectoryContentToReplyBody()
 	{
-		json directoryInfo = json::parse(handledDocument->body);
-		json directoryContent;
+		nlohmann::json directoryInfo = nlohmann::json::parse(handledDocument->body);
+		nlohmann::json directoryContent;
 
 		string path = directoryInfo["path"];
 
-		for (const auto& file : directory_iterator(g_serverRootDirectory + path))
+		for (const auto& file : filesystem::directory_iterator(serverConfiguration::g_serverRootDirectory + path))
 		{
 			std::cout << file << "\n";
 			directoryContent["content"].push_back(file.path());
@@ -198,11 +198,11 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::deleteFile()
 	{
-		json deletedFileInfo = json::parse(handledDocument->body);
+		nlohmann::json deletedFileInfo = nlohmann::json::parse(handledDocument->body);
 
-		if (exists(g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
+		if (filesystem::exists(serverConfiguration::g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
 		{
-			remove_all(g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
+			filesystem::remove_all(serverConfiguration::g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
 			m_outputDocument->status = stock::replyStatuses::g_ok;
 		}
 		else
@@ -223,7 +223,7 @@ namespace AxxonsoftInternProject
 		{
 			deleteFile();
 		}
-		catch(exception& ex)
+		catch(std::exception& ex)
 		{
 			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
@@ -236,9 +236,9 @@ namespace AxxonsoftInternProject
 				putDirectoryContentToReplyBody();
 
 				m_outputDocument->status = stock::replyStatuses::g_ok;
-				cout << "Sucksessfully checked\n";
+				std::cout << "Sucksessfully checked\n";
 			}
-			catch (exception& ex)
+			catch (std::exception& ex)
 			{
 				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
@@ -248,7 +248,7 @@ namespace AxxonsoftInternProject
 	{
 		try
 		{
-			if (m_URITarget.components.size() == 1 && m_URITarget.components[0] == g_content)
+			if (m_URITarget.components.size() == 1 && m_URITarget.components[0] == uri::components::g_content)
 			{
 				std::cout << "Scan directory\n";
 
@@ -265,7 +265,7 @@ namespace AxxonsoftInternProject
 				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 		}
-		catch (exception& ex)
+		catch (std::exception& ex)
 		{
 			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}

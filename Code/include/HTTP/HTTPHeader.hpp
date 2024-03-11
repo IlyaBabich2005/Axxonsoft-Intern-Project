@@ -5,9 +5,7 @@
 
 namespace stock = AxxonsoftInternProject::http::stock;
 
-using stock::characters::separators::g_headerNameValueSeparator;
-
-using std::string;
+namespace separators = stock::characters::separators;
 
 namespace AxxonsoftInternProject
 {

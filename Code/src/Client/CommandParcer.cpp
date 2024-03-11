@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		ParsingStatus CommandParcer::Parce(shared_ptr<Command> parcingResult, string sourceCommand)
+		http::ParsingStatus CommandParcer::Parce(std::shared_ptr<Command> parcingResult, std::string sourceCommand)
 		{
 			bool isTargetParcing = false;
 
@@ -30,11 +30,11 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					return ParsingStatus::endResultBad;
+					return http::ParsingStatus::endResultBad;
 				}
 			}
 
-			return ParsingStatus::endResultGood;
+			return http::ParsingStatus::endResultGood;
 		}
 	}
 }

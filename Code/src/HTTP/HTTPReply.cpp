@@ -9,7 +9,7 @@ namespace AxxonsoftInternProject
 
 		}
 
-		HTTPReply::HTTPReply(string version, string status) : 
+		HTTPReply::HTTPReply(std::string version, std::string status) : 
 			HTTPDocument{ version },
 			status{status}
 		{

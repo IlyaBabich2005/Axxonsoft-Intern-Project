@@ -14,27 +14,11 @@
 
 namespace http = AxxonsoftInternProject::http;
 namespace stock = AxxonsoftInternProject::http::stock;
+namespace headers = stock::headers;
+namespace requestMethods = stock::requestMethods;
+namespace clientCommands = stock::clientCommands;
 namespace Client = AxxonsoftInternProject::Client;
-
-using stock::headers::names::g_contentLength,
-	  stock::requestMethods::g_GET,
-	  stock::requestMethods::g_DELETE,
-	  stock::requestMethods::g_POST,
-	  stock::clientCommands::g_delete,
-	  stock::clientCommands::g_post,
-	  stock::clientCommands::g_ls,
-	  stock::clientCommands::g_get,
-	  Client::NoFileToPostException,
-	  Client::InvalidTargetException,
-	  Client::CantOpenPostedFileException,
-	  std::filesystem::exists,
-	  std::shared_ptr,
-	  std::ifstream,
-	  std::ios,
-	  std::byte,
-	  std::cout,
-	  http::ClientRequestType,
-	  http::HTTPRequest;
+namespace filesystem = std::filesystem;
 
 namespace AxxonsoftInternProject
 {
@@ -43,16 +27,16 @@ namespace AxxonsoftInternProject
 		class CommandHandler
 		{
 		private: 
-			shared_ptr<HTTPRequest> outputRequest;
+			std::shared_ptr<http::HTTPRequest> outputRequest;
 			Command comand;
-			json requestBody;
+			nlohmann::json requestBody;
 
 		private: 
-			void setRequestUriAndMethod(const string& method, const string& uri, const ClientRequestType& type);
+			void setRequestUriAndMethod(const std::string& method, const std::string& uri, const http::ClientRequestType& type);
 			void setHeaders();
 			void putFileDataInRequestBody(std::ifstream& file);
-			void extructTargetIntoRequestBody(string target);
-			void getFileData(ifstream& file);
+			void extructTargetIntoRequestBody(std::string target);
+			void getFileData(std::ifstream& file);
 			void handleDeleteCommand();
 			void handleLSCommand();
 			void handleGetCommand();
@@ -60,7 +44,7 @@ namespace AxxonsoftInternProject
 			void handleCommand();
 
 		public:
-			CommandHandler(shared_ptr<HTTPRequest> outputReques);
+			CommandHandler(std::shared_ptr<http::HTTPRequest> outputReques);
 			void Handle(Command comand);
 		};
 	}

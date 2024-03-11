@@ -4,8 +4,8 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPReplyParser::HTTPReplyParser(shared_ptr<HTTPReply> reply) :
-			HTTPParser{ dynamic_pointer_cast<HTTPDocument>(reply)}
+		HTTPReplyParser::HTTPReplyParser(std::shared_ptr<HTTPReply> reply) :
+			HTTPParser{ std::dynamic_pointer_cast<HTTPDocument>(reply)}
 		{
 			this->m_stage = ParsingStage::httpVersion;
 		}
@@ -28,7 +28,7 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::code;
 			}
-			else if (curentSymbol != '/' && (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol)))
+			else if (curentSymbol != '/' && (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol)))
 			{
 				m_status = ParsingStatus::endResultBad;
 			}
@@ -44,9 +44,9 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::expectingHeaderNewLine;
 			}
-			else if (IsChar(curentSymbol) && !IsDigid(curentSymbol) || curentSymbol != ' ')
+			else if (charChecks::IsChar(curentSymbol) && !charChecks::IsDigid(curentSymbol) || curentSymbol != ' ')
 			{
-				dynamic_pointer_cast<HTTPReply>(m_document)->status.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPReply>(m_document)->status.push_back(curentSymbol);
 			}
 			else
 			{
@@ -60,9 +60,9 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::httpStatus;
 			}
-			else if (IsDigid(curentSymbol))
+			else if (charChecks::IsDigid(curentSymbol))
 			{
-				dynamic_pointer_cast<HTTPReply>(this->m_document)->status.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPReply>(this->m_document)->status.push_back(curentSymbol);
 			}
 			else
 			{

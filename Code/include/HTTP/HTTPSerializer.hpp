@@ -6,13 +6,8 @@
 #include "HTTPDocument.hpp"
 
 namespace stock = AxxonsoftInternProject::http::stock;
-
-using std::vector,
-	  std::shared_ptr,
-	  stock::characters::separators::g_headerNameValueSeparator,
-	  stock::characters::separators::g_httpDocumentLineSeparator,
-	  boost::asio::buffer,
-	  boost::asio::const_buffer;
+namespace separators = stock::characters::separators;
+namespace asio = boost::asio;
 
 namespace AxxonsoftInternProject
 {
@@ -21,11 +16,11 @@ namespace AxxonsoftInternProject
 		class HTTPSerializer
 		{
 		private: 
-			vector<const_buffer> serializeHeaders(shared_ptr<HTTPDocument> document);
-			const_buffer serializeBody(shared_ptr<HTTPDocument> document);
+			std::vector<asio::const_buffer> serializeHeaders(std::shared_ptr<HTTPDocument> document);
+			asio::const_buffer serializeBody(std::shared_ptr<HTTPDocument> document);
 
 		public:
-			virtual vector<const_buffer> Serialize(shared_ptr<HTTPDocument> document);
+			virtual std::vector<asio::const_buffer> Serialize(std::shared_ptr<HTTPDocument> document);
 		};
 	}
 }

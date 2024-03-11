@@ -3,8 +3,6 @@
 #include "HTTPParser.hpp"
 #include "HTTPRequest.hpp"
 
-using std::dynamic_pointer_cast;
-
 namespace AxxonsoftInternProject
 {
 	namespace http
@@ -14,7 +12,7 @@ namespace AxxonsoftInternProject
 		private: 
 
 		public:
-			HTTPRequestParcer(shared_ptr<HTTPRequest> request);
+			HTTPRequestParcer(std::shared_ptr<HTTPRequest> request);
 
 		private:
 			void handleMethodSymbool(char curentSymbol);

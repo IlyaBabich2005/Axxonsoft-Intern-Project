@@ -4,8 +4,8 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPReplyHandler::HTTPReplyHandler(shared_ptr<HTTPReply> handledDocument, ClientRequestType requestType) :
-			HTTPHandler { dynamic_pointer_cast<HTTPDocument>(handledDocument) },
+		HTTPReplyHandler::HTTPReplyHandler(std::shared_ptr<HTTPReply> handledDocument, ClientRequestType requestType) :
+			HTTPHandler { std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
 			m_requestType { requestType }
 		{
 		}
@@ -16,11 +16,11 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::downloadGettedFile()
 		{
-			json body = json::parse(handledDocument->body);
+			nlohmann::json body = nlohmann::json::parse(handledDocument->body);
 
-			vector<byte> bytes = body["data"];
+			std::vector<std::byte> bytes = body["data"];
 
-			string pathToFile = { g_serverRootDirectory + string{body["filename"] } };
+			string pathToFile = { serverConfiguration::g_serverRootDirectory + string{body["filename"] } };
 
 			std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc };
 
@@ -36,53 +36,53 @@ namespace AxxonsoftInternProject
 		{
 			try
 			{
-				stod(handledDocument->version.substr(5));
+				std::stod(handledDocument->version.substr(5));
 
 				if (handledDocument->version.substr(0, 5) != "HTTP/")
 				{
-					throw new InvalidHTTPVersionException{};
+					throw new exceptions::InvalidHTTPVersionException{};
 				}
 			}
-			catch (exception& ex)
+			catch (std::exception& ex)
 			{
-				cout << "Bad reply\n";
+				std::cout << "Bad reply\n";
 			}
 		}
 
 		void HTTPReplyHandler::handleBadRequest()
 		{
-			cout << "Bad request\n";
+			std::cout << "Bad request\n";
 		}
 
 		void HTTPReplyHandler::handleNotFound()
 		{
-			cout << "Not Found\n";
+			std::cout << "Not Found\n";
 		}
 
 		void HTTPReplyHandler::handleOk()
 		{
 			if (m_requestType == ClientRequestType::checkTarget)
 			{
-				json body = json::parse(handledDocument->body);
+				nlohmann::json body = nlohmann::json::parse(handledDocument->body);
 
 				try
 				{
-					vector<string> content = body["content"];
+					std::vector<string> content = body["content"];
 
 					for (auto target : content)
 					{
-						cout << target << "\n";
+						std::cout << target << "\n";
 					}
 				}
-				catch (exception& ex)
+				catch (std::exception& ex)
 				{
-					cout << "empty\n";
+					std::cout << "empty\n";
 				}
 			}
 			else if (m_requestType == ClientRequestType::downloadTarget)
 			{
 				downloadGettedFile();
-				cout << "Target was successfully downloaded\n";
+				std::cout << "Target was successfully downloaded\n";
 			}
 			else if (m_requestType == ClientRequestType::deleteTarget)
 			{
@@ -100,7 +100,7 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::handleStatus()
 		{
-			shared_ptr<HTTPReply> handledReply = dynamic_pointer_cast<HTTPReply>(handledDocument);
+			std::shared_ptr<HTTPReply> handledReply = std::dynamic_pointer_cast<HTTPReply>(handledDocument);
 
 			if (handledReply->status == stock::replyStatuses::g_badRequest)
 			{
@@ -123,9 +123,9 @@ namespace AxxonsoftInternProject
 				this->verifyVersion();
 				this->handleStatus();
 			}
-			catch(exception& ex)
+			catch(std::exception& ex)
 			{
-				cout << "Handling error\n";
+				std::cout << "Handling error\n";
 			}
 		}
 	}

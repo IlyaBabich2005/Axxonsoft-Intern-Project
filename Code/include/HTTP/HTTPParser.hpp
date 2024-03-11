@@ -9,15 +9,7 @@
 #include "checks.hpp"
 
 namespace charChecks = AxxonsoftInternProject::checks::characters;
-
-using std::shared_ptr,
-	  std::exception,
-	  std::stoi,
-	  stock::headers::names::g_contentLength,
-	  charChecks::IsChar,
-	  charChecks::IsControlChar,
-	  charChecks::IsDigid,
-	  charChecks::IsSpesialChar;
+namespace headers = stock::headers;
 
 namespace AxxonsoftInternProject
 {
@@ -49,7 +41,7 @@ namespace AxxonsoftInternProject
 		class HTTPParser
 		{
 		protected:
-			shared_ptr<HTTPDocument> m_document;
+			std::shared_ptr<HTTPDocument> m_document;
 			ParsingStatus m_status;
 			ParsingStage m_stage;
 			int m_contentSize;
@@ -70,7 +62,7 @@ namespace AxxonsoftInternProject
 			virtual void handleVersionSymbol(char curentSymbol) = 0;
 
 		public:
-			HTTPParser(shared_ptr<HTTPDocument> document);
+			HTTPParser(std::shared_ptr<HTTPDocument> document);
 
 			template <typename InputIterator>
 			ParsingStatus Parse(InputIterator begin, InputIterator end);

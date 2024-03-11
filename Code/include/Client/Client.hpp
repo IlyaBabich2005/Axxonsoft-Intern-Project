@@ -1,20 +1,11 @@
 #include <iostream>
 
 #include <boost/asio/io_context.hpp>
-//#include <boost/asio/impl/connect.hpp>
 
 #include "HTTPReplyParser.hpp"
 #include "ClientConnection.hpp"
 #include "CommandParcer.hpp"
 #include "CommandHandler.hpp"
-
-using std::cout,
-	  std::getline,
-	  std::cin,
-	  std::make_shared,
-	  std::move,
-	  boost::asio::io_context,
-	  std::string;
 
 namespace AxxonsoftInternProject
 {
@@ -23,12 +14,12 @@ namespace AxxonsoftInternProject
 		class Client
 		{
 		private: 
-			io_context m_context;
-			tcp::endpoint m_serverEndpoint;
-			tcp::socket m_connectionSocket;
+			asio::io_context m_context;
+			ip::tcp::endpoint m_serverEndpoint;
+			ip::tcp::socket m_connectionSocket;
 			CommandParcer m_parcer;
-			shared_ptr<Command> m_command;
-			shared_ptr<HTTPRequest> m_outputRequest;
+			std::shared_ptr<Command> m_command;
+			std::shared_ptr<http::HTTPRequest> m_outputRequest;
 			CommandHandler m_handler;
 
 		private:
@@ -36,7 +27,7 @@ namespace AxxonsoftInternProject
 			void connect();
 
 		public:
-			Client(string serverIP, string serverPort);
+			Client(std::string serverIP, std::string serverPort);
 			
 			void Run();
 			

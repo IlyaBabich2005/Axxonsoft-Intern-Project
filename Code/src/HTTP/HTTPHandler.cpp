@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPHandler::HTTPHandler(shared_ptr<HTTPDocument> handledDocument) :
+		HTTPHandler::HTTPHandler(std::shared_ptr<HTTPDocument> handledDocument) :
 			handledDocument{ handledDocument }
 		{
 		}

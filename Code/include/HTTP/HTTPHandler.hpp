@@ -4,8 +4,6 @@
 
 #include "HTTPDocument.hpp"
 
-using std::shared_ptr;
-
 namespace AxxonsoftInternProject
 {
 	namespace http
@@ -13,13 +11,13 @@ namespace AxxonsoftInternProject
 		class HTTPHandler
 		{
 		protected:
-			shared_ptr<HTTPDocument> handledDocument;
+			std::shared_ptr<HTTPDocument> handledDocument;
 
 		protected: 
 			virtual void verifyVersion() = 0;
 
 		public: 
-			HTTPHandler(shared_ptr<HTTPDocument> handledDocument);
+			HTTPHandler(std::shared_ptr<HTTPDocument> handledDocument);
 
 			virtual void Handle() = 0;
 		};

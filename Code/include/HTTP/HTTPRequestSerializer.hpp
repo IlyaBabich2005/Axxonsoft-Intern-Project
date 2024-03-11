@@ -3,11 +3,7 @@
 #include "HTTPSerializer.hpp"
 #include "HTTPRequest.hpp"
 
-using std::dynamic_pointer_cast,
-std::begin,
-std::end,
-stock::characters::separators::g_whiteSpaceSeparator;
-
+namespace separators = stock::characters::separators;
 
 namespace AxxonsoftInternProject
 {
@@ -16,7 +12,7 @@ namespace AxxonsoftInternProject
 		class HTTPRequestSerializer : HTTPSerializer
 		{
 		public:
-			vector<const_buffer> Serialize(shared_ptr<HTTPDocument> document) override;
+			std::vector<asio::const_buffer> Serialize(std::shared_ptr<HTTPDocument> document) override;
 		};
 	}
 }

@@ -8,17 +8,17 @@ namespace AxxonsoftInternProject
 	{
 		struct HTTPReply : public HTTPDocument
 		{
-			string status;
+			std::string status;
 
 			HTTPReply();
-			HTTPReply(string version, string status);
+			HTTPReply(std::string version, std::string status);
 		};
 
 		namespace stock
 		{
 			namespace replyes
 			{
-				const HTTPReply g_badRequest{ string{"HTTP/1.0"}, stock::replyStatuses::g_badRequest };
+				const HTTPReply g_badRequest{ std::string{"HTTP/1.0"}, stock::replyStatuses::g_badRequest};
 			}
 		}
 	}

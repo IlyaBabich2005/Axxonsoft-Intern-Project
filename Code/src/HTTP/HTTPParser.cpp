@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
     namespace http
     {
-        HTTPParser::HTTPParser(shared_ptr<HTTPDocument> document) :
+        HTTPParser::HTTPParser(std::shared_ptr<HTTPDocument> document) :
             m_document{ document },
             m_status{ ParsingStatus::indeterminate },
             m_contentSize{ 0 },
@@ -34,7 +34,7 @@ namespace AxxonsoftInternProject
             {
                 m_stage = ParsingStage::expectingLineBeforeBody;
             }
-            else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+            else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol))
             {
                 m_status = ParsingStatus::endResultBad;
             }
@@ -52,7 +52,7 @@ namespace AxxonsoftInternProject
             {
                 m_stage = ParsingStage::spaceBeforeHaderValue;
             }
-            else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol) || IsSpesialChar(curentSymbol))
+            else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol))
             {
                 m_status = ParsingStatus::endResultBad;
             }
@@ -68,7 +68,7 @@ namespace AxxonsoftInternProject
             {
                 m_stage = ParsingStage::expectingHeaderNewLine;
             }
-            else if (!IsChar(curentSymbol) || IsControlChar(curentSymbol))
+            else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol))
             {
                 m_status = ParsingStatus::endResultBad;
             }
@@ -107,13 +107,13 @@ namespace AxxonsoftInternProject
             {
                 for (auto header : m_document->headers)
                 {
-                    if (header.name == g_contentLength)
+                    if (header.name == headers::names::g_contentLength)
                     {
                         try
                         {
                             m_contentSize = std::stoi(header.value);
                         }
-                        catch (exception& ex)
+                        catch (std::exception& ex)
                         {
                            m_status = ParsingStatus::endResultBad;
                         }

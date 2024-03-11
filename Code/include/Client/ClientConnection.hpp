@@ -15,46 +15,32 @@
 #include "HTTPReply.hpp"
 
 namespace http = AxxonsoftInternProject::http;
-
-using	
-		boost::asio::async_write,
-		boost::asio::ip::tcp,
-		boost::asio::buffer,
-		boost::system::error_code,
-		http::HTTPReplyParser,
-		http::HTTPReplyHandler,
-		http::HTTPRequest,
-		http::HTTPReply,
-		http::ParsingStatus,
-		http::HTTPRequestSerializer,
-		std::enable_shared_from_this,
-		std::cout,
-		std::move,
-		std::size_t,
-		std::array;
+namespace asio = boost::asio;
+namespace system = boost::system;
+namespace ip = boost::asio::ip;
 
 namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		class ClientConection : public enable_shared_from_this<ClientConection>
+		class ClientConection : public std::enable_shared_from_this<ClientConection>
 		{
 		private:
-			static const size_t m_bufferSize{ 10 * 1024 };
-			array<char, ClientConection::m_bufferSize> m_incomeBuffer;
-			shared_ptr<HTTPRequest> m_request;
-			shared_ptr<HTTPReply> m_reply;
-			HTTPReplyParser m_parser;
-			HTTPReplyHandler m_handler;
-			HTTPRequestSerializer m_serializer;
-			tcp::socket m_connectionSocket;
+			static const std::size_t m_bufferSize{ 10 * 1024 };
+			std::array<char, ClientConection::m_bufferSize> m_incomeBuffer;
+			std::shared_ptr<http::HTTPRequest> m_request;
+			std::shared_ptr<http::HTTPReply> m_reply;
+			http::HTTPReplyParser m_parser;
+			http::HTTPReplyHandler m_handler;
+			http::HTTPRequestSerializer m_serializer;
+			ip::tcp::socket m_connectionSocket;
 
 		private:
 			void read();
 			void write();
 
 		public:
-			ClientConection(tcp::socket connectionSocket, shared_ptr<HTTPRequest> request);
+			ClientConection(ip::tcp::socket connectionSocket, std::shared_ptr<http::HTTPRequest> request);
 
 			void Run();
 		};

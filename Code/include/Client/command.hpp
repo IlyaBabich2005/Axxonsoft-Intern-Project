@@ -2,13 +2,11 @@
 
 #include <string>
 
-using std::string;
-
 namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		const string commands[] =
+		const std::string commands[] =
 		{
 			"ls",
 			"get",
@@ -18,8 +16,8 @@ namespace AxxonsoftInternProject
 
 		struct Command
 		{
-			string command;
-			string targer;
+			std::string command;
+			std::string targer;
 		};
 	}
 }

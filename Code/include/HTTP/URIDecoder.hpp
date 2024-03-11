@@ -3,9 +3,7 @@
 #include "Target.hpp"
 #include "checks.hpp"
 
-using AxxonsoftInternProject::checks::characters::IsControlChar,
-	  AxxonsoftInternProject::checks::characters::IsSpesialChar,
-	  AxxonsoftInternProject::http::Target;
+namespace charChecks = AxxonsoftInternProject::checks::characters;
 
 namespace AxxonsoftInternProject
 {
@@ -20,7 +18,7 @@ namespace AxxonsoftInternProject
 		class URIDecoder
 		{
 		public:
-			DecoderStatus Decode(string uri, Target& targer);
+			DecoderStatus Decode(std::string uri, Target& targer);
 		};
 	}
 }

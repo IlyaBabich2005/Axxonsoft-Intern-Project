@@ -3,8 +3,6 @@
 #include "HTTPParser.hpp"
 #include "HTTPReply.hpp"
 
-using std::dynamic_pointer_cast;
-
 namespace AxxonsoftInternProject
 {
 	namespace http
@@ -12,7 +10,7 @@ namespace AxxonsoftInternProject
 		class HTTPReplyParser : public HTTPParser
 		{
 		public:
-			HTTPReplyParser(shared_ptr<HTTPReply> reply);
+			HTTPReplyParser(std::shared_ptr<HTTPReply> reply);
 
 		private:
 			void handleStatusSymbool(char curentSymbol);

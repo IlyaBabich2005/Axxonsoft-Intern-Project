@@ -3,10 +3,8 @@
 #include "HTTPSerializer.hpp"
 #include "HTTPReply.hpp"
 
-using std::dynamic_pointer_cast,
-	  std::begin,
-	  std::end,
-	  stock::characters::separators::g_whiteSpaceSeparator;
+namespace separators = stock::characters::separators;
+namespace asio = boost::asio;
 
 namespace AxxonsoftInternProject
 {
@@ -15,7 +13,7 @@ namespace AxxonsoftInternProject
 		class HTTPReplySerializer : public HTTPSerializer
 		{
 		public:
-			vector<const_buffer> Serialize(shared_ptr<HTTPDocument> document) override;
+			std::vector<asio::const_buffer> Serialize(std::shared_ptr<HTTPDocument> document) override;
 		};
 	}
 }

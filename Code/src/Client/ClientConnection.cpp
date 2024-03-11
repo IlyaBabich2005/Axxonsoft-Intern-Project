@@ -4,10 +4,10 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		ClientConection::ClientConection(tcp::socket connectionSocket, shared_ptr<HTTPRequest> request) : 
-			m_connectionSocket{ move(connectionSocket) },
+		ClientConection::ClientConection(ip::tcp::socket connectionSocket, std::shared_ptr<http::HTTPRequest> request) : 
+			m_connectionSocket{ std::move(connectionSocket) },
 			m_request{ request },
-			m_reply{ new HTTPReply },
+			m_reply{ new http::HTTPReply },
 			m_parser{ m_reply },
 			m_handler{ m_reply , request->type}
 		{
@@ -15,15 +15,15 @@ namespace AxxonsoftInternProject
 
 		void ClientConection::write()
 		{
-			cout << "Write\n";
+			std::cout << "Write\n";
 
 			auto self(shared_from_this());
-			async_write(m_connectionSocket, m_serializer.Serialize(m_request),
-				[this, self](error_code ec, size_t)
+			asio::async_write(m_connectionSocket, m_serializer.Serialize(m_request),
+				[this, self](system::error_code ec, std::size_t)
 				{
 					if (!ec)
 					{
-						cout << "Written!\n";
+						std::cout << "Written!\n";
 						read();
 					}
 				});
@@ -32,30 +32,30 @@ namespace AxxonsoftInternProject
 		void ClientConection::read()
 		{
 			auto self(shared_from_this());
-			m_connectionSocket.async_read_some(buffer(m_incomeBuffer),
-				[self, this](error_code ec, size_t bytesTransferred)
+			m_connectionSocket.async_read_some(asio::buffer(m_incomeBuffer),
+				[self, this](system::error_code ec, std::size_t bytesTransferred)
 				{
-					cout << "Get " << bytesTransferred << " bytes \n";
+					std::cout << "Get " << bytesTransferred << " bytes \n";
 
 					if (!ec)
 					{
-						ParsingStatus status = m_parser.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
+						http::ParsingStatus status = m_parser.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
 
-						cout << "Parsed\n";
+						std::cout << "Parsed\n";
 
-						if (status == ParsingStatus::endResultBad)
+						if (status == http::ParsingStatus::endResultBad)
 						{
-							cout << "Parsed Bad\n";
-							cout << "Bad Reply\n";
+							std::cout << "Parsed Bad\n";
+							std::cout << "Bad Reply\n";
 						}
-						else if (status == ParsingStatus::endResultGood)
+						else if (status == http::ParsingStatus::endResultGood)
 						{
-							cout << "Parsed GOOD\n";
+							std::cout << "Parsed GOOD\n";
 							m_handler.Handle();
 						}
 						else
 						{
-							cout << "Parsing Continue\n";
+							std::cout << "Parsing Continue\n";
 							read();
 						}
 					}

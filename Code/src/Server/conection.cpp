@@ -7,32 +7,32 @@ namespace AxxonsoftInternProject
 		void Conection::read()
 		{
 			auto self(shared_from_this());
-			m_connectionSocket.async_read_some(buffer(m_incomeBuffer),
-				[self, this](error_code ec, size_t bytesTransferred)
+			m_connectionSocket.async_read_some(asio::buffer(m_incomeBuffer),
+				[self, this](system::error_code ec, size_t bytesTransferred)
 				{
-					cout << "Get " << bytesTransferred << " bytes \n";
+					std::cout << "Get " << bytesTransferred << " bytes \n";
 
 					if (!ec)
 					{
-						ParsingStatus status = m_parcer.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
+						http::ParsingStatus status = m_parcer.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
 
-						cout << "Parsed\n";
+						std::cout << "Parsed\n";
 
-						if (status == ParsingStatus::endResultBad)
+						if (status == http::ParsingStatus::endResultBad)
 						{
-							cout << "Parsed Bad\n";
-							*m_reply = g_badRequest;
+							std::cout << "Parsed Bad\n";
+							*m_reply = stock::replyes::g_badRequest;
 						}
-						else if (status == ParsingStatus::endResultGood)
+						else if (status == http::ParsingStatus::endResultGood)
 						{
-							cout << "Parsed GOOD\n";
+							std::cout << "Parsed GOOD\n";
 							m_handler.Handle();
-							cout << "Handling\n";
+							std::cout << "Handling\n";
 							write();
 						}
 						else
 						{
-							cout << "Parsing Continue\n";
+							std::cout << "Parsing Continue\n";
 							read();
 						}
 					}
@@ -41,23 +41,23 @@ namespace AxxonsoftInternProject
 
 		void Conection::write()
 		{
-			cout << "Write\n";
+			std::cout << "Write\n";
 
 			auto self(shared_from_this());
 			async_write(m_connectionSocket, m_serializer.Serialize(m_reply),
-				[this, self](error_code ec, size_t)
+				[this, self](system::error_code ec, size_t)
 				{
 					if (!ec)
 					{
-						cout << "Written!\n";
+						std::cout << "Written!\n";
 					}
 				});
 		}
 
-		Conection::Conection(tcp::socket connectionSocket) :
-			m_connectionSocket{ move(connectionSocket) },
-			m_request{new HTTPRequest},
-			m_reply{new HTTPReply},
+		Conection::Conection(ip::tcp::socket connectionSocket) :
+			m_connectionSocket{ std::move(connectionSocket) },
+			m_request{new http::HTTPRequest},
+			m_reply{new http::HTTPReply},
 			m_parcer{m_request},
 			m_handler{m_request, m_reply}
 		{

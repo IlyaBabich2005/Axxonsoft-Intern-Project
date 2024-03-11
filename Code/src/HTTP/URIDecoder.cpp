@@ -6,13 +6,13 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		DecoderStatus URIDecoder::Decode(string uri, Target& targer)
+		DecoderStatus URIDecoder::Decode(std::string uri, Target& targer)
 		{
-			string temp;
+			std::string temp;
 
 			for (auto character : uri)
 			{
-				if (IsControlChar(character) || IsSpesialChar(character))
+				if (charChecks::IsControlChar(character) || charChecks::IsSpesialChar(character))
 				{
 					if (character == '/' && !targer.isFile)
 					{

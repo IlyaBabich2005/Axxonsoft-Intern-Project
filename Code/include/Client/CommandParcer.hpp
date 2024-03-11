@@ -5,8 +5,7 @@
 #include "checks.hpp"
 
 namespace checks = AxxonsoftInternProject::checks::characters;
-
-using AxxonsoftInternProject::http::ParsingStatus;
+namespace http = AxxonsoftInternProject::http;
 
 namespace AxxonsoftInternProject
 {
@@ -15,7 +14,7 @@ namespace AxxonsoftInternProject
 		class CommandParcer
 		{
 		public:
-			ParsingStatus Parce(shared_ptr<Command> parcingResult, string sourceCommand);
+			http::ParsingStatus Parce(std::shared_ptr<Command> parcingResult, std::string sourceCommand);
 		};
 	}
 }

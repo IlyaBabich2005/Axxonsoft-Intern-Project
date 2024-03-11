@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		CommandHandler::CommandHandler(shared_ptr<HTTPRequest> outputRequest) :
+		CommandHandler::CommandHandler(std::shared_ptr<http::HTTPRequest> outputRequest) :
 			outputRequest{ outputRequest }
 		{
 
@@ -14,14 +14,14 @@ namespace AxxonsoftInternProject
 		{
 			if (outputRequest->body.size() != 0)
 			{
-				outputRequest->headers.push_back(http::HTTPHeader{ g_contentLength, std::to_string(outputRequest->body.size()) });
+				outputRequest->headers.push_back(http::HTTPHeader{ headers::names::g_contentLength, std::to_string(outputRequest->body.size()) });
 			}
 		}
 
-		void CommandHandler::extructTargetIntoRequestBody(string target)
+		void CommandHandler::extructTargetIntoRequestBody(std::string target)
 		{
-			string temp;
-			string path = "";
+			std::string temp;
+			std::string path = "";
 			bool isFilename = false;
 			requestBody["path"] = "";
 			requestBody["filename"] = "";
@@ -33,7 +33,7 @@ namespace AxxonsoftInternProject
 					if (isFilename)
 					{
 						std::cout << "Invalid Target format\n";
-						throw new InvalidTargetException;
+						throw new Client::InvalidTargetException;
 					}
 					else
 					{
@@ -64,20 +64,20 @@ namespace AxxonsoftInternProject
 		void CommandHandler::putFileDataInRequestBody(std::ifstream& file)
 		{
 			auto end = file.tellg();
-			file.seekg(0, ios::beg);
+			file.seekg(0, std::ios::beg);
 
 			auto size = size_t(end - file.tellg());
-			vector<byte> buffer(size);
+			std::vector<std::byte> buffer(size);
 
 			file.read((char*)buffer.data(), buffer.size());
 
 			requestBody["data"] = buffer;
 		}
 
-		void CommandHandler::getFileData(ifstream& file)
+		void CommandHandler::getFileData(std::ifstream& file)
 		{
-			string filePath;
-			string filename;
+			std::string filePath;
+			std::string filename;
 
 			putFileDataInRequestBody(file);
 
@@ -98,12 +98,12 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::handlePostCommand()
 		{
-			setRequestUriAndMethod(g_POST, "/", ClientRequestType::sendTarget);
-			string pathToPostedFile = comand.targer;
+			setRequestUriAndMethod(requestMethods::g_POST, "/", http::ClientRequestType::sendTarget);
+			std::string pathToPostedFile = comand.targer;
 
-			if (exists(pathToPostedFile))
+			if (filesystem::exists(pathToPostedFile))
 			{
-				ifstream file(pathToPostedFile, ios::binary | ios::ate);
+				std::ifstream file(pathToPostedFile, std::ios::binary | std::ios::ate);
 
 				if (file.is_open())
 				{
@@ -113,19 +113,19 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					cout << "Cant open posted file\n";
+					std::cout << "Cant open posted file\n";
 					file.close();
-					throw new CantOpenPostedFileException;
+					throw new Client::CantOpenPostedFileException;
 				}
 			}
 			else
 			{
-				cout << "Cant open posted file\n";
-				throw new NoFileToPostException;
+				std::cout << "Cant open posted file\n";
+				throw new Client::NoFileToPostException;
 			}
 		}
 
-		void CommandHandler::setRequestUriAndMethod(const string& method, const string& uri, const ClientRequestType& type)
+		void CommandHandler::setRequestUriAndMethod(const std::string& method, const std::string& uri, const http::ClientRequestType& type)
 		{
 			outputRequest->method = method;
 			outputRequest->uri = uri;
@@ -134,42 +134,42 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::handleGetCommand()
 		{
-			setRequestUriAndMethod(g_GET, "/", ClientRequestType::downloadTarget);
+			setRequestUriAndMethod(requestMethods::g_GET, "/", http::ClientRequestType::downloadTarget);
 		}
 
 		void CommandHandler::handleLSCommand()
 		{
-			setRequestUriAndMethod(g_GET, "/content", ClientRequestType::checkTarget);
+			setRequestUriAndMethod(requestMethods::g_GET, "/content", http::ClientRequestType::checkTarget);
 		}
 
 		void CommandHandler::handleDeleteCommand()
 		{
-			setRequestUriAndMethod(g_DELETE, "/content", ClientRequestType::deleteTarget);
+			setRequestUriAndMethod(requestMethods::g_DELETE, "/content", http::ClientRequestType::deleteTarget);
 		}
 
 		void CommandHandler::handleCommand()
 		{
 			try
 			{
-				if (this->comand.command != g_post)
+				if (this->comand.command != clientCommands::g_post)
 				{
 					this->extructTargetIntoRequestBody(this->comand.targer);
 
-					if (this->comand.command == g_ls)
+					if (this->comand.command == clientCommands::g_ls)
 					{
 						this->handleLSCommand();
 					}
-					else if (this->comand.command == g_get)
+					else if (this->comand.command == clientCommands::g_get)
 					{
 						this->handleGetCommand();
 					}
-					else if(this->comand.command == g_delete)
+					else if(this->comand.command == clientCommands::g_delete)
 					{
 						this->handleDeleteCommand();
 					}
 					else
 					{
-						cout << "Invalid Method\n";
+						std::cout << "Invalid Method\n";
 					}
 				}
 				else
@@ -177,9 +177,9 @@ namespace AxxonsoftInternProject
 					handlePostCommand();
 				}
 			}
-			catch (exception& ex)
+			catch (std::exception& ex)
 			{
-				cout << "Invalid command\n";
+				std::cout << "Invalid command\n";
 			}
 		}
 

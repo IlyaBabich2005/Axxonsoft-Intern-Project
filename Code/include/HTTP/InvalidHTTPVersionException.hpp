@@ -2,15 +2,13 @@
 
 #include <exception>
 
-using std::exception;
-
 namespace AxxonsoftInternProject
 {
 	namespace http
 	{
 		namespace exceptions
 		{
-			class InvalidHTTPVersionException : public exception
+			class InvalidHTTPVersionException : public std::exception
 			{
 			};
 		}
