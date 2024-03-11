@@ -8,7 +8,8 @@ namespace AxxonsoftInternProject
 	{
 		class InvalidTargetException : std::exception
 		{
-
+		public:
+			char* what();
 		};
 	}
 

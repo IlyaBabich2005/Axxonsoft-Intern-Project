@@ -87,6 +87,7 @@ add_library(
 	src/HTTP/HTTPReply.cpp
 	src/HTTP/URIDecoder.cpp
 	src/HTTP/HTTPReplyHandler.cpp
+	src/HTTP/InvalidHTTPVersionException.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)
@@ -114,6 +115,9 @@ add_executable(
 	src/Client/CommandParcer.cpp
 	src/Client/Client.cpp
 	src/Client/CommandHandler.cpp
+	src/Client/NoFileToPostException.cpp
+	src/Client/CantOpenPostedFileException.cpp
+	src/Client/InvalidTargetFormatException.cpp
 	include/Client/Client.hpp 
 	include/Client/command.hpp 
 	include/Client/ClientConnection.hpp

@@ -115,7 +115,13 @@ namespace AxxonsoftInternProject
                         }
                         catch (std::exception& ex)
                         {
+                           std::cout << ex.what() << "\n";
                            m_status = ParsingStatus::endResultBad;
+                        }
+                        catch (boost::exception& ex)
+                        {
+                            std::cout << boost::diagnostic_information(ex) << "\n";
+                            m_status = ParsingStatus::endResultBad;
                         }
                     }
                 }

@@ -6,7 +6,7 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		const string requestMethods[]
+		const std::string requestMethods[]
 		{
 			"GET",
 			"POST",

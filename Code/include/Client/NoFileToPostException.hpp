@@ -8,6 +8,8 @@ namespace AxxonsoftInternProject
 	{
 		class NoFileToPostException : std::exception
 		{
+		public:
+			char* what();
 		};
 	}
 

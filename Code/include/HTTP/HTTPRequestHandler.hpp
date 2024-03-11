@@ -7,6 +7,9 @@
 
 #include <nlohmann/json.hpp>
 
+#include <boost/exception/exception.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+
 #include "HTTPRequest.hpp"
 #include "HTTPHandler.hpp"
 #include "HTTPReply.hpp"

@@ -10,6 +10,8 @@ namespace AxxonsoftInternProject
 		{
 			class InvalidHTTPVersionException : public std::exception
 			{
+			public:
+				char* what();
 			};
 		}
 	}

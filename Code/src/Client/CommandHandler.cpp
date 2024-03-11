@@ -179,7 +179,11 @@ namespace AxxonsoftInternProject
 			}
 			catch (std::exception& ex)
 			{
-				std::cout << "Invalid command\n";
+				std::cout << ex.what() << "\n";
+			}
+			catch (boost::exception& ex)
+			{
+				std::cout << boost::diagnostic_information(ex) << "\n";
 			}
 		}
 

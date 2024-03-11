@@ -24,7 +24,13 @@ namespace AxxonsoftInternProject
 		catch (std::exception& ex)
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
-
+			std::cout << ex.what() << "\n";
+			handledDocument->version = serverConfiguration::g_httpVersion;
+		}
+		catch (boost::exception& ex)
+		{
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
+			std::cout << boost::diagnostic_information(ex) << '\n';
 			handledDocument->version = serverConfiguration::g_httpVersion;
 		}
 	}
@@ -122,6 +128,12 @@ namespace AxxonsoftInternProject
 			}
 			catch (std::exception& ex)
 			{
+				std::cout << ex.what() << '\n';
+				m_outputDocument->status = stock::replyStatuses::g_notFound;
+			}
+			catch (boost::exception& ex)
+			{
+				std::cout << boost::diagnostic_information(ex) << '\n';
 				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 		}
@@ -225,6 +237,12 @@ namespace AxxonsoftInternProject
 		}
 		catch(std::exception& ex)
 		{
+			std::cout << ex.what() << '\n';
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
+		}
+		catch (boost::exception& ex)
+		{
+			std::cout << boost::diagnostic_information(ex) << '\n';
 			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
 	}
@@ -240,6 +258,12 @@ namespace AxxonsoftInternProject
 			}
 			catch (std::exception& ex)
 			{
+				std::cout << ex.what() << '\n';
+				m_outputDocument->status = stock::replyStatuses::g_notFound;
+			}
+			catch (boost::exception& ex)
+			{
+				std::cout << boost::diagnostic_information(ex) << '\n';
 				m_outputDocument->status = stock::replyStatuses::g_notFound;
 			}
 	}
@@ -267,6 +291,12 @@ namespace AxxonsoftInternProject
 		}
 		catch (std::exception& ex)
 		{
+			std::cout << ex.what() << "\n";
+			m_outputDocument->status = stock::replyStatuses::g_notFound;
+		}
+		catch (boost::exception& ex)
+		{
+			std::cout << boost::diagnostic_information(ex) << "\n";
 			m_outputDocument->status = stock::replyStatuses::g_notFound;
 		}
 	}

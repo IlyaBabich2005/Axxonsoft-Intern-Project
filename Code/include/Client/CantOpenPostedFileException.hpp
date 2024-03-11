@@ -8,7 +8,8 @@ namespace AxxonsoftInternProject
 	{
 		class CantOpenPostedFileException : std::exception
 		{
-
+		public:
+			char* what();
 		};
 	}
 

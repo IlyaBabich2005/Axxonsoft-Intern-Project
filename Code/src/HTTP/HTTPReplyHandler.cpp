@@ -45,7 +45,11 @@ namespace AxxonsoftInternProject
 			}
 			catch (std::exception& ex)
 			{
-				std::cout << "Bad reply\n";
+				std::cout << ex.what() << "\n";
+			}
+			catch (boost::exception& ex)
+			{
+				std::cout << boost::diagnostic_information(ex) << "\n";
 			}
 		}
 
@@ -76,7 +80,11 @@ namespace AxxonsoftInternProject
 				}
 				catch (std::exception& ex)
 				{
-					std::cout << "empty\n";
+					std::cout << ex.what() << "\n";
+				}
+				catch (boost::exception& ex)
+				{
+					std::cout << boost::diagnostic_information(ex) << "\n";
 				}
 			}
 			else if (m_requestType == ClientRequestType::downloadTarget)
@@ -125,7 +133,11 @@ namespace AxxonsoftInternProject
 			}
 			catch(std::exception& ex)
 			{
-				std::cout << "Handling error\n";
+				std::cout << ex.what() << "\n";
+			}
+			catch (boost::exception& ex)
+			{
+				std::cout << boost::diagnostic_information(ex) << "\n";
 			}
 		}
 	}

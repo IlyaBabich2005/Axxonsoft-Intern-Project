@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <boost/asio/buffer.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 
 #include "HTTPRequest.hpp"
 #include "checks.hpp"

@@ -4,6 +4,9 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
+#include <boost/exception/exception.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+
 #include "HTTPHandler.hpp"
 #include "HTTPReply.hpp"
 #include "HTTPRequest.hpp"
