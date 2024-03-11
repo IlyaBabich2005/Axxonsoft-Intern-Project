@@ -14,6 +14,7 @@
 #include "InvalidTargetFormatException.hpp"
 #include "NoFileToPostException.hpp"
 #include "CantOpenPostedFileException.hpp"
+#include "Config.hpp"
 
 namespace http = AxxonsoftInternProject::http;
 namespace stock = AxxonsoftInternProject::http::stock;

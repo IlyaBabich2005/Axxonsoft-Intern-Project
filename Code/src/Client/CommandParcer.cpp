@@ -14,7 +14,7 @@ namespace AxxonsoftInternProject
 				{
 					if (!isTargetParcing)
 					{
-						if(symbol == ' ')
+						if (symbol == ' ')
 						{
 							isTargetParcing = true;
 						}

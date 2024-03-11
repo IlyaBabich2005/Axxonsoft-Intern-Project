@@ -21,7 +21,7 @@ namespace AxxonsoftInternProject
 
 			if (!ec)
 			{
-				std::cout << "Directory created\n";
+				std::cout << stock::messages::g_directoryCreated << "\n";
 			}
 
 			m_threadPool.join();

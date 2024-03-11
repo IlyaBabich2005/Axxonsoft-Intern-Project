@@ -16,11 +16,11 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::downloadGettedFile()
 		{
-			nlohmann::json body = nlohmann::json::parse(handledDocument->body);
+			nlohmann::json body = nlohmann::json::parse(m_handledDocument->body);
 
-			std::vector<std::byte> bytes = body["data"];
+			std::vector<std::byte> bytes = body[stock::json::g_dataFieldName];
 
-			string pathToFile = { serverConfiguration::g_serverRootDirectory + string{body["filename"] } };
+			string pathToFile = { serverConfiguration::g_serverRootDirectory + string{body[stock::json::g_filenameFiledName] } };
 
 			std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc };
 
@@ -34,44 +34,36 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::verifyVersion()
 		{
-			try
+			for (auto version : stock::g_httpVersions)
 			{
-				std::stod(handledDocument->version.substr(5));
-
-				if (handledDocument->version.substr(0, 5) != "HTTP/")
+				if (this->m_handledDocument->version == version)
 				{
-					throw new exceptions::InvalidHTTPVersionException{};
+					return;
 				}
 			}
-			catch (std::exception& ex)
-			{
-				std::cout << ex.what() << "\n";
-			}
-			catch (boost::exception& ex)
-			{
-				std::cout << boost::diagnostic_information(ex) << "\n";
-			}
+
+			throw new exceptions::InvalidHTTPVersionException{};
 		}
 
 		void HTTPReplyHandler::handleBadRequest()
 		{
-			std::cout << "Bad request\n";
+			std::cout << stock::messages::g_badRequest << "\n";
 		}
 
 		void HTTPReplyHandler::handleNotFound()
 		{
-			std::cout << "Not Found\n";
+			std::cout << stock::messages::g_notFound << "\n";
 		}
 
 		void HTTPReplyHandler::handleOk()
 		{
 			if (m_requestType == ClientRequestType::checkTarget)
 			{
-				nlohmann::json body = nlohmann::json::parse(handledDocument->body);
+				nlohmann::json body = nlohmann::json::parse(m_handledDocument->body);
 
 				try
 				{
-					std::vector<string> content = body["content"];
+					std::vector<string> content = body[stock::json::g_contentFieldName];
 
 					for (auto target : content)
 					{
@@ -90,25 +82,25 @@ namespace AxxonsoftInternProject
 			else if (m_requestType == ClientRequestType::downloadTarget)
 			{
 				downloadGettedFile();
-				std::cout << "Target was successfully downloaded\n";
+				std::cout << stock::messages::g_targetWasSuccesfullyDownloaded << "\n";
 			}
 			else if (m_requestType == ClientRequestType::deleteTarget)
 			{
-				std::cout << "Target was sucessfully deleted\n";
+				std::cout << stock::messages::g_targetWasSuccesfullyDeleted << "\n";
 			}
 			else if(m_requestType == ClientRequestType::sendTarget)
 			{
-				std::cout << "Target was sucessfully sended\n";
+				std::cout << stock::messages::g_targetWasSuccesfullySended << "\n";
 			}
 			else
 			{
-				std::cout << "Client request type error\n";
+				std::cout << stock::messages::g_clientRequestTypeError << "\n";
 			}
 		}
 
 		void HTTPReplyHandler::handleStatus()
 		{
-			std::shared_ptr<HTTPReply> handledReply = std::dynamic_pointer_cast<HTTPReply>(handledDocument);
+			std::shared_ptr<HTTPReply> handledReply = std::dynamic_pointer_cast<HTTPReply>(m_handledDocument);
 
 			if (handledReply->status == stock::replyStatuses::g_badRequest)
 			{

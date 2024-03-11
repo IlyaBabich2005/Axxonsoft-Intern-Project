@@ -126,6 +126,7 @@ add_executable(
 	include/Client/InvalidTargetFormatException.hpp
 	include/Client/NoFileToPostException.hpp
 	include/Client/CantOpenPostedFileException.hpp
+	include/Client/Config.hpp
 )
 
 target_include_directories(Client PRIVATE include/Client)

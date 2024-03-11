@@ -11,7 +11,7 @@ namespace AxxonsoftInternProject
 		class HTTPHandler
 		{
 		protected:
-			std::shared_ptr<HTTPDocument> handledDocument;
+			std::shared_ptr<HTTPDocument> m_handledDocument;
 
 		protected: 
 			virtual void verifyVersion() = 0;

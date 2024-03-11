@@ -6,7 +6,7 @@ namespace AxxonsoftInternProject
 	{
 		namespace exceptions
 		{
-			InvalidHTTPVersionException::what()
+			char* InvalidHTTPVersionException::what()
 			{
 				return "Invalid http version format";
 			}

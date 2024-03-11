@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		InvalidTargetException::what()
+		char* InvalidTargetException::what()
 		{
 			return "Invalid target format";
 		}

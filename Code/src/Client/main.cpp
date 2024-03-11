@@ -2,7 +2,7 @@
 
 int main()
 {
-	AxxonsoftInternProject::Client::Client client{ "127.0.0.1", "80"};
+	AxxonsoftInternProject::Client::Client client{ Client::config::g_serverIP, Client::config::g_serverPort};
 
 	client.Run();
 }

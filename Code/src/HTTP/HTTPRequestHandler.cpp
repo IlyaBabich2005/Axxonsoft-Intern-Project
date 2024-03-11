@@ -12,34 +12,34 @@ namespace AxxonsoftInternProject
 	{
 		try
 		{
-			std::stod(handledDocument->version.substr(5));
+			std::stod(m_handledDocument->version.substr(5));
 
-			if (handledDocument->version.substr(0, 5) != "HTTP/")
+			if (m_handledDocument->version.substr(0, 5) != "HTTP/")
 			{
 				throw new exceptions::InvalidHTTPVersionException{};
 			}
 
-			m_outputDocument->version = handledDocument->version;
+			m_outputDocument->version = m_handledDocument->version;
 		}
 		catch (std::exception& ex)
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
 			std::cout << ex.what() << "\n";
-			handledDocument->version = serverConfiguration::g_httpVersion;
+			m_handledDocument->version = serverConfiguration::g_httpVersion;
 		}
 		catch (boost::exception& ex)
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
 			std::cout << boost::diagnostic_information(ex) << '\n';
-			handledDocument->version = serverConfiguration::g_httpVersion;
+			m_handledDocument->version = serverConfiguration::g_httpVersion;
 		}
 	}
 
 	void http::HTTPRequestHandler::handleMethod()
 	{
-		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(handledDocument)->uri, m_URITarget))
+		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->uri, m_URITarget))
 		{
-			string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(handledDocument)->method;
+			string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->method;
 			std::cout << "Decoded\n";
 
 			if (requestMethod == requestMethods::g_GET)
@@ -59,7 +59,7 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::handleHeaders()
 	{
-		for (auto header : handledDocument->headers)
+		for (auto header : m_handledDocument->headers)
 		{
 			if (header.name == headers::names::g_connection&& header.value == headers::values::g_keepAlive)
 			{
@@ -110,7 +110,7 @@ namespace AxxonsoftInternProject
 		{
 			try
 			{
-				nlohmann::json inputFileInfo = nlohmann::json::parse(handledDocument->body);
+				nlohmann::json inputFileInfo = nlohmann::json::parse(m_handledDocument->body);
 				std::vector<std::byte> bytes = inputFileInfo["data"];
 
 				createDirectories(string{ inputFileInfo["path"] });
@@ -157,7 +157,7 @@ namespace AxxonsoftInternProject
 	void http::HTTPRequestHandler::putFileToReplyBody(std::ifstream &sendedFile)
 	{
 		nlohmann::json sendedInfo;
-		nlohmann::json gettedFileInfo = nlohmann::json::parse(handledDocument->body);
+		nlohmann::json gettedFileInfo = nlohmann::json::parse(m_handledDocument->body);
 
 		std::cout << "Readed\n";
 
@@ -171,7 +171,7 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::handleGetFileMethod()
 	{
-		nlohmann::json fileInfo = nlohmann::json::parse(handledDocument->body);
+		nlohmann::json fileInfo = nlohmann::json::parse(m_handledDocument->body);
 
 		std::ifstream sendedFile{ serverConfiguration::g_serverRootDirectory + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
 
@@ -192,7 +192,7 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::putDirectoryContentToReplyBody()
 	{
-		nlohmann::json directoryInfo = nlohmann::json::parse(handledDocument->body);
+		nlohmann::json directoryInfo = nlohmann::json::parse(m_handledDocument->body);
 		nlohmann::json directoryContent;
 
 		string path = directoryInfo["path"];
@@ -210,7 +210,7 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::deleteFile()
 	{
-		nlohmann::json deletedFileInfo = nlohmann::json::parse(handledDocument->body);
+		nlohmann::json deletedFileInfo = nlohmann::json::parse(m_handledDocument->body);
 
 		if (filesystem::exists(serverConfiguration::g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
 		{

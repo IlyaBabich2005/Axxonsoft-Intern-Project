@@ -30,7 +30,7 @@ namespace AxxonsoftInternProject
 		}
 		else
 		{
-			std::cout << "Bad command\n";
+			std::cout << stock::messages::g_badCommand << "\n";
 			readCommand();
 		}
 
@@ -47,7 +47,7 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					std::cout << "Can't connect\n";
+					std::cout << stock::messages::g_cantConnect << "\n";
 				}
 			});
 	}

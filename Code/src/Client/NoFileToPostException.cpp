@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		NoFileToPostException::what()
+		char* NoFileToPostException::what()
 		{
 			return "No file to post";
 		}

@@ -38,6 +38,7 @@ namespace AxxonsoftInternProject
 		private:
 			void read();
 			void write();
+			std::string showBytesGetted(std::size_t bytesTransferred);
 
 		public:
 			ClientConection(ip::tcp::socket connectionSocket, std::shared_ptr<http::HTTPRequest> request);

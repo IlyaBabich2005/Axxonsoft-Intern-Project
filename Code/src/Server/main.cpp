@@ -11,7 +11,7 @@
 
 int main()
 {
-	AxxonsoftInternProject::SERVER::Server server{"127.0.0.1", "80", 8};
+	AxxonsoftInternProject::SERVER::Server server{serverConfiguration::g_serverAdress, serverConfiguration::g_serverPort, serverConfiguration::g_threadPollSize};
 	server.Run();
 
 	std::cin;

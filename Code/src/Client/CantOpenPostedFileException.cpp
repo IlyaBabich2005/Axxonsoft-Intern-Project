@@ -4,7 +4,7 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		CantOpenPostedFileException::what()
+		char* CantOpenPostedFileException::what()
 		{
 			return "Cant open posted file";
 		}
