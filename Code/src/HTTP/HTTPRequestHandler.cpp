@@ -14,7 +14,7 @@ namespace AxxonsoftInternProject
 		{
 			std::stod(m_handledDocument->m_version.substr(5));
 
-			if (m_handledDocument->m_version.substr(0, 5) != "HTTP/")
+			if (m_handledDocument->m_version.substr(0, 5) != stock::g_httpVersionHead)
 			{
 				throw new exceptions::InvalidHTTPVersionException{};
 			}
@@ -24,13 +24,13 @@ namespace AxxonsoftInternProject
 		catch (std::exception& ex)
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_badRequest;
-			std::cout << ex.what() << "\n";
+			std::cout << boost::format("%1%\n") % ex.what();
 			m_handledDocument->m_version = AxxonsoftInternProject::SERVER::Configuration::g_httpVersion;
 		}
 		catch (boost::exception& ex)
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_badRequest;
-			std::cout << boost::diagnostic_information(ex) << '\n';
+			std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 			m_handledDocument->m_version = AxxonsoftInternProject::SERVER::Configuration::g_httpVersion;
 		}
 	}
@@ -40,7 +40,7 @@ namespace AxxonsoftInternProject
 		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_uri, m_URITarget))
 		{
 			std::string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_method;
-			std::cout << "Decoded\n";
+			std::cout << boost::format("%1%\n") % stock::messages::g_decoded;
 
 			if (requestMethod == stock::requestMethods::g_GET)
 				handleGETMethod();
@@ -92,11 +92,19 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					currentPath += endPath.substr(0, endPath.find('/')) + "/";
+					currentPath += boost::str(boost::format("%1%/") % endPath.substr(0, endPath.find('/')));
 					endPath.erase(0, endPath.find('/') + 1);
 				}
 			}
 		}
+	}
+
+	std::string http::HTTPRequestHandler::getFilePathOnServer(nlohmann::json inputFileInfo)
+	{
+		return boost::str(boost::format("%1%%2%/%3%") %
+			AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory %
+			std::string{ inputFileInfo[stock::json::g_pathFileldName] } %
+			std::string{ inputFileInfo[stock::json::g_filenameFiledName] });
 	}
 
 	void http::HTTPRequestHandler::handlePOSTMethod()
@@ -111,30 +119,28 @@ namespace AxxonsoftInternProject
 			try
 			{
 				nlohmann::json inputFileInfo = nlohmann::json::parse(m_handledDocument->m_body);
-				std::vector<std::byte> bytes = inputFileInfo["data"];
+				std::vector<std::byte> bytes = inputFileInfo[stock::json::g_dataFieldName];
 
-				createDirectories(std::string{ inputFileInfo["path"] });
+				createDirectories(std::string{ inputFileInfo[stock::json::g_pathFileldName] });
 
-				std::string pathToFile = AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
-					std::string{inputFileInfo["path"]} + "/" + std::string{inputFileInfo["filename"]};
+				std::string pathToFile = getFilePathOnServer(inputFileInfo);
 
 				std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc};
 
 				if (file.is_open())
 				{
 					file.write((char*)bytes.data(), bytes.size());
+					file.close();
 				}
-
-				file.close();
 			}
 			catch (std::exception& ex)
 			{
-				std::cout << ex.what() << '\n';
+				std::cout << boost::format("%1%\n") % ex.what();
 				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 			catch (boost::exception& ex)
 			{
-				std::cout << boost::diagnostic_information(ex) << '\n';
+				std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 		}
@@ -160,37 +166,35 @@ namespace AxxonsoftInternProject
 		nlohmann::json sendedInfo;
 		nlohmann::json gettedFileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 
-		std::cout << "Readed\n";
+		std::cout << boost::format("%1%\n") % stock::messages::g_readed;
 
-		sendedInfo["data"] = readFileInBinates(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
-			std::string{gettedFileInfo["path"]} + "/" + std::string{ gettedFileInfo["filename"] });
-		sendedInfo["filename"] = std::string{ gettedFileInfo["filename"] };
+		sendedInfo[stock::json::g_dataFieldName] = readFileInBinates(getFilePathOnServer(gettedFileInfo));
+		sendedInfo[stock::json::g_filenameFiledName] = std::string{ gettedFileInfo[stock::json::g_filenameFiledName] };
 
 		m_outputDocument->m_body = sendedInfo.dump(stock::json::g_dumpSize);
 
-		std::cout << "Writed in file\n";
+		std::cout << boost::format("%1%\n") % stock::messages::g_writedInFile;
 	}
 
 	void http::HTTPRequestHandler::handleGetFileMethod()
 	{
 		nlohmann::json fileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 
-		std::ifstream sendedFile{ AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
-			std::string{fileInfo["path"]} + "/" + std::string{fileInfo["filename"]}};
+		std::ifstream sendedFile{ getFilePathOnServer(fileInfo)};
 
 		if (sendedFile.is_open())
 		{
-			std::cout << "Openning file\n";
+			std::cout << boost::format("%1%\n") % stock::messages::g_openningFile;
 
 			putFileToReplyBody(sendedFile);
 			m_outputDocument->m_status = stock::replyStatuses::g_ok;
+
+			sendedFile.close();
 		}
 		else
 		{
 			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
-		
-		sendedFile.close();
 	}
 
 	void http::HTTPRequestHandler::putDirectoryContentToReplyBody()
@@ -198,15 +202,15 @@ namespace AxxonsoftInternProject
 		nlohmann::json directoryInfo = nlohmann::json::parse(m_handledDocument->m_body);
 		nlohmann::json directoryContent;
 
-		std::string path = directoryInfo["path"];
+		std::string path = directoryInfo[stock::json::g_pathFileldName];
 
 		for (const auto& file : std::filesystem::directory_iterator(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + path))
 		{
-			std::cout << file << "\n";
-			directoryContent["content"].push_back(file.path());
+			std::cout << boost::format("%1%\n") % file;
+			directoryContent[stock::json::g_contentFieldName].push_back(file.path());
 		}
 
-		std::cout << "Serializing body\n";
+		std::cout << boost::format("%1%\n") % stock::messages::g_serializingBody;
 
 		m_outputDocument->m_body = directoryContent.dump(stock::json::g_dumpSize);
 	}
@@ -215,11 +219,9 @@ namespace AxxonsoftInternProject
 	{
 		nlohmann::json deletedFileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 
-		if (std::filesystem::exists(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
-			std::string{ deletedFileInfo["path"] } + "/" + std::string{ deletedFileInfo["filename"] }))
+		if (std::filesystem::exists(getFilePathOnServer(deletedFileInfo)))
 		{
-			std::filesystem::remove_all(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
-				std::string{ deletedFileInfo["path"] } + "/" + std::string{ deletedFileInfo["filename"] });
+			std::filesystem::remove_all(getFilePathOnServer(deletedFileInfo));
 			m_outputDocument->m_status = stock::replyStatuses::g_ok;
 		}
 		else
@@ -242,12 +244,12 @@ namespace AxxonsoftInternProject
 		}
 		catch(std::exception& ex)
 		{
-			std::cout << ex.what() << '\n';
+			std::cout << boost::format("%1%\n") % ex.what();
 			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 		catch (boost::exception& ex)
 		{
-			std::cout << boost::diagnostic_information(ex) << '\n';
+			std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 	}
@@ -259,16 +261,16 @@ namespace AxxonsoftInternProject
 				putDirectoryContentToReplyBody();
 
 				m_outputDocument->m_status = stock::replyStatuses::g_ok;
-				std::cout << "Sucksessfully checked\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_succesfullyChecked;
 			}
 			catch (std::exception& ex)
 			{
-				std::cout << ex.what() << '\n';
+				std::cout << boost::format("%1%\n") % ex.what();
 				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 			catch (boost::exception& ex)
 			{
-				std::cout << boost::diagnostic_information(ex) << '\n';
+				std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 	}
@@ -279,13 +281,13 @@ namespace AxxonsoftInternProject
 		{
 			if (m_URITarget.components.size() == 1 && m_URITarget.components[0] == stock::uri::components::g_content)
 			{
-				std::cout << "Scan directory\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_scanDirectory;
 
 				handleGETContentMethod();
 			}
 			else if (m_URITarget.components.size() == 0)
 			{
-				std::cout << "Search file\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_searchFile;
 
 				handleGetFileMethod();
 			}
@@ -296,12 +298,12 @@ namespace AxxonsoftInternProject
 		}
 		catch (std::exception& ex)
 		{
-			std::cout << ex.what() << "\n";
+			std::cout << boost::format("%1%\n") % ex.what();
 			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 		catch (boost::exception& ex)
 		{
-			std::cout << boost::diagnostic_information(ex) << "\n";
+			std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 	}

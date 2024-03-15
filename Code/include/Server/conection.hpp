@@ -8,6 +8,7 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/asio/impl/write.hpp>
+#include <boost/format.hpp>
 
 #include "HTTPRequestParser.hpp"
 #include "HTTPRequestHandler.hpp"
@@ -32,7 +33,6 @@ namespace AxxonsoftInternProject
 		private:
 			void read();
 			void write();
-			std::string showBytesGetted(std::size_t bytesTransferred);
 
 		public:
 			Conection(boost::asio::ip::tcp::socket connectionSocket);

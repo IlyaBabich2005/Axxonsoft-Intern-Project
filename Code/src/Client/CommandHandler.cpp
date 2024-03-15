@@ -27,11 +27,11 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::extructTargetIntoRequestBody(std::string target)
 		{
-			std::string temp = "";
-			std::string path = "";
+			std::string temp;
+			std::string path;
 			bool isFilename = false;
-			m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = "";
-			m_requestBody[AxxonsoftInternProject::http::stock::json::g_filenameFiledName] = "";
+			m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = std::string{};
+			m_requestBody[AxxonsoftInternProject::http::stock::json::g_filenameFiledName] = std::string{};
 
 			for (auto character : target)
 			{
@@ -44,7 +44,7 @@ namespace AxxonsoftInternProject
 					else
 					{
 						path += temp;
-						temp = "";
+						temp = std::string{};
 					}
 				}
 				else if (character == '.')
@@ -82,19 +82,20 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::getFileData(std::ifstream& file)
 		{
-			std::string filePath;
-			std::string filename;
-
 			putFileDataInRequestBody(file);
 
-			std::cout << AxxonsoftInternProject::http::stock::messages::g_inputFilePathOnServer << "\n";
+			std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputFilePathOnServer;
+
+			std::string filePath;
 
 			if (std::getline(std::cin, filePath))
 			{
 				m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = filePath;
 			}
 
-			std::cout << AxxonsoftInternProject::http::stock::messages::g_inputFileNameOnServer << "\n";
+			std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputFileNameOnServer;
+
+			std::string filename;
 
 			if (std::getline(std::cin, filename))
 			{
@@ -124,7 +125,6 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					file.close();
 					throw new Client::CantOpenPostedFileException;
 				}
 			}
@@ -187,7 +187,7 @@ namespace AxxonsoftInternProject
 					}
 					else
 					{
-						std::cout << AxxonsoftInternProject::http::stock::messages::g_invalidMethod << "\n";
+						std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_invalidMethod;
 					}
 				}
 				else
@@ -197,11 +197,11 @@ namespace AxxonsoftInternProject
 			}
 			catch (std::exception& ex)
 			{
-				std::cout << ex.what() << "\n";
+				std::cout << boost::format("%1%\n") % ex.what();
 			}
 			catch (boost::exception& ex)
 			{
-				std::cout << boost::diagnostic_information(ex) << "\n";
+				std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 			}
 		}
 

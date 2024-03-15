@@ -17,9 +17,9 @@ namespace AxxonsoftInternProject
 
 	void Client::Client::readCommand()
 	{
-		std::string command;
-
 		m_command = std::shared_ptr<Command>{ new Command };
+
+		std::string command;
 
 		std::getline(std::cin, command);
 			
@@ -30,7 +30,7 @@ namespace AxxonsoftInternProject
 		}
 		else
 		{
-			std::cout << AxxonsoftInternProject::http::stock::messages::g_badCommand << "\n";
+			std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_badCommand;
 			readCommand();
 		}
 
@@ -47,7 +47,7 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					std::cout << AxxonsoftInternProject::http::stock::messages::g_cantConnect << "\n";
+					std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_cantConnect;
 				}
 			});
 	}

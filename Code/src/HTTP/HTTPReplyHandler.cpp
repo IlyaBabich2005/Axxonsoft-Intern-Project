@@ -48,12 +48,12 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::handleBadRequest()
 		{
-			std::cout << stock::messages::g_badRequest << "\n";
+			std::cout << boost::format("%1%\n") % stock::messages::g_badRequest;
 		}
 
 		void HTTPReplyHandler::handleNotFound()
 		{
-			std::cout << stock::messages::g_notFound << "\n";
+			std::cout << boost::format("%1%\n") % stock::messages::g_notFound;
 		}
 
 		void HTTPReplyHandler::handleOk()
@@ -68,34 +68,34 @@ namespace AxxonsoftInternProject
 
 					for (auto target : content)
 					{
-						std::cout << target << "\n";
+						std::cout << boost::format("%1%\n") % target;
 					}
 				}
 				catch (std::exception& ex)
 				{
-					std::cout << ex.what() << "\n";
+					std::cout << boost::format("%1%\n") % ex.what();
 				}
 				catch (boost::exception& ex)
 				{
-					std::cout << boost::diagnostic_information(ex) << "\n";
+					std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 				}
 			}
 			else if (m_requestType == ClientRequestType::downloadTarget)
 			{
 				downloadGettedFile();
-				std::cout << stock::messages::g_targetWasSuccesfullyDownloaded << "\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_targetWasSuccesfullyDownloaded;
 			}
 			else if (m_requestType == ClientRequestType::deleteTarget)
 			{
-				std::cout << stock::messages::g_targetWasSuccesfullyDeleted << "\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_targetWasSuccesfullyDeleted;
 			}
 			else if(m_requestType == ClientRequestType::sendTarget)
 			{
-				std::cout << stock::messages::g_targetWasSuccesfullySended << "\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_targetWasSuccesfullySended;
 			}
 			else
 			{
-				std::cout << stock::messages::g_clientRequestTypeError << "\n";
+				std::cout << boost::format("%1%\n") % stock::messages::g_clientRequestTypeError;
 			}
 		}
 
@@ -126,11 +126,11 @@ namespace AxxonsoftInternProject
 			}
 			catch(std::exception& ex)
 			{
-				std::cout << ex.what() << "\n";
+				std::cout << boost::format("%1%\n") % ex.what();
 			}
 			catch (boost::exception& ex)
 			{
-				std::cout << boost::diagnostic_information(ex) << "\n";
+				std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 			}
 		}
 	}

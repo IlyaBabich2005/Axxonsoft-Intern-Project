@@ -89,6 +89,14 @@ namespace AxxonsoftInternProject
 				const std::string g_notFound{ "Not found" };
 				const std::string g_handling{ "Handling" };
 				const std::string g_directoryCreated{ "Directory created" };
+				const std::string g_decoded{ "Decoded" };
+				const std::string g_readed{ "Readed" };
+				const std::string g_writedInFile{ "Writed in file" };
+				const std::string g_openningFile{ "Openning file" };
+				const std::string g_serializingBody{ "Serializing body" };
+				const std::string g_succesfullyChecked{ "Succesfully checked" };
+				const std::string g_scanDirectory{ "Scun directory" };
+				const std::string g_searchFile{ "Search file" };
 			}
 
 			namespace json
@@ -99,6 +107,8 @@ namespace AxxonsoftInternProject
 				const std::string g_dataFieldName{ "data" };
 				const std::string g_contentFieldName{ "content" };
 			}
+
+			const std::string g_httpVersionHead{ "HTTP/" };
 
 			const std::string g_httpVersions[]
 			{

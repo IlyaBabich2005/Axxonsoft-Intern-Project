@@ -5,7 +5,9 @@
 #include <filesystem>
 
 #include <boost/exception/exception.hpp>
-#include <boost/exception/diagnostic_information.hpp>include <boost/exception/diagnostic_information.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+#include <boost/format.hpp>
 
 #include "HTTPRequest.hpp"
 #include "Stock.hpp"

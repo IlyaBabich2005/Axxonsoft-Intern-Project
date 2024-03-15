@@ -9,6 +9,7 @@
 
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+#include <boost/format.hpp>
 
 #include "HTTPRequest.hpp"
 #include "HTTPHandler.hpp"
@@ -32,6 +33,7 @@ namespace AxxonsoftInternProject
 			void verifyVersion() override;
 			void handleMethod();
 			void handleHeaders();
+			std::string getFilePathOnServer(nlohmann::json inputFileInfo);
 			std::vector<std::byte> readFileInBinates(std::string pathToFile);
 			void putDirectoryContentToReplyBody();
 			void putFileToReplyBody(std::ifstream &sendedFile);

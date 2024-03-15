@@ -136,12 +136,12 @@ namespace AxxonsoftInternProject
                         }
                         catch (std::exception& ex)
                         {
-                           std::cout << ex.what() << "\n";
+                           std::cout << boost::format("%1%\n") % ex.what();
                            m_status = ParsingStatus::endResultBad;
                         }
                         catch (boost::exception& ex)
                         {
-                            std::cout << boost::diagnostic_information(ex) << "\n";
+                            std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
                             m_status = ParsingStatus::endResultBad;
                         }
                     }

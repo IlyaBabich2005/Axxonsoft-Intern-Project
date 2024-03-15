@@ -10,7 +10,7 @@ namespace AxxonsoftInternProject
 			m_connectionSocket.async_read_some(boost::asio::buffer(m_incomeBuffer),
 				[self, this](boost::system::error_code ec, size_t bytesTransferred)
 				{
-					showBytesGetted(bytesTransferred);
+					std::cout << boost::format("Get %1% bytes\n") % bytesTransferred;
 
 					if (!ec)
 					{
@@ -20,19 +20,19 @@ namespace AxxonsoftInternProject
 
 						if (status == http::ParsingStatus::endResultBad)
 						{
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcedBad << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parcedBad;
 							*m_reply = AxxonsoftInternProject::http::stock::replyes::g_badRequest;
 						}
 						else if (status == http::ParsingStatus::endResultGood)
 						{
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcedGood << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parcedGood;
 							m_handler.Handle();
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_handling << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_handling;
 							write();
 						}
 						else
 						{
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcingContinious << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parcingContinious;
 							read();
 						}
 					}
@@ -41,7 +41,7 @@ namespace AxxonsoftInternProject
 
 		void Conection::write()
 		{
-			std::cout << AxxonsoftInternProject::http::stock::messages::g_writing << "\n";
+			std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_writing;
 
 			auto self(shared_from_this());
 			async_write(m_connectionSocket, m_serializer.Serialize(m_reply),
@@ -49,15 +49,9 @@ namespace AxxonsoftInternProject
 				{
 					if (!ec)
 					{
-						std::cout << AxxonsoftInternProject::http::stock::messages::g_written << "\n";
+						std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_written;
 					}
 				});
-		}
-
-
-		std::string Conection::showBytesGetted(std::size_t bytesTransferred)
-		{
-			std::cout << "Get " << bytesTransferred << " bytes \n";
 		}
 
 		Conection::Conection(boost::asio::ip::tcp::socket connectionSocket) :

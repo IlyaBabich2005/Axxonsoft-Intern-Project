@@ -15,7 +15,7 @@ namespace AxxonsoftInternProject
 
 		void ClientConection::write()
 		{
-			std::cout << AxxonsoftInternProject::http::stock::messages::g_writing << '\n';
+			std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_writing;
 
 			auto self(shared_from_this());
 			boost::asio::async_write(m_connectionSocket, m_serializer.Serialize(m_request),
@@ -23,15 +23,10 @@ namespace AxxonsoftInternProject
 				{
 					if (!ec)
 					{
-						std::cout << AxxonsoftInternProject::http::stock::messages::g_written << "\n";
+						std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_written;
 						read();
 					}
 				});
-		}
-
-		std::string ClientConection::showBytesGetted(std::size_t bytesTransferred)
-		{
-			std::cout << "Get " << bytesTransferred << " bytes \n";
 		}
 
 		void ClientConection::read()
@@ -40,27 +35,27 @@ namespace AxxonsoftInternProject
 			m_connectionSocket.async_read_some(boost::asio::buffer(m_incomeBuffer),
 				[self, this](boost::system::error_code ec, std::size_t bytesTransferred)
 				{
-					showBytesGetted(bytesTransferred);
+					std::cout << boost::format("Get %1% bytes\n") % bytesTransferred;
 
 					if (!ec)
 					{
 						http::ParsingStatus status = m_parser.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
 
-						std::cout << AxxonsoftInternProject::http::stock::messages::g_parced << "\n";
+						std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parced;
 
 						if (status == http::ParsingStatus::endResultBad)
 						{
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcedBad << "\n";
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_badReply << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parcedBad;
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_badReply;
 						}
 						else if (status == http::ParsingStatus::endResultGood)
 						{
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcedGood << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parcedGood;
 							m_handler.Handle();
 						}
 						else
 						{
-							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcingContinious << "\n";
+							std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_parcingContinious;
 							read();
 						}
 					}
