@@ -93,6 +93,7 @@ namespace AxxonsoftInternProject
 
 			namespace json
 			{
+				const int g_dumpSize{4};
 				const std::string g_pathFileldName{ "path" };
 				const std::string g_filenameFiledName{ "filename" };
 				const std::string g_dataFieldName{ "data" };

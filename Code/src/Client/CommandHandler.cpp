@@ -211,7 +211,7 @@ namespace AxxonsoftInternProject
 
 			m_outputRequest->m_version = config::g_httpVersion;
 			handleCommand();
-			m_outputRequest->m_body = m_requestBody.dump(4);
+			m_outputRequest->m_body = m_requestBody.dump(AxxonsoftInternProject::http::stock::json::g_dumpSize);
 			setHeaders();
 		}
 	}

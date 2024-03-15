@@ -166,7 +166,7 @@ namespace AxxonsoftInternProject
 			std::string{gettedFileInfo["path"]} + "/" + std::string{ gettedFileInfo["filename"] });
 		sendedInfo["filename"] = std::string{ gettedFileInfo["filename"] };
 
-		m_outputDocument->m_body = sendedInfo.dump(4);
+		m_outputDocument->m_body = sendedInfo.dump(stock::json::g_dumpSize);
 
 		std::cout << "Writed in file\n";
 	}
@@ -208,7 +208,7 @@ namespace AxxonsoftInternProject
 
 		std::cout << "Serializing body\n";
 
-		m_outputDocument->m_body = directoryContent.dump(4);
+		m_outputDocument->m_body = directoryContent.dump(stock::json::g_dumpSize);
 	}
 
 	void http::HTTPRequestHandler::deleteFile()
