@@ -13,12 +13,6 @@
 #include "HTTPRequestHandler.hpp"
 #include "HTTPReplySerializer.hpp"
 
-namespace http = AxxonsoftInternProject::http;
-namespace stock = AxxonsoftInternProject::http::stock;
-namespace asio = boost::asio;
-namespace system = boost::system;
-namespace ip = asio::ip;
-
 namespace AxxonsoftInternProject
 {
 	namespace SERVER
@@ -33,7 +27,7 @@ namespace AxxonsoftInternProject
 			http::HTTPRequestParcer m_parcer;
 			http::HTTPRequestHandler m_handler;
 			http::HTTPReplySerializer m_serializer;
-			ip::tcp::socket m_connectionSocket;
+			boost::asio::ip::tcp::socket m_connectionSocket;
 
 		private:
 			void read();
@@ -41,7 +35,7 @@ namespace AxxonsoftInternProject
 			std::string showBytesGetted(std::size_t bytesTransferred);
 
 		public:
-			Conection(ip::tcp::socket connectionSocket);
+			Conection(boost::asio::ip::tcp::socket connectionSocket);
 
 			void Run();
 		};

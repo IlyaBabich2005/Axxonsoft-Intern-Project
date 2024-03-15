@@ -12,7 +12,8 @@ namespace AxxonsoftInternProject
 
 			for (auto character : uri)
 			{
-				if (charChecks::IsControlChar(character) || charChecks::IsSpesialChar(character))
+				if (AxxonsoftInternProject::checks::characters::IsControlChar(character) || 
+					AxxonsoftInternProject::checks::characters::IsSpesialChar(character))
 				{
 					if (character == '/' && !targer.isFile)
 					{

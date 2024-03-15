@@ -10,9 +10,9 @@ namespace AxxonsoftInternProject
 	{
 		struct HTTPDocument
 		{
-			std::vector<HTTPHeader> headers;
-			std::string version;
-			std::string body;
+			std::vector<HTTPHeader> m_headers;
+			std::string m_version;
+			std::string m_body;
 
 			HTTPDocument();
 			HTTPDocument(std::string version);

@@ -14,9 +14,9 @@ namespace AxxonsoftInternProject
 		class Client
 		{
 		private: 
-			asio::io_context m_context;
-			ip::tcp::endpoint m_serverEndpoint;
-			ip::tcp::socket m_connectionSocket;
+			boost::asio::io_context m_context;
+			boost::asio::ip::tcp::endpoint m_serverEndpoint;
+			boost::asio::ip::tcp::socket m_connectionSocket;
 			CommandParcer m_parcer;
 			std::shared_ptr<Command> m_command;
 			std::shared_ptr<http::HTTPRequest> m_outputRequest;

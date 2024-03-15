@@ -16,14 +16,6 @@
 #include "CantOpenPostedFileException.hpp"
 #include "Config.hpp"
 
-namespace http = AxxonsoftInternProject::http;
-namespace stock = AxxonsoftInternProject::http::stock;
-namespace headers = stock::headers;
-namespace requestMethods = stock::requestMethods;
-namespace clientCommands = stock::clientCommands;
-namespace Client = AxxonsoftInternProject::Client;
-namespace filesystem = std::filesystem;
-
 namespace AxxonsoftInternProject
 {
 	namespace Client
@@ -31,12 +23,15 @@ namespace AxxonsoftInternProject
 		class CommandHandler
 		{
 		private: 
-			std::shared_ptr<http::HTTPRequest> outputRequest;
-			Command comand;
-			nlohmann::json requestBody;
+			std::shared_ptr<AxxonsoftInternProject::http::HTTPRequest> m_outputRequest;
+			Command m_comand;
+			nlohmann::json m_requestBody;
 
 		private: 
-			void setRequestUriAndMethod(const std::string& method, const std::string& uri, const http::ClientRequestType& type);
+			void setRequestUriAndMethod(
+				const std::string& method, 
+				const std::string& uri, 
+				const AxxonsoftInternProject::http::ClientRequestType& type);
 			void setHeaders();
 			void putFileDataInRequestBody(std::ifstream& file);
 			void extructTargetIntoRequestBody(std::string target);
@@ -48,7 +43,7 @@ namespace AxxonsoftInternProject
 			void handleCommand();
 
 		public:
-			CommandHandler(std::shared_ptr<http::HTTPRequest> outputReques);
+			CommandHandler(std::shared_ptr<AxxonsoftInternProject::http::HTTPRequest> outputReques);
 			void Handle(Command comand);
 		};
 	}

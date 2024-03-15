@@ -23,9 +23,9 @@ namespace AxxonsoftInternProject
 
 		struct HTTPRequest : public HTTPDocument
 		{
-			std::string method;
-			std::string uri;
-			ClientRequestType type;
+			std::string m_method;
+			std::string m_uri;
+			ClientRequestType m_type;
 		};
 	}
 }

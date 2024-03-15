@@ -7,8 +7,8 @@ namespace AxxonsoftInternProject
 		void Conection::read()
 		{
 			auto self(shared_from_this());
-			m_connectionSocket.async_read_some(asio::buffer(m_incomeBuffer),
-				[self, this](system::error_code ec, size_t bytesTransferred)
+			m_connectionSocket.async_read_some(boost::asio::buffer(m_incomeBuffer),
+				[self, this](boost::system::error_code ec, size_t bytesTransferred)
 				{
 					showBytesGetted(bytesTransferred);
 
@@ -16,23 +16,23 @@ namespace AxxonsoftInternProject
 					{
 						http::ParsingStatus status = m_parcer.Parse(m_incomeBuffer.data(), m_incomeBuffer.data() + bytesTransferred);
 
-						std::cout << stock::messages::g_parced << "\n";
+						std::cout << AxxonsoftInternProject::http::stock::messages::g_parced << "\n";
 
 						if (status == http::ParsingStatus::endResultBad)
 						{
-							std::cout << stock::messages::g_parcedBad << "\n";
-							*m_reply = stock::replyes::g_badRequest;
+							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcedBad << "\n";
+							*m_reply = AxxonsoftInternProject::http::stock::replyes::g_badRequest;
 						}
 						else if (status == http::ParsingStatus::endResultGood)
 						{
-							std::cout << stock::messages::g_parcedGood << "\n";
+							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcedGood << "\n";
 							m_handler.Handle();
-							std::cout << stock::messages::g_handling << "\n";
+							std::cout << AxxonsoftInternProject::http::stock::messages::g_handling << "\n";
 							write();
 						}
 						else
 						{
-							std::cout << stock::messages::g_parcingContinious << "\n";
+							std::cout << AxxonsoftInternProject::http::stock::messages::g_parcingContinious << "\n";
 							read();
 						}
 					}
@@ -41,15 +41,15 @@ namespace AxxonsoftInternProject
 
 		void Conection::write()
 		{
-			std::cout << stock::messages::g_writing << "\n";
+			std::cout << AxxonsoftInternProject::http::stock::messages::g_writing << "\n";
 
 			auto self(shared_from_this());
 			async_write(m_connectionSocket, m_serializer.Serialize(m_reply),
-				[this, self](system::error_code ec, size_t)
+				[this, self](boost::system::error_code ec, size_t)
 				{
 					if (!ec)
 					{
-						std::cout << stock::messages::g_written << "\n";
+						std::cout << AxxonsoftInternProject::http::stock::messages::g_written << "\n";
 					}
 				});
 		}
@@ -60,7 +60,7 @@ namespace AxxonsoftInternProject
 			std::cout << "Get " << bytesTransferred << " bytes \n";
 		}
 
-		Conection::Conection(ip::tcp::socket connectionSocket) :
+		Conection::Conection(boost::asio::ip::tcp::socket connectionSocket) :
 			m_connectionSocket{ std::move(connectionSocket) },
 			m_request{new http::HTTPRequest},
 			m_reply{new http::HTTPReply},

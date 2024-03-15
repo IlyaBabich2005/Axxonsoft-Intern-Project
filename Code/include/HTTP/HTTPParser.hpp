@@ -9,9 +9,6 @@
 #include "HTTPRequest.hpp"
 #include "checks.hpp"
 
-namespace charChecks = AxxonsoftInternProject::checks::characters;
-namespace headers = stock::headers;
-
 namespace AxxonsoftInternProject
 {
 	namespace http

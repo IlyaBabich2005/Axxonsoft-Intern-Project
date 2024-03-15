@@ -16,8 +16,8 @@ namespace AxxonsoftInternProject
 
 		struct Command
 		{
-			std::string command;
-			std::string targer;
+			std::string m_command;
+			std::string m_targer;
 		};
 	}
 }

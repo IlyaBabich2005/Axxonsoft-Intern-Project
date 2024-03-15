@@ -8,7 +8,7 @@ namespace AxxonsoftInternProject
 	{
 		struct HTTPReply : public HTTPDocument
 		{
-			std::string status;
+			std::string m_status;
 
 			HTTPReply();
 			HTTPReply(std::string version, std::string status);

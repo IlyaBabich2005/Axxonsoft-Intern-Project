@@ -14,10 +14,6 @@
 #include "Stock.hpp"
 #include "Configuration.hpp"
 
-namespace exceptions = AxxonsoftInternProject::http::exceptions;
-namespace stock = AxxonsoftInternProject::http::stock;
-namespace serverConfiguration = AxxonsoftInternProject::SERVER::Configuration;
-
 namespace AxxonsoftInternProject
 {
 	namespace http

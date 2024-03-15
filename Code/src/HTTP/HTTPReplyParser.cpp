@@ -16,8 +16,12 @@ namespace AxxonsoftInternProject
 
 			switch (m_stage)
 			{
-			case code: handleCodeSymbol(curentSymbol); break;
-			case httpStatus: handleStatusSymbool(curentSymbol); break;
+			case code: 
+				handleCodeSymbol(curentSymbol); 
+				break;
+			case httpStatus: 
+				handleStatusSymbool(curentSymbol);
+				break;
 			default: break;
 			}
 		}
@@ -28,13 +32,15 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::code;
 			}
-			else if (curentSymbol != '/' && (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol)))
+			else if (curentSymbol != '/' && (!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
+				AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol) || 
+				AxxonsoftInternProject::checks::characters::IsSpesialChar(curentSymbol)))
 			{
 				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				m_document->version.push_back(curentSymbol);
+				m_document->m_version.push_back(curentSymbol);
 			}
 		}
 
@@ -44,9 +50,10 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::expectingHeaderNewLine;
 			}
-			else if (charChecks::IsChar(curentSymbol) && !charChecks::IsDigid(curentSymbol) || curentSymbol != ' ')
+			else if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) && 
+				!AxxonsoftInternProject::checks::characters::IsDigid(curentSymbol) || curentSymbol != ' ')
 			{
-				std::dynamic_pointer_cast<HTTPReply>(m_document)->status.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPReply>(m_document)->m_status.push_back(curentSymbol);
 			}
 			else
 			{
@@ -60,9 +67,9 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::httpStatus;
 			}
-			else if (charChecks::IsDigid(curentSymbol))
+			else if (AxxonsoftInternProject::checks::characters::IsDigid(curentSymbol))
 			{
-				std::dynamic_pointer_cast<HTTPReply>(this->m_document)->status.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPReply>(this->m_document)->m_status.push_back(curentSymbol);
 			}
 			else
 			{

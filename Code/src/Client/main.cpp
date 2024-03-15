@@ -2,7 +2,7 @@
 
 int main()
 {
-	AxxonsoftInternProject::Client::Client client{ Client::config::g_serverIP, Client::config::g_serverPort};
+	AxxonsoftInternProject::Client::Client client{ AxxonsoftInternProject::Client::config::g_serverIP, AxxonsoftInternProject::Client::config::g_serverPort};
 
 	client.Run();
 }

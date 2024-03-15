@@ -10,14 +10,14 @@ namespace AxxonsoftInternProject
 			m_command{ new Command },
 			m_outputRequest { new http::HTTPRequest }
 		{
-			ip::tcp::resolver resolver{ m_context };
+			boost::asio::ip::tcp::resolver resolver{ m_context };
 			m_serverEndpoint = *resolver.resolve(serverIP, serverPort).begin();
 		}
 	}
 
 	void Client::Client::readCommand()
 	{
-		string command;
+		std::string command;
 
 		m_command = std::shared_ptr<Command>{ new Command };
 
@@ -30,7 +30,7 @@ namespace AxxonsoftInternProject
 		}
 		else
 		{
-			std::cout << stock::messages::g_badCommand << "\n";
+			std::cout << AxxonsoftInternProject::http::stock::messages::g_badCommand << "\n";
 			readCommand();
 		}
 
@@ -39,7 +39,7 @@ namespace AxxonsoftInternProject
 	void Client::Client::connect()
 	{
 		m_connectionSocket.async_connect(m_serverEndpoint,
-			[this](system::error_code ec)
+			[this](boost::system::error_code ec)
 			{
 				if (!ec)
 				{
@@ -47,7 +47,7 @@ namespace AxxonsoftInternProject
 				}
 				else
 				{
-					std::cout << stock::messages::g_cantConnect << "\n";
+					std::cout << AxxonsoftInternProject::http::stock::messages::g_cantConnect << "\n";
 				}
 			});
 	}

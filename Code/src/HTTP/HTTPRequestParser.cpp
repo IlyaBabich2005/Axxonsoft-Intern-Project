@@ -29,15 +29,15 @@ namespace AxxonsoftInternProject
 				m_stage = ParsingStage::expectingHeaderNewLine;
 			}
 			else if (curentSymbol != '/' && 
-				(!charChecks::IsChar(curentSymbol) || 
-					charChecks::IsControlChar(curentSymbol) ||
-					charChecks::IsSpesialChar(curentSymbol)))
+				(!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
+					AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol) ||
+					AxxonsoftInternProject::checks::characters::IsSpesialChar(curentSymbol)))
 			{
 				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				m_document->version.push_back(curentSymbol);
+				m_document->m_version.push_back(curentSymbol);
 			}
 		}
 
@@ -47,13 +47,15 @@ namespace AxxonsoftInternProject
 			{
 				m_stage = ParsingStage::uri;
 			}
-			else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol))
+			else if (!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
+				AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol) || 
+				AxxonsoftInternProject::checks::characters::IsSpesialChar(curentSymbol))
 			{
 				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				std::dynamic_pointer_cast<HTTPRequest>(m_document)->method.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPRequest>(m_document)->m_method.push_back(curentSymbol);
 			}
 		}
 
@@ -65,16 +67,16 @@ namespace AxxonsoftInternProject
 			}
 			else if (curentSymbol != ':' && 
 					curentSymbol != '/' && 
-					(!charChecks::IsChar(curentSymbol) ||
-						charChecks::IsControlChar(curentSymbol) ||
-						charChecks::IsSpesialChar(curentSymbol))
+					(!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) ||
+						AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol) ||
+						AxxonsoftInternProject::checks::characters::IsSpesialChar(curentSymbol))
 				)
 			{
 				m_status = ParsingStatus::endResultBad;
 			}
 			else
 			{
-				std::dynamic_pointer_cast<HTTPRequest>(m_document)->uri.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPRequest>(m_document)->m_uri.push_back(curentSymbol);
 			}
 		}
 

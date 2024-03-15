@@ -20,12 +20,12 @@ namespace AxxonsoftInternProject
 						}
 						else
 						{
-							parcingResult->command.push_back(symbol);
+							parcingResult->m_command.push_back(symbol);
 						}
 					}
 					else
 					{
-						parcingResult->targer.push_back(symbol);
+						parcingResult->m_targer.push_back(symbol);
 					}
 				}
 				else

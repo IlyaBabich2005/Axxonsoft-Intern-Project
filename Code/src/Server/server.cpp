@@ -16,12 +16,12 @@ namespace AxxonsoftInternProject
 
 		void Server::Run()
 		{
-			system::error_code ec;
-			filesystem::create_directory(Configuration::g_serverRootDirectory, ec);
+			boost::system::error_code ec;
+			std::filesystem::create_directory(Configuration::g_serverRootDirectory, ec);
 
 			if (!ec)
 			{
-				std::cout << stock::messages::g_directoryCreated << "\n";
+				std::cout << AxxonsoftInternProject::http::stock::messages::g_directoryCreated << "\n";
 			}
 
 			m_threadPool.join();
@@ -31,10 +31,10 @@ namespace AxxonsoftInternProject
 		{
 		}
 
-		void Server::configurateAcceptor(const string& adress, const string& port)
+		void Server::configurateAcceptor(const std::string& adress, const std::string& port)
 		{
-			ip::tcp::resolver resolver{ m_threadPool.executor() };
-			ip::tcp::endpoint serverEndpoint{ *resolver.resolve(adress, port).begin() };
+			boost::asio::ip::tcp::resolver resolver{ m_threadPool.executor() };
+			boost::asio::ip::tcp::endpoint serverEndpoint{ *resolver.resolve(adress, port).begin() };
 
 			m_acceptor.open(serverEndpoint.protocol());
 			m_acceptor.bind(serverEndpoint);
@@ -44,7 +44,7 @@ namespace AxxonsoftInternProject
 		void Server::accept()
 		{
 			m_acceptor.async_accept(make_strand(m_threadPool.executor()),
-				[this](system::error_code ec, ip::tcp::socket connectionSocket)
+				[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket)
 				{
 					if (!ec)
 					{

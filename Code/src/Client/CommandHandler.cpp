@@ -5,16 +5,23 @@ namespace AxxonsoftInternProject
 	namespace Client
 	{
 		CommandHandler::CommandHandler(std::shared_ptr<http::HTTPRequest> outputRequest) :
-			outputRequest{ outputRequest }
+			m_outputRequest{ outputRequest }
 		{
 
 		}
 
 		void CommandHandler::setHeaders()
 		{
-			if (outputRequest->body.size() != 0)
+			if (m_outputRequest->m_body.size() != 0)
 			{
-				outputRequest->headers.push_back(http::HTTPHeader{ headers::names::g_contentLength, std::to_string(outputRequest->body.size()) });
+				m_outputRequest->m_headers.push_back
+				(
+					http::HTTPHeader
+					{ 
+						AxxonsoftInternProject::http::stock::headers::names::g_contentLength, 
+						std::to_string(m_outputRequest->m_body.size()) 
+					}
+				);
 			}
 		}
 
@@ -23,8 +30,8 @@ namespace AxxonsoftInternProject
 			std::string temp = "";
 			std::string path = "";
 			bool isFilename = false;
-			requestBody[stock::json::g_pathFileldName] = "";
-			requestBody[stock::json::g_filenameFiledName] = "";
+			m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = "";
+			m_requestBody[AxxonsoftInternProject::http::stock::json::g_filenameFiledName] = "";
 
 			for (auto character : target)
 			{
@@ -50,14 +57,14 @@ namespace AxxonsoftInternProject
 
 			if (isFilename)
 			{
-				requestBody[stock::json::g_pathFileldName] = temp;
+				m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = temp;
 			}
 			else
 			{
 				path += temp;
 			}
 
-			requestBody[stock::json::g_pathFileldName] = path;
+			m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = path;
 		}
 
 		void CommandHandler::putFileDataInRequestBody(std::ifstream& file)
@@ -70,7 +77,7 @@ namespace AxxonsoftInternProject
 
 			file.read((char*)buffer.data(), buffer.size());
 
-			requestBody[stock::json::g_dataFieldName] = buffer;
+			m_requestBody[AxxonsoftInternProject::http::stock::json::g_dataFieldName] = buffer;
 		}
 
 		void CommandHandler::getFileData(std::ifstream& file)
@@ -80,27 +87,32 @@ namespace AxxonsoftInternProject
 
 			putFileDataInRequestBody(file);
 
-			std::cout << stock::messages::g_inputFilePathOnServer << "\n";
+			std::cout << AxxonsoftInternProject::http::stock::messages::g_inputFilePathOnServer << "\n";
 
 			if (std::getline(std::cin, filePath))
 			{
-				requestBody[stock::json::g_pathFileldName] = filePath;
+				m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = filePath;
 			}
 
-			std::cout << stock::messages::g_inputFileNameOnServer << "\n";
+			std::cout << AxxonsoftInternProject::http::stock::messages::g_inputFileNameOnServer << "\n";
 
 			if (std::getline(std::cin, filename))
 			{
-				requestBody[stock::json::g_filenameFiledName] = filename;
+				m_requestBody[AxxonsoftInternProject::http::stock::json::g_filenameFiledName] = filename;
 			}
 		}
 
 		void CommandHandler::handlePostCommand()
 		{
-			setRequestUriAndMethod(requestMethods::g_POST, stock::uri::g_empty, http::ClientRequestType::sendTarget);
-			std::string pathToPostedFile = comand.targer;
+			setRequestUriAndMethod
+			( 
+				AxxonsoftInternProject::http::stock::requestMethods::g_POST, 
+				AxxonsoftInternProject::http::stock::uri::g_empty, 
+				http::ClientRequestType::sendTarget
+			);
+			std::string pathToPostedFile = m_comand.m_targer;
 
-			if (filesystem::exists(pathToPostedFile))
+			if (std::filesystem::exists(pathToPostedFile))
 			{
 				std::ifstream file(pathToPostedFile, std::ios::binary | std::ios::ate);
 
@@ -124,49 +136,58 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::setRequestUriAndMethod(const std::string& method, const std::string& uri, const http::ClientRequestType& type)
 		{
-			outputRequest->method = method;
-			outputRequest->uri = uri;
-			outputRequest->type = type;
+			m_outputRequest->m_method = method;
+			m_outputRequest->m_uri = uri;
+			m_outputRequest->m_type = type;
 		}
 
 		void CommandHandler::handleGetCommand()
 		{
-			setRequestUriAndMethod(requestMethods::g_GET, stock::uri::g_empty, http::ClientRequestType::downloadTarget);
+			setRequestUriAndMethod(
+				AxxonsoftInternProject::http::stock::requestMethods::g_GET,
+				AxxonsoftInternProject::http::stock::uri::g_empty,
+				http::ClientRequestType::downloadTarget);
 		}
 
 		void CommandHandler::handleLSCommand()
 		{
-			setRequestUriAndMethod(requestMethods::g_GET, stock::uri::g_getContent, http::ClientRequestType::checkTarget);
+			setRequestUriAndMethod(
+				AxxonsoftInternProject::http::stock::requestMethods::g_GET,
+				AxxonsoftInternProject::http::stock::uri::g_getContent,
+				http::ClientRequestType::checkTarget);
 		}
 
 		void CommandHandler::handleDeleteCommand()
 		{
-			setRequestUriAndMethod(requestMethods::g_DELETE, stock::uri::g_empty, http::ClientRequestType::deleteTarget);
+			setRequestUriAndMethod(
+				AxxonsoftInternProject::http::stock::requestMethods::g_DELETE,
+				AxxonsoftInternProject::http::stock::uri::g_empty,
+				http::ClientRequestType::deleteTarget);
 		}
 
 		void CommandHandler::handleCommand()
 		{
 			try
 			{
-				if (this->comand.command != clientCommands::g_post)
+				if (this->m_comand.m_command != AxxonsoftInternProject::http::stock::clientCommands::g_post)
 				{
-					this->extructTargetIntoRequestBody(this->comand.targer);
+					this->extructTargetIntoRequestBody(this->m_comand.m_targer);
 
-					if (this->comand.command == clientCommands::g_ls)
+					if (this->m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_ls)
 					{
 						this->handleLSCommand();
 					}
-					else if (this->comand.command == clientCommands::g_get)
+					else if (this->m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_get)
 					{
 						this->handleGetCommand();
 					}
-					else if(this->comand.command == clientCommands::g_delete)
+					else if(this->m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_delete)
 					{
 						this->handleDeleteCommand();
 					}
 					else
 					{
-						std::cout << stock::messages::g_invalidMethod << "\n";
+						std::cout << AxxonsoftInternProject::http::stock::messages::g_invalidMethod << "\n";
 					}
 				}
 				else
@@ -186,11 +207,11 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::Handle(Command command)
 		{
-			this->comand = command;
+			this->m_comand = command;
 
-			this->outputRequest->version = config::g_httpVersion;
+			this->m_outputRequest->m_version = config::g_httpVersion;
 			this->handleCommand();
-			this->outputRequest->body = this->requestBody.dump(4);
+			this->m_outputRequest->m_body = this->m_requestBody.dump(4);
 			this->setHeaders();
 		}
 	}

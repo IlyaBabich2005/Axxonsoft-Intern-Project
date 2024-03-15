@@ -11,7 +11,11 @@
 
 int main()
 {
-	AxxonsoftInternProject::SERVER::Server server{serverConfiguration::g_serverAdress, serverConfiguration::g_serverPort, serverConfiguration::g_threadPollSize};
+	AxxonsoftInternProject::SERVER::Server server{
+		AxxonsoftInternProject::SERVER::Configuration::g_serverAdress, 
+		AxxonsoftInternProject::SERVER::Configuration::g_serverPort, 
+		AxxonsoftInternProject::SERVER::Configuration::g_threadPollSize
+	};
 	server.Run();
 
 	std::cin;

@@ -17,14 +17,6 @@
 #include "URIDecoder.hpp"
 #include "Configuration.hpp"
 
-namespace exceptions = AxxonsoftInternProject::http::exceptions;
-namespace stock = AxxonsoftInternProject::http::stock;
-namespace filesystem = std::filesystem;
-namespace serverConfiguration = AxxonsoftInternProject::SERVER::Configuration;
-namespace requestMethods = stock::requestMethods;
-namespace headers = stock::headers;
-namespace uri = stock::uri;
-
 namespace AxxonsoftInternProject
 {
 	namespace http
@@ -40,11 +32,11 @@ namespace AxxonsoftInternProject
 			void verifyVersion() override;
 			void handleMethod();
 			void handleHeaders();
-			std::vector<std::byte> readFileInBinates(string pathToFile);
+			std::vector<std::byte> readFileInBinates(std::string pathToFile);
 			void putDirectoryContentToReplyBody();
 			void putFileToReplyBody(std::ifstream &sendedFile);
 			void deleteFile();
-			void createDirectories(string finalPath);
+			void createDirectories(std::string finalPath);
 			void handlePOSTMethod();
 			void handleDELETEMethod();
 			void handleGetFileMethod();

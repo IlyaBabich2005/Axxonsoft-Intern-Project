@@ -10,7 +10,7 @@ namespace AxxonsoftInternProject
 		}
 
 		HTTPDocument::HTTPDocument(std::string version) :
-			version{version}
+			m_version{version}
 		{
 
 		}

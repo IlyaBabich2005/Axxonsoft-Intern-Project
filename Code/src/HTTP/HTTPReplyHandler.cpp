@@ -16,11 +16,12 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::downloadGettedFile()
 		{
-			nlohmann::json body = nlohmann::json::parse(m_handledDocument->body);
+			nlohmann::json body = nlohmann::json::parse(m_handledDocument->m_body);
 
 			std::vector<std::byte> bytes = body[stock::json::g_dataFieldName];
 
-			string pathToFile = { serverConfiguration::g_serverRootDirectory + string{body[stock::json::g_filenameFiledName] } };
+			std::string pathToFile = { AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+				std::string{body[stock::json::g_filenameFiledName] } };
 
 			std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc };
 
@@ -36,7 +37,7 @@ namespace AxxonsoftInternProject
 		{
 			for (auto version : stock::g_httpVersions)
 			{
-				if (this->m_handledDocument->version == version)
+				if (this->m_handledDocument->m_version == version)
 				{
 					return;
 				}
@@ -59,11 +60,11 @@ namespace AxxonsoftInternProject
 		{
 			if (m_requestType == ClientRequestType::checkTarget)
 			{
-				nlohmann::json body = nlohmann::json::parse(m_handledDocument->body);
+				nlohmann::json body = nlohmann::json::parse(m_handledDocument->m_body);
 
 				try
 				{
-					std::vector<string> content = body[stock::json::g_contentFieldName];
+					std::vector<std::string> content = body[stock::json::g_contentFieldName];
 
 					for (auto target : content)
 					{
@@ -102,15 +103,15 @@ namespace AxxonsoftInternProject
 		{
 			std::shared_ptr<HTTPReply> handledReply = std::dynamic_pointer_cast<HTTPReply>(m_handledDocument);
 
-			if (handledReply->status == stock::replyStatuses::g_badRequest)
+			if (handledReply->m_status == stock::replyStatuses::g_badRequest)
 			{
 				handleBadRequest();
 			}
-			if (handledReply->status == stock::replyStatuses::g_notFound)
+			if (handledReply->m_status == stock::replyStatuses::g_notFound)
 			{
 				handleNotFound();
 			}
-			if (handledReply->status == stock::replyStatuses::g_ok)
+			if (handledReply->m_status == stock::replyStatuses::g_ok)
 			{
 				handleOk();
 			}                                                   

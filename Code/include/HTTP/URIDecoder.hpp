@@ -3,8 +3,6 @@
 #include "Target.hpp"
 #include "checks.hpp"
 
-namespace charChecks = AxxonsoftInternProject::checks::characters;
-
 namespace AxxonsoftInternProject
 {
 	namespace http

@@ -11,7 +11,7 @@ namespace AxxonsoftInternProject
 
 		HTTPReply::HTTPReply(std::string version, std::string status) : 
 			HTTPDocument{ version },
-			status{status}
+			m_status{status}
 		{
 
 		}

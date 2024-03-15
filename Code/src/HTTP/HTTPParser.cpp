@@ -16,14 +16,30 @@ namespace AxxonsoftInternProject
         {
             switch (m_stage)
             {
-            case httpVersion: handleVersionSymbol(curentSymbol); break;
-            case expectingHeaderNewLine: handleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); break;
-            case newLineStart: handleNewLineStartSymbol(curentSymbol); break;
-            case headerName: handleHeaderNameSymbol(curentSymbol); break;
-            case spaceBeforeHaderValue: handleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); break;
-            case headerValue: handleHeaderValueSymbol(curentSymbol); break;
-            case expectingLineBeforeBody: handleSymbolBeforeBody(curentSymbol); break;
-            case body: handleBodySymbol(curentSymbol); break;
+            case httpVersion: 
+                handleVersionSymbol(curentSymbol); 
+                break;
+            case expectingHeaderNewLine: 
+                handleSynbolForCorrespondence(curentSymbol, '\n', ParsingStage::newLineStart); 
+                break;
+            case newLineStart: 
+                handleNewLineStartSymbol(curentSymbol); 
+                break;
+            case headerName: 
+                handleHeaderNameSymbol(curentSymbol); 
+                break;
+            case spaceBeforeHaderValue: 
+                handleSynbolForCorrespondence(curentSymbol, ' ', ParsingStage::headerValue); 
+                break;
+            case headerValue: 
+                handleHeaderValueSymbol(curentSymbol); 
+                break;
+            case expectingLineBeforeBody: 
+                handleSymbolBeforeBody(curentSymbol); 
+                break;
+            case body: 
+                handleBodySymbol(curentSymbol); 
+                break;
             }
 
         }
@@ -34,14 +50,16 @@ namespace AxxonsoftInternProject
             {
                 m_stage = ParsingStage::expectingLineBeforeBody;
             }
-            else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol))
+            else if (!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
+                AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol) || 
+                AxxonsoftInternProject::checks::characters::IsSpesialChar(curentSymbol))
             {
                 m_status = ParsingStatus::endResultBad;
             }
             else
             {
-                m_document->headers.push_back(HTTPHeader{});
-                m_document->headers.back().name.push_back(curentSymbol);
+                m_document->m_headers.push_back(HTTPHeader{});
+                m_document->m_headers.back().m_name.push_back(curentSymbol);
                 m_stage = ParsingStage::headerName;
             }
         }
@@ -52,13 +70,15 @@ namespace AxxonsoftInternProject
             {
                 m_stage = ParsingStage::spaceBeforeHaderValue;
             }
-            else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol) || charChecks::IsSpesialChar(curentSymbol))
+            else if (!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
+                AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol) || 
+                AxxonsoftInternProject::checks::characters::IsSpesialChar(curentSymbol))
             {
                 m_status = ParsingStatus::endResultBad;
             }
             else
             {
-                m_document->headers.back().name.push_back(curentSymbol);
+                m_document->m_headers.back().m_name.push_back(curentSymbol);
             }
         }
 
@@ -68,20 +88,21 @@ namespace AxxonsoftInternProject
             {
                 m_stage = ParsingStage::expectingHeaderNewLine;
             }
-            else if (!charChecks::IsChar(curentSymbol) || charChecks::IsControlChar(curentSymbol))
+            else if (!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
+                AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
             {
                 m_status = ParsingStatus::endResultBad;
             }
             else
             {
-                m_document->headers.back().value.push_back(curentSymbol);
+                m_document->m_headers.back().m_value.push_back(curentSymbol);
             }
         }
 
         void HTTPParser::handleBodySymbol(char curentSymbol)
         {
             m_handledContentSize++;
-            m_document->body.push_back(curentSymbol);
+            m_document->m_body.push_back(curentSymbol);
 
             if (m_handledContentSize >= m_contentSize)
             {
@@ -105,13 +126,13 @@ namespace AxxonsoftInternProject
         {
             if (currentSymbol == '\n')
             {
-                for (auto header : m_document->headers)
+                for (auto header : m_document->m_headers)
                 {
-                    if (header.name == headers::names::g_contentLength)
+                    if (header.m_name == AxxonsoftInternProject::http::stock::headers::names::g_contentLength)
                     {
                         try
                         {
-                            m_contentSize = std::stoi(header.value);
+                            m_contentSize = std::stoi(header.m_value);
                         }
                         catch (std::exception& ex)
                         {

@@ -17,8 +17,8 @@ namespace AxxonsoftInternProject
 		{
 		private:
 			int	m_numOfConnectedClients;
-			asio::thread_pool	m_threadPool;
-			ip::tcp::acceptor m_acceptor;
+			boost::asio::thread_pool m_threadPool;
+			boost::asio::ip::tcp::acceptor m_acceptor;
 
 		private:
 			void configurateAcceptor(const std::string& adress, const std::string& port);

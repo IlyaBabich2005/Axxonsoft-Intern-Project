@@ -12,81 +12,81 @@ namespace AxxonsoftInternProject
 	{
 		try
 		{
-			std::stod(m_handledDocument->version.substr(5));
+			std::stod(m_handledDocument->m_version.substr(5));
 
-			if (m_handledDocument->version.substr(0, 5) != "HTTP/")
+			if (m_handledDocument->m_version.substr(0, 5) != "HTTP/")
 			{
 				throw new exceptions::InvalidHTTPVersionException{};
 			}
 
-			m_outputDocument->version = m_handledDocument->version;
+			m_outputDocument->m_version = m_handledDocument->m_version;
 		}
 		catch (std::exception& ex)
 		{
-			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_badRequest;
 			std::cout << ex.what() << "\n";
-			m_handledDocument->version = serverConfiguration::g_httpVersion;
+			m_handledDocument->m_version = AxxonsoftInternProject::SERVER::Configuration::g_httpVersion;
 		}
 		catch (boost::exception& ex)
 		{
-			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_badRequest;
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_badRequest;
 			std::cout << boost::diagnostic_information(ex) << '\n';
-			m_handledDocument->version = serverConfiguration::g_httpVersion;
+			m_handledDocument->m_version = AxxonsoftInternProject::SERVER::Configuration::g_httpVersion;
 		}
 	}
 
 	void http::HTTPRequestHandler::handleMethod()
 	{
-		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->uri, m_URITarget))
+		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_uri, m_URITarget))
 		{
-			string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->method;
+			std::string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_method;
 			std::cout << "Decoded\n";
 
-			if (requestMethod == requestMethods::g_GET)
+			if (requestMethod == stock::requestMethods::g_GET)
 				handleGETMethod();
-			else if (requestMethod == requestMethods::g_DELETE)
+			else if (requestMethod == stock::requestMethods::g_DELETE)
 				handleDELETEMethod();
-			else if (requestMethod == requestMethods::g_POST)
+			else if (requestMethod == stock::requestMethods::g_POST)
 				handlePOSTMethod();
 			else
-				std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_methodNotAllowed;
+				std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_methodNotAllowed;
 		}
 		else
 		{
-			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->status = stock::replyStatuses::g_notFound;
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_notFound;
 		}
 	}
 
 	void http::HTTPRequestHandler::handleHeaders()
 	{
-		for (auto header : m_handledDocument->headers)
+		for (auto header : m_handledDocument->m_headers)
 		{
-			if (header.name == headers::names::g_connection&& header.value == headers::values::g_keepAlive)
+			if (header.m_name == stock::headers::names::g_connection && header.m_value == stock::headers::values::g_keepAlive)
 			{
-				m_outputDocument->headers.push_back(header);
+				m_outputDocument->m_headers.push_back(header);
 			}
 		}
 
-		if (m_outputDocument->body.size() != 0)
+		if (m_outputDocument->m_body.size() != 0)
 		{
-			m_outputDocument->headers.push_back(HTTPHeader{ headers::names::g_contentLength, std::to_string(m_outputDocument->body.size()) });
+			m_outputDocument->m_headers.push_back(HTTPHeader{ stock::headers::names::g_contentLength, std::to_string(m_outputDocument->m_body.size()) });
 		}
 	}
 
-	void http::HTTPRequestHandler::createDirectories(string finalPath)
+	void http::HTTPRequestHandler::createDirectories(std::string finalPath)
 	{
-		string currentPath = serverConfiguration::g_serverRootDirectory;
-		string endPath = finalPath;
+		std::string currentPath = AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory;
+		std::string endPath = finalPath;
 
-		while (filesystem::exists(serverConfiguration::g_serverRootDirectory + finalPath))
+		while (std::filesystem::exists(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + finalPath))
 		{
-			if (!filesystem::exists(currentPath))
+			if (!std::filesystem::exists(currentPath))
 			{
-				filesystem::create_directory(currentPath);
+				std::filesystem::create_directory(currentPath);
 			}
 			else
 			{
-				if (endPath.find('/') == string::npos)
+				if (endPath.find('/') == std::string::npos)
 				{
 					currentPath += endPath;
 				}
@@ -103,19 +103,20 @@ namespace AxxonsoftInternProject
 	{
 		if (m_URITarget.components.size() != 0)
 		{
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			return;
 		}
 		else
 		{
 			try
 			{
-				nlohmann::json inputFileInfo = nlohmann::json::parse(m_handledDocument->body);
+				nlohmann::json inputFileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 				std::vector<std::byte> bytes = inputFileInfo["data"];
 
-				createDirectories(string{ inputFileInfo["path"] });
+				createDirectories(std::string{ inputFileInfo["path"] });
 
-				string pathToFile = serverConfiguration::g_serverRootDirectory + string{inputFileInfo["path"]} + "/" + string{inputFileInfo["filename"]};
+				std::string pathToFile = AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+					std::string{inputFileInfo["path"]} + "/" + std::string{inputFileInfo["filename"]};
 
 				std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc};
 
@@ -129,17 +130,17 @@ namespace AxxonsoftInternProject
 			catch (std::exception& ex)
 			{
 				std::cout << ex.what() << '\n';
-				m_outputDocument->status = stock::replyStatuses::g_notFound;
+				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 			catch (boost::exception& ex)
 			{
 				std::cout << boost::diagnostic_information(ex) << '\n';
-				m_outputDocument->status = stock::replyStatuses::g_notFound;
+				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 		}
 	}
 
-	std::vector<std::byte> http::HTTPRequestHandler::readFileInBinates(string pathToFile)
+	std::vector<std::byte> http::HTTPRequestHandler::readFileInBinates(std::string pathToFile)
 	{
 		std::ifstream file(pathToFile, std::ios::binary | std::ios::ate);
 
@@ -157,34 +158,36 @@ namespace AxxonsoftInternProject
 	void http::HTTPRequestHandler::putFileToReplyBody(std::ifstream &sendedFile)
 	{
 		nlohmann::json sendedInfo;
-		nlohmann::json gettedFileInfo = nlohmann::json::parse(m_handledDocument->body);
+		nlohmann::json gettedFileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 
 		std::cout << "Readed\n";
 
-		sendedInfo["data"] = readFileInBinates(serverConfiguration::g_serverRootDirectory + string{gettedFileInfo["path"]} + "/" + string{ gettedFileInfo["filename"] });
-		sendedInfo["filename"] = string{ gettedFileInfo["filename"] };
+		sendedInfo["data"] = readFileInBinates(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+			std::string{gettedFileInfo["path"]} + "/" + std::string{ gettedFileInfo["filename"] });
+		sendedInfo["filename"] = std::string{ gettedFileInfo["filename"] };
 
-		m_outputDocument->body = sendedInfo.dump(4);
+		m_outputDocument->m_body = sendedInfo.dump(4);
 
 		std::cout << "Writed in file\n";
 	}
 
 	void http::HTTPRequestHandler::handleGetFileMethod()
 	{
-		nlohmann::json fileInfo = nlohmann::json::parse(m_handledDocument->body);
+		nlohmann::json fileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 
-		std::ifstream sendedFile{ serverConfiguration::g_serverRootDirectory + string{fileInfo["path"]} + "/" + string{fileInfo["filename"]}};
+		std::ifstream sendedFile{ AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+			std::string{fileInfo["path"]} + "/" + std::string{fileInfo["filename"]}};
 
 		if (sendedFile.is_open())
 		{
 			std::cout << "Openning file\n";
 
 			putFileToReplyBody(sendedFile);
-			m_outputDocument->status = stock::replyStatuses::g_ok;
+			m_outputDocument->m_status = stock::replyStatuses::g_ok;
 		}
 		else
 		{
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 		
 		sendedFile.close();
@@ -192,12 +195,12 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::putDirectoryContentToReplyBody()
 	{
-		nlohmann::json directoryInfo = nlohmann::json::parse(m_handledDocument->body);
+		nlohmann::json directoryInfo = nlohmann::json::parse(m_handledDocument->m_body);
 		nlohmann::json directoryContent;
 
-		string path = directoryInfo["path"];
+		std::string path = directoryInfo["path"];
 
-		for (const auto& file : filesystem::directory_iterator(serverConfiguration::g_serverRootDirectory + path))
+		for (const auto& file : std::filesystem::directory_iterator(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + path))
 		{
 			std::cout << file << "\n";
 			directoryContent["content"].push_back(file.path());
@@ -205,21 +208,23 @@ namespace AxxonsoftInternProject
 
 		std::cout << "Serializing body\n";
 
-		m_outputDocument->body = directoryContent.dump(4);
+		m_outputDocument->m_body = directoryContent.dump(4);
 	}
 
 	void http::HTTPRequestHandler::deleteFile()
 	{
-		nlohmann::json deletedFileInfo = nlohmann::json::parse(m_handledDocument->body);
+		nlohmann::json deletedFileInfo = nlohmann::json::parse(m_handledDocument->m_body);
 
-		if (filesystem::exists(serverConfiguration::g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] }))
+		if (std::filesystem::exists(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+			std::string{ deletedFileInfo["path"] } + "/" + std::string{ deletedFileInfo["filename"] }))
 		{
-			filesystem::remove_all(serverConfiguration::g_serverRootDirectory + string{ deletedFileInfo["path"] } + "/" + string{ deletedFileInfo["filename"] });
-			m_outputDocument->status = stock::replyStatuses::g_ok;
+			std::filesystem::remove_all(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+				std::string{ deletedFileInfo["path"] } + "/" + std::string{ deletedFileInfo["filename"] });
+			m_outputDocument->m_status = stock::replyStatuses::g_ok;
 		}
 		else
 		{
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 	}
 
@@ -227,7 +232,7 @@ namespace AxxonsoftInternProject
 	{
 		if (m_URITarget.components.size() != 0)
 		{
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			return;
 		}
 
@@ -238,12 +243,12 @@ namespace AxxonsoftInternProject
 		catch(std::exception& ex)
 		{
 			std::cout << ex.what() << '\n';
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 		catch (boost::exception& ex)
 		{
 			std::cout << boost::diagnostic_information(ex) << '\n';
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 	}
 
@@ -253,18 +258,18 @@ namespace AxxonsoftInternProject
 			{
 				putDirectoryContentToReplyBody();
 
-				m_outputDocument->status = stock::replyStatuses::g_ok;
+				m_outputDocument->m_status = stock::replyStatuses::g_ok;
 				std::cout << "Sucksessfully checked\n";
 			}
 			catch (std::exception& ex)
 			{
 				std::cout << ex.what() << '\n';
-				m_outputDocument->status = stock::replyStatuses::g_notFound;
+				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 			catch (boost::exception& ex)
 			{
 				std::cout << boost::diagnostic_information(ex) << '\n';
-				m_outputDocument->status = stock::replyStatuses::g_notFound;
+				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 	}
 
@@ -272,7 +277,7 @@ namespace AxxonsoftInternProject
 	{
 		try
 		{
-			if (m_URITarget.components.size() == 1 && m_URITarget.components[0] == uri::components::g_content)
+			if (m_URITarget.components.size() == 1 && m_URITarget.components[0] == stock::uri::components::g_content)
 			{
 				std::cout << "Scan directory\n";
 
@@ -286,18 +291,18 @@ namespace AxxonsoftInternProject
 			}
 			else
 			{
-				m_outputDocument->status = stock::replyStatuses::g_notFound;
+				m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 			}
 		}
 		catch (std::exception& ex)
 		{
 			std::cout << ex.what() << "\n";
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 		catch (boost::exception& ex)
 		{
 			std::cout << boost::diagnostic_information(ex) << "\n";
-			m_outputDocument->status = stock::replyStatuses::g_notFound;
+			m_outputDocument->m_status = stock::replyStatuses::g_notFound;
 		}
 	}
 

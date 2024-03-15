@@ -14,11 +14,6 @@
 #include "HTTPRequestSerializer.hpp"
 #include "HTTPReply.hpp"
 
-namespace http = AxxonsoftInternProject::http;
-namespace asio = boost::asio;
-namespace system = boost::system;
-namespace ip = boost::asio::ip;
-
 namespace AxxonsoftInternProject
 {
 	namespace Client
@@ -28,12 +23,12 @@ namespace AxxonsoftInternProject
 		private:
 			static const std::size_t m_bufferSize{ 10 * 1024 };
 			std::array<char, ClientConection::m_bufferSize> m_incomeBuffer;
-			std::shared_ptr<http::HTTPRequest> m_request;
+			std::shared_ptr<AxxonsoftInternProject::http::HTTPRequest> m_request;
 			std::shared_ptr<http::HTTPReply> m_reply;
-			http::HTTPReplyParser m_parser;
-			http::HTTPReplyHandler m_handler;
-			http::HTTPRequestSerializer m_serializer;
-			ip::tcp::socket m_connectionSocket;
+			AxxonsoftInternProject::http::HTTPReplyParser m_parser;
+			AxxonsoftInternProject::http::HTTPReplyHandler m_handler;
+			AxxonsoftInternProject::http::HTTPRequestSerializer m_serializer;
+			boost::asio::ip::tcp::socket m_connectionSocket;
 
 		private:
 			void read();
@@ -41,7 +36,7 @@ namespace AxxonsoftInternProject
 			std::string showBytesGetted(std::size_t bytesTransferred);
 
 		public:
-			ClientConection(ip::tcp::socket connectionSocket, std::shared_ptr<http::HTTPRequest> request);
+			ClientConection(boost::asio::ip::tcp::socket connectionSocket, std::shared_ptr<AxxonsoftInternProject::http::HTTPRequest> request);
 
 			void Run();
 		};
