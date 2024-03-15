@@ -37,7 +37,7 @@ namespace AxxonsoftInternProject
 		{
 			for (auto version : stock::g_httpVersions)
 			{
-				if (this->m_handledDocument->m_version == version)
+				if (m_handledDocument->m_version == version)
 				{
 					return;
 				}
@@ -121,8 +121,8 @@ namespace AxxonsoftInternProject
 		{
 			try
 			{
-				this->verifyVersion();
-				this->handleStatus();
+				verifyVersion();
+				handleStatus();
 			}
 			catch(std::exception& ex)
 			{

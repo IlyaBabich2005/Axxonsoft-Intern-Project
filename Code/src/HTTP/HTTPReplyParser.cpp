@@ -7,7 +7,7 @@ namespace AxxonsoftInternProject
 		HTTPReplyParser::HTTPReplyParser(std::shared_ptr<HTTPReply> reply) :
 			HTTPParser{ std::dynamic_pointer_cast<HTTPDocument>(reply)}
 		{
-			this->m_stage = ParsingStage::httpVersion;
+			m_stage = ParsingStage::httpVersion;
 		}
 
 		void HTTPReplyParser::handleSymbol(char curentSymbol)
@@ -69,7 +69,7 @@ namespace AxxonsoftInternProject
 			}
 			else if (AxxonsoftInternProject::checks::characters::IsDigid(curentSymbol))
 			{
-				std::dynamic_pointer_cast<HTTPReply>(this->m_document)->m_status.push_back(curentSymbol);
+				std::dynamic_pointer_cast<HTTPReply>(m_document)->m_status.push_back(curentSymbol);
 			}
 			else
 			{

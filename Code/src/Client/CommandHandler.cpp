@@ -169,21 +169,21 @@ namespace AxxonsoftInternProject
 		{
 			try
 			{
-				if (this->m_comand.m_command != AxxonsoftInternProject::http::stock::clientCommands::g_post)
+				if (m_comand.m_command != AxxonsoftInternProject::http::stock::clientCommands::g_post)
 				{
-					this->extructTargetIntoRequestBody(this->m_comand.m_targer);
+					extructTargetIntoRequestBody(m_comand.m_targer);
 
-					if (this->m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_ls)
+					if (m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_ls)
 					{
-						this->handleLSCommand();
+						handleLSCommand();
 					}
-					else if (this->m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_get)
+					else if (m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_get)
 					{
-						this->handleGetCommand();
+						handleGetCommand();
 					}
-					else if(this->m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_delete)
+					else if(m_comand.m_command == AxxonsoftInternProject::http::stock::clientCommands::g_delete)
 					{
-						this->handleDeleteCommand();
+						handleDeleteCommand();
 					}
 					else
 					{
@@ -207,12 +207,12 @@ namespace AxxonsoftInternProject
 
 		void CommandHandler::Handle(Command command)
 		{
-			this->m_comand = command;
+			m_comand = command;
 
-			this->m_outputRequest->m_version = config::g_httpVersion;
-			this->handleCommand();
-			this->m_outputRequest->m_body = this->m_requestBody.dump(4);
-			this->setHeaders();
+			m_outputRequest->m_version = config::g_httpVersion;
+			handleCommand();
+			m_outputRequest->m_body = m_requestBody.dump(4);
+			setHeaders();
 		}
 	}
 }

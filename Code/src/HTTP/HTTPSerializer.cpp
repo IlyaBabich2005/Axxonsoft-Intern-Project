@@ -28,7 +28,7 @@ namespace AxxonsoftInternProject
 
 		std::vector<boost::asio::const_buffer> HTTPSerializer::Serialize(std::shared_ptr<HTTPDocument> document)
 		{
-			std::vector<boost::asio::const_buffer> serializedDocument = this->serializeHeaders(document);
+			std::vector<boost::asio::const_buffer> serializedDocument = serializeHeaders(document);
 
 			if (document->m_body.size() > 0)
 			{

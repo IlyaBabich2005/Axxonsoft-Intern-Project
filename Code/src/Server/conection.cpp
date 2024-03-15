@@ -71,7 +71,7 @@ namespace AxxonsoftInternProject
 
 		void Conection::Run()
 		{
-			this->read();
+			read();
 		}
 	}
 }
