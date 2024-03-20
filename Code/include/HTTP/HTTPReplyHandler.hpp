@@ -34,6 +34,7 @@ namespace AxxonsoftInternProject
 
 		public:
 			HTTPReplyHandler(std::shared_ptr<HTTPReply> handledDocument, ClientRequestType requestType);
+			HTTPReplyHandler();
 			~HTTPReplyHandler();
 
 			void Handle() override;

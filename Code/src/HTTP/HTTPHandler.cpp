@@ -8,5 +8,9 @@ namespace AxxonsoftInternProject
 			m_handledDocument{ handledDocument }
 		{
 		}
+
+		HTTPHandler::HTTPHandler()
+		{
+		}
 	}
 }

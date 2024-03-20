@@ -18,6 +18,7 @@ namespace AxxonsoftInternProject
 
 		public: 
 			HTTPHandler(std::shared_ptr<HTTPDocument> handledDocument);
+			HTTPHandler();
 
 			virtual void Handle() = 0;
 		};

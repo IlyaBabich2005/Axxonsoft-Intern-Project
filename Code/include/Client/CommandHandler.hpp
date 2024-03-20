@@ -45,8 +45,8 @@ namespace AxxonsoftInternProject
 			void handleCommand();
 
 		public:
-			CommandHandler(std::shared_ptr<AxxonsoftInternProject::http::HTTPRequest> outputReques);
-			void Handle(Command comand);
+			CommandHandler();
+			void Handle(Command comand, std::shared_ptr<http::HTTPRequest> request);
 		};
 	}
 }

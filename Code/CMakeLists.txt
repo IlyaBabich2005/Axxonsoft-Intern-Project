@@ -111,7 +111,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Client)
 add_executable(
 	Client
 	src/Client/main.cpp 
-	src/Client/ClientConnection.cpp
 	src/Client/CommandParcer.cpp
 	src/Client/Client.cpp
 	src/Client/CommandHandler.cpp
@@ -120,7 +119,6 @@ add_executable(
 	src/Client/InvalidTargetFormatException.cpp
 	include/Client/Client.hpp 
 	include/Client/command.hpp 
-	include/Client/ClientConnection.hpp
 	include/Client/CommandParcer.hpp
 	include/Client/CommandHandler.hpp
 	include/Client/InvalidTargetFormatException.hpp

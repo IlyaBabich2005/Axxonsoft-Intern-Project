@@ -102,11 +102,13 @@ namespace AxxonsoftInternProject
         void HTTPParser::handleBodySymbol(char curentSymbol)
         {
             m_handledContentSize++;
+
             m_document->m_body.push_back(curentSymbol);
 
             if (m_handledContentSize >= m_contentSize)
             {
                 m_status = ParsingStatus::endResultGood;
+                return;
             }
         }
 

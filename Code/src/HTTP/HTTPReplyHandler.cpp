@@ -10,6 +10,10 @@ namespace AxxonsoftInternProject
 		{
 		}
 
+		HTTPReplyHandler::HTTPReplyHandler()
+		{
+		}
+
 		HTTPReplyHandler::~HTTPReplyHandler()
 		{
 		}

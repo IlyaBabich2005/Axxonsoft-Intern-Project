@@ -207,7 +207,16 @@ namespace AxxonsoftInternProject
 		for (const auto& file : std::filesystem::directory_iterator(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + path))
 		{
 			std::cout << boost::format("%1%\n") % file;
-			directoryContent[stock::json::g_contentFieldName].push_back(file.path());
+
+			int rootDirectoryEnterInPath = 0;
+			std::string path = file.path().string();
+
+			if (path.find(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory) != std::string::npos)
+			{
+				path.erase(rootDirectoryEnterInPath, AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory.length());
+			}
+				
+			directoryContent[stock::json::g_contentFieldName].push_back(path);
 		}
 
 		std::cout << boost::format("%1%\n") % stock::messages::g_serializingBody;

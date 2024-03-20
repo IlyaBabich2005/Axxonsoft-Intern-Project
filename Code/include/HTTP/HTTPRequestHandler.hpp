@@ -10,6 +10,7 @@
 #include <boost/exception/exception.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include "HTTPRequest.hpp"
 #include "HTTPHandler.hpp"

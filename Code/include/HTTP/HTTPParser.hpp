@@ -70,6 +70,8 @@ namespace AxxonsoftInternProject
 		template<typename InputIterator>
 		inline ParsingStatus HTTPParser::Parse(InputIterator begin, InputIterator end)
 		{
+			m_status = indeterminate;
+
 			while (begin != end)
 			{
 				handleSymbol(*begin++);
@@ -77,6 +79,9 @@ namespace AxxonsoftInternProject
 				if (m_status == endResultBad ||
 					m_status == endResultGood)
 				{
+					m_stage = httpVersion;
+					m_handledContentSize = 0;
+					m_contentSize = 0;
 					return m_status;
 				}
 			}

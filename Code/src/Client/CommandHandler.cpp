@@ -4,10 +4,8 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
-		CommandHandler::CommandHandler(std::shared_ptr<http::HTTPRequest> outputRequest) :
-			m_outputRequest{ outputRequest }
+		CommandHandler::CommandHandler()
 		{
-
 		}
 
 		void CommandHandler::setHeaders()
@@ -30,8 +28,6 @@ namespace AxxonsoftInternProject
 			std::string temp;
 			std::string path;
 			bool isFilename = false;
-			m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = std::string{};
-			m_requestBody[AxxonsoftInternProject::http::stock::json::g_filenameFiledName] = std::string{};
 
 			for (auto character : target)
 			{
@@ -57,7 +53,7 @@ namespace AxxonsoftInternProject
 
 			if (isFilename)
 			{
-				m_requestBody[AxxonsoftInternProject::http::stock::json::g_pathFileldName] = temp;
+				m_requestBody[AxxonsoftInternProject::http::stock::json::g_filenameFiledName] = temp;
 			}
 			else
 			{
@@ -205,8 +201,9 @@ namespace AxxonsoftInternProject
 			}
 		}
 
-		void CommandHandler::Handle(Command command)
+		void CommandHandler::Handle(Command command, std::shared_ptr<http::HTTPRequest> request)
 		{
+			m_outputRequest = request;
 			m_comand = command;
 
 			m_outputRequest->m_version = config::g_httpVersion;
