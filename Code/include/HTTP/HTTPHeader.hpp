@@ -1,7 +1,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
 #include "Stock.hpp"
+#include "HTTPHeaderField.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -10,10 +13,10 @@ namespace AxxonsoftInternProject
 		struct HTTPHeader
 		{
 			std::string m_name;
-			std::string m_value;
+			std::vector<HTTPHeaderField> m_values;
 
 			HTTPHeader();
 			HTTPHeader(std::string name, std::string value);
 		};
 	}
-}
+} 

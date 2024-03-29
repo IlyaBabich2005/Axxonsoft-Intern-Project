@@ -45,6 +45,8 @@ namespace AxxonsoftInternProject
 			ParsingStage m_stage;
 			int m_contentSize;
 			int m_handledContentSize;
+			std::string m_tempHeaderString;
+			bool m_isHeaderFieldName;
 
 		private:
 			void handleNewLineStartSymbol(char curentSymbol);

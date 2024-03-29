@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-
 #include <nlohmann/json.hpp>
 
 #include <boost/exception/exception.hpp>

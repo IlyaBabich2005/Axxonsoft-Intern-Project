@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.11)
 
 set (CMAKE_CXX_STANDARD 17)
 
@@ -17,17 +17,6 @@ add_definitions(-DBOOST_ALL_NO_LIB)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Server)
 
-file(
-  DOWNLOAD
-  https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.38.3/CPM.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake
-  EXPECTED_HASH SHA256=cc155ce02e7945e7b8967ddfaff0b050e958a723ef7aad3766d368940cb15494
-)
-
-include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
-
-CPMAddPackage("gh:nlohmann/json@3.11.3")
-
 SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "G:/Libs/boost_1_84_0")
 SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "G:/Libs/boost_1_84_0/lib64-msvc-14.3")
 
@@ -43,7 +32,19 @@ IF (Boost_FOUND)
     ADD_DEFINITIONS( "-DHAS_BOOST" )
 ENDIF()
 
-include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake) 
+file(
+  DOWNLOAD
+  https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.38.3/CPM.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake
+  EXPECTED_HASH SHA256=cc155ce02e7945e7b8967ddfaff0b050e958a723ef7aad3766d368940cb15494
+)
+
+include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
+
+# show download progress
+set(FETCHCONTENT_QUIET FALSE)
+
+CPMAddPackage("gh:nlohmann/json@3.11.3")
 
 include_directories(${CMAKE_SOURCE_DIR}/include/HTTP)
 include_directories(${CMAKE_SOURCE_DIR}/include/Server)
@@ -54,7 +55,6 @@ link_directories(${CMAKE_SOURCE_DIR}/src/Server)
 
 add_library(
 	HTTP
-	#include/HTTP/Body.hpp
 	include/HTTP/checks.hpp
 	include/HTTP/HTTPDocument.hpp
 	include/HTTP/HTTPHandler.hpp
@@ -73,6 +73,7 @@ add_library(
 	include/HTTP/URIDecoder.hpp
 	include/HTTP/HTTPReplyHandler.hpp
 	include/HTTP/HTTPRequestSerializer.hpp
+	include/HTTP/HTTPHeaderField.hpp
 	src/HTTP/checks.cpp
 	src/HTTP/HTTPHandler.cpp
 	src/HTTP/HTTPHeader.cpp
@@ -88,6 +89,7 @@ add_library(
 	src/HTTP/URIDecoder.cpp
 	src/HTTP/HTTPReplyHandler.cpp
 	src/HTTP/InvalidHTTPVersionException.cpp
+	src/HTTP/HTTPHeaderField.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)
@@ -130,4 +132,4 @@ add_executable(
 target_include_directories(Client PRIVATE include/Client)
 target_link_libraries(Client PRIVATE HTTP)
 
-target_link_libraries(HTTP nlohmann_json::nlohmann_json)
+target_link_libraries(HTTP nlohmann_json)

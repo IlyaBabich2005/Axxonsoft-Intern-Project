@@ -57,18 +57,5 @@
         "CMAKE_BUILD_TYPE": "Release"
       }
     }
-  ],
-  "workflowPresets": [
-    {
-      "name": "workflowPresets",
-      "displayName": "Custom Workflow Preset",
-      "description": "Custom workflow preset description",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x64-debug"
-        }
-      ]
-    }
   ]
 }

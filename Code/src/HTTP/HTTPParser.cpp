@@ -8,7 +8,8 @@ namespace AxxonsoftInternProject
             m_document{ document },
             m_status{ ParsingStatus::indeterminate },
             m_contentSize{ 0 },
-            m_handledContentSize{ 0 }
+            m_handledContentSize{ 0 },
+            m_isHeaderFieldName{false}
         {
         }
 
@@ -59,6 +60,7 @@ namespace AxxonsoftInternProject
             else
             {
                 m_document->m_headers.push_back(HTTPHeader{});
+                m_document->m_headers.back().m_values.push_back(HTTPHeaderField{});
                 m_document->m_headers.back().m_name.push_back(curentSymbol);
                 m_stage = ParsingStage::headerName;
             }
@@ -93,9 +95,19 @@ namespace AxxonsoftInternProject
             {
                 m_status = ParsingStatus::endResultBad;
             }
-            else
+            else if (curentSymbol == ',')
+			{
+                m_document->m_headers.back().m_values.back().m_value = m_tempHeaderString;
+
+                m_stage = ParsingStage::spaceBeforeHaderValue;
+			}
+            else if (curentSymbol == '=')
             {
-                m_document->m_headers.back().m_value.push_back(curentSymbol);
+                m_document->m_headers.back().m_values.back().m_name = m_tempHeaderString;
+            }
+            else if (curentSymbol != '"')
+            {
+                m_tempHeaderString.push_back(curentSymbol);
             }
         }
 
@@ -134,7 +146,7 @@ namespace AxxonsoftInternProject
                     {
                         try
                         {
-                            m_contentSize = std::stoi(header.m_value);
+                            m_contentSize = std::stoi(header.m_values.back().m_value);
                         }
                         catch (std::exception& ex)
                         {

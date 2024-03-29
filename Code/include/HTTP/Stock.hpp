@@ -15,6 +15,8 @@ namespace AxxonsoftInternProject
 					const std::string g_whiteSpaceSeparator{ " " };
 					const std::string g_headerNameValueSeparator{ ": " };
 					const std::string g_httpDocumentLineSeparator{ "\r\n" };
+					const std::string g_httpHeaderValuesSeparator{ ", " };
+					const std::string g_httpHeaderValueFieldSeparator{ "=" };
 				}
 			}
 
