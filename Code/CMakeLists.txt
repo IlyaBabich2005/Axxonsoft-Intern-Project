@@ -73,7 +73,7 @@ add_library(
 	include/HTTP/URIDecoder.hpp
 	include/HTTP/HTTPReplyHandler.hpp
 	include/HTTP/HTTPRequestSerializer.hpp
-	include/HTTP/HTTPHeaderField.hpp
+	include/HTTP/HTTPHeaderValueClass.hpp
 	src/HTTP/checks.cpp
 	src/HTTP/HTTPHandler.cpp
 	src/HTTP/HTTPHeader.cpp
@@ -89,7 +89,7 @@ add_library(
 	src/HTTP/URIDecoder.cpp
 	src/HTTP/HTTPReplyHandler.cpp
 	src/HTTP/InvalidHTTPVersionException.cpp
-	src/HTTP/HTTPHeaderField.cpp
+	src/HTTP/HTTPHeaderValueClass.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)
@@ -103,6 +103,10 @@ add_executable(
 	include/Server/conection.hpp 
 	src/Server/conection.cpp 
 	include/Server/Configuration.hpp
+	src/Server/Session.cpp
+	include/Server/Session.hpp
+	src/Server/SessionManager.cpp
+	include/Server/SessionManager.hpp
 )
 
 target_include_directories(Server PRIVATE include/Server)

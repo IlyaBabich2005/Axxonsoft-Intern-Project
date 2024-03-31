@@ -12,6 +12,7 @@ namespace AxxonsoftInternProject
 			{
 				serializedHeaders.push_back(boost::asio::buffer(document->m_headers[i].m_name));
 				serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_headerNameValueSeparator));
+
 				for (int j = 0; j < document->m_headers[i].m_values.size(); j++)
 				{
 					if(document->m_headers[i].m_values[j].m_name != "")
@@ -20,8 +21,13 @@ namespace AxxonsoftInternProject
 						serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueFieldSeparator));
 					}
 
-					serializedHeaders.push_back(boost::asio::buffer(document->m_headers[i].m_values[j].m_value));
-					serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValuesSeparator));
+					for(int k = 0; k < document->m_headers[i].m_values[j].m_arguments.size(); k++)
+					{
+						serializedHeaders.push_back(boost::asio::buffer(document->m_headers[i].m_values[j].m_arguments[k]));
+						serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueArgumentsSeparator));
+					}
+
+					serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueSeparator));
 				}
 			}
 

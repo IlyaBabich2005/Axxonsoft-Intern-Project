@@ -43,12 +43,14 @@ namespace AxxonsoftInternProject
 
 		void Server::accept()
 		{
+			m_sessionManager.Update();
+
 			m_acceptor.async_accept(make_strand(m_threadPool.executor()),
 				[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket)
 				{
 					if (!ec)
 					{
-						std::make_shared<Conection>(std::move(connectionSocket))->Run();
+						std::make_shared<Conection>(std::move(connectionSocket), m_sessionManager)->Run();
 					}
 
 					accept();

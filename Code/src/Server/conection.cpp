@@ -54,12 +54,13 @@ namespace AxxonsoftInternProject
 				});
 		}
 
-		Conection::Conection(boost::asio::ip::tcp::socket connectionSocket) :
+		Conection::Conection(boost::asio::ip::tcp::socket connectionSocket, SessionManager& sessionManager) :
 			m_connectionSocket{ std::move(connectionSocket) },
 			m_request{new http::HTTPRequest},
 			m_reply{new http::HTTPReply},
 			m_parcer{m_request},
-			m_handler{m_request, m_reply}
+			m_handler{m_request, m_reply},
+			m_sessionManager{sessionManager}
 		{
 		}
 

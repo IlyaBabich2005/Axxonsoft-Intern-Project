@@ -9,7 +9,8 @@ namespace AxxonsoftInternProject
             m_status{ ParsingStatus::indeterminate },
             m_contentSize{ 0 },
             m_handledContentSize{ 0 },
-            m_isHeaderFieldName{false}
+            m_isHeaderClassValue {false},
+            m_isStringValue{false}
         {
         }
 
@@ -60,7 +61,7 @@ namespace AxxonsoftInternProject
             else
             {
                 m_document->m_headers.push_back(HTTPHeader{});
-                m_document->m_headers.back().m_values.push_back(HTTPHeaderField{});
+                m_document->m_headers.back().m_values.push_back(HTTPHeaderValueClass{});
                 m_document->m_headers.back().m_name.push_back(curentSymbol);
                 m_stage = ParsingStage::headerName;
             }
@@ -86,28 +87,62 @@ namespace AxxonsoftInternProject
 
         void HTTPParser::handleHeaderValueSymbol(char curentSymbol)
         {
-            if (curentSymbol == '\r')
+            if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) ||
+                !AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
             {
-                m_stage = ParsingStage::expectingHeaderNewLine;
+                if (!m_isStringValue)
+                {
+                    if (curentSymbol == '=')
+                    {
+                        m_document->m_headers.back().m_values.back().m_name = m_tempHeaderString;
+
+                        m_isHeaderClassValue = true;
+                    }
+                    else if (curentSymbol == ',')
+                    {
+                        m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
+
+                        m_stage = ParsingStage::spaceBeforeHaderValue;
+                    }
+                    else if (curentSymbol == '"')
+					{
+						m_isStringValue = !m_isStringValue;
+					}
+                    else if (curentSymbol == ';')
+                    {
+                        if (m_isHeaderClassValue)
+						{
+                            m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
+                            m_isHeaderClassValue = false;
+						}
+						else
+                        {
+                            m_document->m_headers.back().m_values.back().m_name = m_tempHeaderString;
+                        }
+                    }
+                    else
+                    {
+                        m_tempHeaderString.push_back(curentSymbol);
+                    }
+                }
+                else
+                {
+                    m_tempHeaderString.push_back(curentSymbol);
+                }
+
+                if (curentSymbol == '\r')
+                {
+                    m_stage = ParsingStage::expectingHeaderNewLine;
+                    m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
+                    m_isHeaderClassValue = false;
+                    m_isStringValue = false;
+
+                    return;
+                }
             }
-            else if (!AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) || 
-                AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
+            else
             {
                 m_status = ParsingStatus::endResultBad;
-            }
-            else if (curentSymbol == ',')
-			{
-                m_document->m_headers.back().m_values.back().m_value = m_tempHeaderString;
-
-                m_stage = ParsingStage::spaceBeforeHaderValue;
-			}
-            else if (curentSymbol == '=')
-            {
-                m_document->m_headers.back().m_values.back().m_name = m_tempHeaderString;
-            }
-            else if (curentSymbol != '"')
-            {
-                m_tempHeaderString.push_back(curentSymbol);
             }
         }
 
@@ -146,7 +181,7 @@ namespace AxxonsoftInternProject
                     {
                         try
                         {
-                            m_contentSize = std::stoi(header.m_values.back().m_value);
+                            m_contentSize = std::stoi(header.m_values.back().m_arguments.back());
                         }
                         catch (std::exception& ex)
                         {

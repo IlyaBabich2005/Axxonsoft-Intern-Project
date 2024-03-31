@@ -13,6 +13,12 @@ namespace AxxonsoftInternProject
 			const std::string g_serverAdress{ "127.0.0.1" };
 			const std::string g_serverPort{ "80" };
 			const int g_threadPollSize{ 8 };
+			const std::string g_adminPassword{ "admin" };
+			const std::string g_adminUsername{ "admin" };
+			const int g_sessionIdSize{ 64 };
+			const int g_charSetSize{ 127 };
+			const int g_lastSpecialChar{ 32 };
+			const int g_sessionLifetimeInMinutes = 60;
 		}
 	}
 }

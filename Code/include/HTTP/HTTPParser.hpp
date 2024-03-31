@@ -46,7 +46,8 @@ namespace AxxonsoftInternProject
 			int m_contentSize;
 			int m_handledContentSize;
 			std::string m_tempHeaderString;
-			bool m_isHeaderFieldName;
+			bool m_isStringValue;
+			bool m_isHeaderClassValue;
 
 		private:
 			void handleNewLineStartSymbol(char curentSymbol);
