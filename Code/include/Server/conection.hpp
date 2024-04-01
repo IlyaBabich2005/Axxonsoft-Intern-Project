@@ -13,7 +13,6 @@
 #include "HTTPRequestParser.hpp"
 #include "HTTPRequestHandler.hpp"
 #include "HTTPReplySerializer.hpp"
-#include "SessionManager.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -30,14 +29,13 @@ namespace AxxonsoftInternProject
 			http::HTTPRequestHandler m_handler;
 			http::HTTPReplySerializer m_serializer;
 			boost::asio::ip::tcp::socket m_connectionSocket;
-			SessionManager m_sessionManager;
 
 		private:
 			void read();
 			void write();
 
 		public:
-			Conection(boost::asio::ip::tcp::socket connectionSocket, SessionManager& sessionManager);
+			Conection(boost::asio::ip::tcp::socket connectionSocket, std::shared_ptr<SessionManager> sessionManager);
 
 			void Run();
 		};

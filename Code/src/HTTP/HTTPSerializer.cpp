@@ -24,10 +24,18 @@ namespace AxxonsoftInternProject
 					for(int k = 0; k < document->m_headers[i].m_values[j].m_arguments.size(); k++)
 					{
 						serializedHeaders.push_back(boost::asio::buffer(document->m_headers[i].m_values[j].m_arguments[k]));
-						serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueArgumentsSeparator));
+
+						if (document->m_headers[i].m_values[j].m_arguments.size() != 1 && k != document->m_headers[i].m_values[j].m_arguments.size() - 1)
+						{
+							serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueArgumentsSeparator));
+						}
 					}
 
-					serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueSeparator));
+					if (document->m_headers[i].m_values.size() != 1 && j != document->m_headers[i].m_values.size() - 1)
+					{
+						serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpHeaderValueSeparator));
+					}
+					
 				}
 			}
 
@@ -44,6 +52,7 @@ namespace AxxonsoftInternProject
 		std::vector<boost::asio::const_buffer> HTTPSerializer::Serialize(std::shared_ptr<HTTPDocument> document)
 		{
 			std::vector<boost::asio::const_buffer> serializedDocument = serializeHeaders(document);
+			serializedDocument.push_back(boost::asio::buffer(stock::characters::separators::g_httpDocumentLineSeparator));
 
 			if (document->m_body.size() > 0)
 			{

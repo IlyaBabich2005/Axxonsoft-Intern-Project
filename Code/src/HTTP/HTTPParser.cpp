@@ -90,7 +90,17 @@ namespace AxxonsoftInternProject
             if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) ||
                 !AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
             {
-                if (!m_isStringValue)
+                if (curentSymbol == '\r')
+                {
+                    m_stage = ParsingStage::expectingHeaderNewLine;
+                    m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
+                    m_tempHeaderString = "";
+                    m_isHeaderClassValue = false;
+                    m_isStringValue = false;
+
+                    return;
+                }
+                else if (!m_isStringValue)
                 {
                     if (curentSymbol == '=')
                     {
@@ -123,21 +133,14 @@ namespace AxxonsoftInternProject
                     else
                     {
                         m_tempHeaderString.push_back(curentSymbol);
+                        return;
                     }
+
+                    m_tempHeaderString = "";
                 }
                 else
                 {
                     m_tempHeaderString.push_back(curentSymbol);
-                }
-
-                if (curentSymbol == '\r')
-                {
-                    m_stage = ParsingStage::expectingHeaderNewLine;
-                    m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
-                    m_isHeaderClassValue = false;
-                    m_isStringValue = false;
-
-                    return;
                 }
             }
             else

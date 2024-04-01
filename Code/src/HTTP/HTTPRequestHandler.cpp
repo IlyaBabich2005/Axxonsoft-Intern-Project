@@ -2,10 +2,20 @@
 
 namespace AxxonsoftInternProject
 {
-	http::HTTPRequestHandler::HTTPRequestHandler(std::shared_ptr<HTTPRequest> handledDocument, std::shared_ptr<HTTPReply> outputDocument) :
+	http::HTTPRequestHandler::HTTPRequestHandler(
+		std::shared_ptr<HTTPRequest> handledDocument, 
+		std::shared_ptr<HTTPReply> outputDocument, 
+		std::shared_ptr< AxxonsoftInternProject::SERVER::SessionManager> sessionManager
+		) :
 		HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
-		m_outputDocument{ outputDocument }
+		m_outputDocument{ outputDocument },
+		m_sessionManager{ sessionManager }
 	{
+	}
+
+	bool http::HTTPRequestHandler::isUserLoggedIn()
+	{
+		return false;
 	}
 
 	void http::HTTPRequestHandler::verifyVersion()
@@ -37,7 +47,11 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::handleMethod()
 	{
-		if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_uri, m_URITarget))
+		if(!isUserLoggedIn())
+		{
+			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_unauthorized;
+		}
+		else if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_uri, m_URITarget))
 		{
 			std::string requestMethod = std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_method;
 			std::cout << boost::format("%1%\n") % stock::messages::g_decoded;

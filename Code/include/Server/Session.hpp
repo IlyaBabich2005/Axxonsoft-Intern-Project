@@ -16,8 +16,7 @@ namespace AxxonsoftInternProject
 			std::chrono::time_point<std::chrono::system_clock> m_sessionTimeStamp;
 
 			Session(const std::string& sessionID);
+			Session();
 		};
-
-		Session nullSession = NULL;
 	}
 }

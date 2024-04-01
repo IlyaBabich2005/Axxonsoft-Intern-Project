@@ -8,7 +8,6 @@
 #include <filesystem>
 
 #include "conection.hpp"
-#include "SessionManager.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -17,10 +16,9 @@ namespace AxxonsoftInternProject
 		class Server
 		{
 		private:
-			OfConnectedClients;
 			boost::asio::thread_pool m_threadPool;
 			boost::asio::ip::tcp::acceptor m_acceptor;
-			SessionManager m_sessionManager;
+			std::shared_ptr<SessionManager> m_sessionManager;
 
 		private:
 			void configurateAcceptor(const std::string& adress, const std::string& port);

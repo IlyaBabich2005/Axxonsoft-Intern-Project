@@ -27,6 +27,7 @@ namespace AxxonsoftInternProject
 				const std::string g_ok{ "200 OK" };
 				const std::string g_notFound{ "404 Not Found" };
 				const std::string g_methodNotAllowed{ "405 Method Not Allowed" };
+				const std::string g_unauthorized{ "401 Unauthorized" };
 			}
 
 

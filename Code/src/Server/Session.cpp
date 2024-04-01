@@ -10,5 +10,11 @@ namespace AxxonsoftInternProject
 			m_sessionTimeStamp(std::chrono::system_clock::now())
 		{
 		}
+
+		Session::Session() :
+			m_lifetime(Configuration::g_sessionLifetimeInMinutes),
+			m_sessionTimeStamp(std::chrono::system_clock::now())
+		{
+		};
 	}
 }
