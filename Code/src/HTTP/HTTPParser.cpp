@@ -9,8 +9,9 @@ namespace AxxonsoftInternProject
             m_status{ ParsingStatus::indeterminate },
             m_contentSize{ 0 },
             m_handledContentSize{ 0 },
-            m_isHeaderClassValue {false},
-            m_isStringValue{false}
+            m_isHeaderClassDefined {false},
+            m_isStringValue{false},
+            m_isHeaserFieldNameDefined{false}
         {
         }
 
@@ -61,7 +62,6 @@ namespace AxxonsoftInternProject
             else
             {
                 m_document->m_headers.push_back(HTTPHeader{});
-                m_document->m_headers.back().m_values.push_back(HTTPHeaderValueClass{});
                 m_document->m_headers.back().m_name.push_back(curentSymbol);
                 m_stage = ParsingStage::headerName;
             }
@@ -90,53 +90,18 @@ namespace AxxonsoftInternProject
             if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) ||
                 !AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
             {
-                if (curentSymbol == '\r')
-                {
-                    m_stage = ParsingStage::expectingHeaderNewLine;
-                    m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
-                    m_tempHeaderString = "";
-                    m_isHeaderClassValue = false;
-                    m_isStringValue = false;
-
-                    return;
-                }
+                if(curentSymbol == '\r')
+				{
+                    handleRSymbolInHeaderValue(curentSymbol);
+				}
                 else if (!m_isStringValue)
                 {
-                    if (curentSymbol == '=')
-                    {
-                        m_document->m_headers.back().m_values.back().m_name = m_tempHeaderString;
-
-                        m_isHeaderClassValue = true;
-                    }
-                    else if (curentSymbol == ',')
-                    {
-                        m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
-
-                        m_stage = ParsingStage::spaceBeforeHaderValue;
-                    }
-                    else if (curentSymbol == '"')
-					{
-						m_isStringValue = !m_isStringValue;
-					}
-                    else if (curentSymbol == ';')
-                    {
-                        if (m_isHeaderClassValue)
-						{
-                            m_document->m_headers.back().m_values.back().m_arguments.push_back(m_tempHeaderString);
-                            m_isHeaderClassValue = false;
-						}
-						else
-                        {
-                            m_document->m_headers.back().m_values.back().m_name = m_tempHeaderString;
-                        }
-                    }
-                    else
-                    {
-                        m_tempHeaderString.push_back(curentSymbol);
-                        return;
-                    }
-
-                    m_tempHeaderString = "";
+                    handleNonStringHeaderValueSymbol(curentSymbol);
+                }
+                
+                if (curentSymbol == '"')
+                {
+                    m_isStringValue = !m_isStringValue;
                 }
                 else
                 {
@@ -162,6 +127,97 @@ namespace AxxonsoftInternProject
             }
         }
 
+        void HTTPParser::handleWhiteSpaceSymbolInHeaderValue(char curentSymbol)
+        {
+            m_isHeaderClassDefined = true;
+            m_document->m_headers.back().m_classes.push_back(HTTPHeaderValueClass{});
+            m_document->m_headers.back().m_classes.back().m_name = m_tempHeaderString;
+        }
+
+        void HTTPParser::handleEqualsSymbolInHeaderValue(char curentSymbol)
+        {
+            m_isHeaserFieldNameDefined = true;
+
+            defineHeaderClass();
+
+            m_document->m_headers.back().m_classes.back().m_fields.push_back(HTTPHeaderValueClassField{});
+            m_document->m_headers.back().m_classes.back().m_fields.back().m_name = m_tempHeaderString;
+        }
+
+        void HTTPParser::handleCommaSymbolInHeaderValue(char curentSymbol)
+        {
+            defineHeaderFieldName();
+
+            m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(m_tempHeaderString);
+            m_isHeaserFieldNameDefined = false;
+            m_stage = ParsingStage::spaceBeforeHaderValue;
+        }
+
+        void HTTPParser::handleSemicolonSymbolInHeaderValue(char curentSymbol)
+        {
+            defineHeaderFieldName();
+
+            m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(m_tempHeaderString);
+            m_isHeaserFieldNameDefined = false;
+            m_isHeaderClassDefined = false;
+            m_stage = ParsingStage::spaceBeforeHaderValue;
+        }
+
+        void HTTPParser::handleRSymbolInHeaderValue(char curentSymbol)
+        {
+            defineHeaderFieldName();
+
+			m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(m_tempHeaderString);
+
+            m_isStringValue = false;
+            m_isHeaderClassDefined = false;
+            m_isHeaserFieldNameDefined = false;
+            m_tempHeaderString.clear();
+            m_stage = ParsingStage::expectingHeaderNewLine;
+        }
+
+        void HTTPParser::handleNonStringHeaderValueSymbol(char curentSymbol)
+        {
+            switch (curentSymbol)
+            {
+            case ' ':
+                handleWhiteSpaceSymbolInHeaderValue(curentSymbol);
+                break;
+            case '=':
+                handleEqualsSymbolInHeaderValue(curentSymbol);
+                break;
+            case ';':
+                handleSemicolonSymbolInHeaderValue(curentSymbol);
+                break;
+            case ',':
+                handleCommaSymbolInHeaderValue(curentSymbol);
+                break;
+			default:
+                return;
+            }
+
+            m_tempHeaderString.clear();
+        }
+
+        void HTTPParser::defineHeaderClass()
+        {
+            if (!m_isHeaderClassDefined)
+            {
+                m_document->m_headers.back().m_classes.push_back(HTTPHeaderValueClass{});
+                m_isHeaderClassDefined = true;
+            }
+        }
+
+        void HTTPParser::defineHeaderFieldName()
+        {
+            if (!m_isHeaserFieldNameDefined)
+            {
+                defineHeaderClass();
+
+                m_document->m_headers.back().m_classes.back().m_fields.push_back(HTTPHeaderValueClassField{});
+            }
+        }
+
         void HTTPParser::handleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage)
         {
             if (curentSymbol == requiredSymbol)
@@ -184,7 +240,7 @@ namespace AxxonsoftInternProject
                     {
                         try
                         {
-                            m_contentSize = std::stoi(header.m_values.back().m_arguments.back());
+                            m_contentSize = std::stoi(header.m_classes.back().m_fields.back().m_arguments.back());
                         }
                         catch (std::exception& ex)
                         {

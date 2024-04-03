@@ -75,7 +75,8 @@ namespace AxxonsoftInternProject
 	{
 		for (auto header : m_handledDocument->m_headers)
 		{
-			if (header.m_name == stock::headers::names::g_connection && header.m_values.back().m_arguments.back() == stock::headers::values::g_keepAlive)
+			if (header.m_name == stock::headers::names::g_connection && 
+				header.m_classes.back().m_fields.back().m_arguments.back() == stock::headers::values::g_keepAlive)
 			{
 				m_outputDocument->m_headers.push_back(header);
 			}

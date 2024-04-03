@@ -12,7 +12,7 @@ namespace AxxonsoftInternProject
 		struct HTTPHeader
 		{
 			std::string m_name;
-			std::vector<HTTPHeaderValueClass> m_values;
+			std::vector<HTTPHeaderValueClass> m_classes;
 
 			HTTPHeader();
 			HTTPHeader(std::string name, std::string value);

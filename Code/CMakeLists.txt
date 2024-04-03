@@ -74,6 +74,7 @@ add_library(
 	include/HTTP/HTTPReplyHandler.hpp
 	include/HTTP/HTTPRequestSerializer.hpp
 	include/HTTP/HTTPHeaderValueClass.hpp
+	include/HTTP/HTTPHeaderValueClassField.hpp
 	src/HTTP/checks.cpp
 	src/HTTP/HTTPHandler.cpp
 	src/HTTP/HTTPHeader.cpp
@@ -90,6 +91,7 @@ add_library(
 	src/HTTP/HTTPReplyHandler.cpp
 	src/HTTP/InvalidHTTPVersionException.cpp
 	src/HTTP/HTTPHeaderValueClass.cpp
+	src/HTTP/HTTPHeaderValueClassField.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)

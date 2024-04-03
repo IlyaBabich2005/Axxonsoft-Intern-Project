@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "HTTPHeaderValueClassField.hpp"
+
 namespace AxxonsoftInternProject
 {
 	namespace http
@@ -10,7 +12,7 @@ namespace AxxonsoftInternProject
 		struct HTTPHeaderValueClass
 		{
 			std::string m_name;
-			std::vector<std::string> m_arguments;
+			std::vector<HTTPHeaderValueClassField> m_fields;
 
 			HTTPHeaderValueClass(std::string value);
 			HTTPHeaderValueClass();

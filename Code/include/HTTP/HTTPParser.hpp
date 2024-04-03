@@ -47,7 +47,8 @@ namespace AxxonsoftInternProject
 			int m_handledContentSize;
 			std::string m_tempHeaderString;
 			bool m_isStringValue;
-			bool m_isHeaderClassValue;
+			bool m_isHeaderClassDefined;
+			bool m_isHeaserFieldNameDefined;
 
 		private:
 			void handleNewLineStartSymbol(char curentSymbol);
@@ -55,6 +56,14 @@ namespace AxxonsoftInternProject
 			void handleHeaderValueSymbol(char curentSymbol);
 			void handleSymbolBeforeBody(char curentSymbol);
 			void handleBodySymbol(char curentSymbol);
+			void handleWhiteSpaceSymbolInHeaderValue(char curentSymbol);
+			void handleEqualsSymbolInHeaderValue(char curentSymbol);
+			void handleCommaSymbolInHeaderValue(char curentSymbol);
+			void handleSemicolonSymbolInHeaderValue(char curentSymbol);
+			void handleRSymbolInHeaderValue(char curentSymbol);
+			void handleNonStringHeaderValueSymbol(char curentSymbol);
+			void defineHeaderClass();
+			void defineHeaderFieldName();
 
 			void handleSynbolForCorrespondence(char curentSymbol, char requiredSymbol, ParsingStage nextStage);
 

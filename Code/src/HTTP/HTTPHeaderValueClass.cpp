@@ -5,7 +5,7 @@ namespace AxxonsoftInternProject
 	namespace http
 	{
 		HTTPHeaderValueClass::HTTPHeaderValueClass(std::string value) : 
-			m_arguments{ value }
+			m_fields{ value }
 		{
 		}
 
