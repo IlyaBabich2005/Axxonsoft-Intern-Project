@@ -5,17 +5,21 @@ namespace AxxonsoftInternProject
 	http::HTTPRequestHandler::HTTPRequestHandler(
 		std::shared_ptr<HTTPRequest> handledDocument, 
 		std::shared_ptr<HTTPReply> outputDocument, 
-		std::shared_ptr< AxxonsoftInternProject::SERVER::SessionManager> sessionManager
+		std::shared_ptr< AxxonsoftInternProject::SERVER::DigestManager> digestManager
 		) :
 		HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
 		m_outputDocument{ outputDocument },
-		m_sessionManager{ sessionManager }
+		m_digestManager{ digestManager }
 	{
 	}
 
 	bool http::HTTPRequestHandler::isUserLoggedIn()
 	{
 		return false;
+	}
+
+	void http::HTTPRequestHandler::setAuthHeader()
+	{
 	}
 
 	void http::HTTPRequestHandler::verifyVersion()
@@ -50,6 +54,7 @@ namespace AxxonsoftInternProject
 		if(!isUserLoggedIn())
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_unauthorized;
+			//add authorization header
 		}
 		else if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_uri, m_URITarget))
 		{

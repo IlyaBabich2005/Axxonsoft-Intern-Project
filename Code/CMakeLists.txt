@@ -24,7 +24,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
 
-find_package(Boost 1.84.0 REQUIRED COMPONENTS system filesystem REQUIRED)
+find_package(Boost 1.84.0 REQUIRED)
 
 FIND_PACKAGE(Boost)
 IF (Boost_FOUND)
@@ -92,6 +92,7 @@ add_library(
 	src/HTTP/InvalidHTTPVersionException.cpp
 	src/HTTP/HTTPHeaderValueClass.cpp
 	src/HTTP/HTTPHeaderValueClassField.cpp
+	src/HTTP/Stock.cpp
 )
 
 target_include_directories(HTTP PRIVATE include/HTTP/)
@@ -109,6 +110,8 @@ add_executable(
 	include/Server/Session.hpp
 	src/Server/SessionManager.cpp
 	include/Server/SessionManager.hpp
+	src/Server/DigestManager.cpp 
+	include/Server/DigestManager.hpp
 )
 
 target_include_directories(Server PRIVATE include/Server)

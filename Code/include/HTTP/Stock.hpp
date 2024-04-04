@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <time.h>
+#include <random>
 
 namespace AxxonsoftInternProject
 {
@@ -10,6 +12,8 @@ namespace AxxonsoftInternProject
 		{
 			namespace characters
 			{
+				const std::string g_charsetForGenerator{ "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" };
+
 				namespace separators
 				{
 					const std::string g_whiteSpaceSeparator{ " " };
@@ -105,7 +109,7 @@ namespace AxxonsoftInternProject
 
 			namespace json
 			{
-				const int g_dumpSize{4};
+				const int g_dumpSize{ 4 };
 				const std::string g_pathFileldName{ "path" };
 				const std::string g_filenameFiledName{ "filename" };
 				const std::string g_dataFieldName{ "data" };
@@ -118,6 +122,11 @@ namespace AxxonsoftInternProject
 			{
 				"HTTP/1.0"
 			};
+
+			namespace functions
+			{
+				std::string generateRandomString(int size);
+			}
 		}
 	}
 }

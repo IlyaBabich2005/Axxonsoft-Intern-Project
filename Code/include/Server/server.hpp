@@ -18,7 +18,7 @@ namespace AxxonsoftInternProject
 		private:
 			boost::asio::thread_pool m_threadPool;
 			boost::asio::ip::tcp::acceptor m_acceptor;
-			std::shared_ptr<SessionManager> m_sessionManager;
+			std::shared_ptr<DigestManager> m_digestManager;
 
 		private:
 			void configurateAcceptor(const std::string& adress, const std::string& port);

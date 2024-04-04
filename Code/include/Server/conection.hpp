@@ -35,7 +35,8 @@ namespace AxxonsoftInternProject
 			void write();
 
 		public:
-			Conection(boost::asio::ip::tcp::socket connectionSocket, std::shared_ptr<SessionManager> sessionManager);
+			Conection(boost::asio::ip::tcp::socket connectionSocket, 
+				std::shared_ptr<DigestManager> digestManager);
 
 			void Run();
 		};

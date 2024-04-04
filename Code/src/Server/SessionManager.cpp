@@ -6,21 +6,7 @@ namespace AxxonsoftInternProject
 	{
 		std::string SessionManager::generateSessionID()
 		{
-				srand(time(NULL) + rand());
-
-				std::string sessionId;
-
-				for (int i = 0; i < Configuration::g_sessionIdSize; i++)
-				{
-					int randomChar = rand() % Configuration::g_charSetSize;
-
-					while (randomChar < Configuration::g_lastSpecialChar)
-						randomChar = rand() % Configuration::g_charSetSize;
-
-					sessionId += char(randomChar);
-				}
-
-				return sessionId;
+				return AxxonsoftInternProject::http::stock::functions::generateRandomString(Configuration::g_sessionIdSize);
 		}
 
 		void SessionManager::AddSession(const std::string& sessionID, const std::string& sessionUsername)

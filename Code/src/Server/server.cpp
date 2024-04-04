@@ -7,7 +7,7 @@ namespace AxxonsoftInternProject
 		Server::Server(const std::string& adress, const std::string& port, const std::size_t& threadPoolSize) :
 			m_threadPool{ threadPoolSize },
 			m_acceptor{ m_threadPool.executor() },
-			m_sessionManager{ new SessionManager() }
+			m_digestManager{ new DigestManager() }
 		{
 			configurateAcceptor(adress, port);
 
@@ -43,14 +43,14 @@ namespace AxxonsoftInternProject
 
 		void Server::accept()
 		{
-			//m_sessionManager->Update();
+			m_digestManager->Update();
 
 			m_acceptor.async_accept(make_strand(m_threadPool.executor()),
 				[this](boost::system::error_code ec, boost::asio::ip::tcp::socket connectionSocket)
 				{
 					if (!ec)
 					{
-						std::make_shared<Conection>(std::move(connectionSocket), m_sessionManager)->Run();
+						std::make_shared<Conection>(std::move(connectionSocket), m_digestManager)->Run();
 					}
 
 					accept();

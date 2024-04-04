@@ -17,7 +17,7 @@
 #include "InvalidHTTPVersionException.hpp"
 #include "URIDecoder.hpp"
 #include "Configuration.hpp"
-#include "SessionManager.hpp"
+#include "DigestManager.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -29,7 +29,7 @@ namespace AxxonsoftInternProject
 			std::shared_ptr<HTTPReply> m_outputDocument;
 			URIDecoder m_decoder;
 			Target m_URITarget;
-			std::shared_ptr<AxxonsoftInternProject::SERVER::SessionManager> m_sessionManager;
+			std::shared_ptr<AxxonsoftInternProject::SERVER::DigestManager> m_digestManager;
 
 		private: 
 			void verifyVersion() override;
@@ -47,12 +47,13 @@ namespace AxxonsoftInternProject
 			void handleGETContentMethod();
 			void handleGETMethod();
 			bool isUserLoggedIn();
+			void setAuthHeader();
 			
 		public:
 			HTTPRequestHandler(
 				std::shared_ptr<HTTPRequest> handledDocument, 
 				std::shared_ptr<HTTPReply> outputDocument,
-				std::shared_ptr<AxxonsoftInternProject::SERVER::SessionManager> sessionManager);
+				std::shared_ptr<AxxonsoftInternProject::SERVER::DigestManager> sessionManager);
 
 			void Handle() override;
 		};

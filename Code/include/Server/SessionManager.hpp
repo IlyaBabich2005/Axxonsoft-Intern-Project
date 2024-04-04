@@ -2,6 +2,7 @@
 
 #include "Session.hpp"
 #include "Configuration.hpp"
+#include "Stock.hpp"
 
 #include <map>
 #include <string>
