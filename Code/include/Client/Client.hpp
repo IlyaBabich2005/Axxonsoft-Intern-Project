@@ -32,6 +32,7 @@ namespace AxxonsoftInternProject
 			http::HTTPReplyHandler m_replyHandler;
 			http::HTTPReplyParser m_replyParcer;
 			http::HTTPRequestSerializer m_serializer;
+			std::shared_ptr<LoginManager> m_loginManager;
 
 		private:
 			void readCommand();

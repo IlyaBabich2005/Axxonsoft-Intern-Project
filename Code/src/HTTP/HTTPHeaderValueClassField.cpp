@@ -15,5 +15,11 @@ namespace AxxonsoftInternProject
 		}
 
 		HTTPHeaderValueClassField::HTTPHeaderValueClassField() {}
+
+		HTTPHeaderValueClassField::HTTPHeaderValueClassField(std::string name, HTTPHeaderValueClassFielsArgument argument) : 
+			m_name{ name },
+			m_arguments{ argument }
+		{
+		}
 	}
 }

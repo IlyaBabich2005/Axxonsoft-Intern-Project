@@ -19,8 +19,9 @@ namespace AxxonsoftInternProject
 			const int g_charSetSize{ 127 };
 			const int g_lastSpecialChar{ 32 };
 			const int g_opaqueSize{ 64 };
-			const int g_nounceSize{ 64 };
+			const int g_nonceSize{ 64 };
 			const int g_sessionLifetimeInMinutes = 60;
+			const std::string g_realm = "localhost:3000";
 		}
 	}
 }

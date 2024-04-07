@@ -9,8 +9,10 @@ namespace AxxonsoftInternProject
 			m_request{ new http::HTTPRequest },
 			m_reply{ new http::HTTPReply },
 			m_command{ new Command },
-			m_replyParcer{m_reply}
+			m_replyParcer{m_reply},
+			m_loginManager{ new LoginManager }
 		{
+			m_commandHandler = CommandHandler{ m_loginManager };
 			boost::asio::ip::tcp::resolver resolver{ context };
 			m_serverEndpoint = *resolver.resolve(serverIP, serverPort).begin();
 		}
@@ -28,7 +30,8 @@ namespace AxxonsoftInternProject
 		if (m_commandParcer.Parce(m_command, command) == http::ParsingStatus::endResultGood)
 		{
 			m_commandHandler.Handle(*m_command, m_request);
-			m_replyHandler = http::HTTPReplyHandler{ m_reply, m_request->m_type };
+
+			m_replyHandler = http::HTTPReplyHandler{ m_reply, m_request->m_type, m_loginManager };
 			writeRequest();
 		}
 		else

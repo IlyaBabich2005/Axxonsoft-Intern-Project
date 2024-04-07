@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <vector>
+
+#include "HTTPHeaderValueClassFieldArgument.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -10,11 +11,12 @@ namespace AxxonsoftInternProject
 		struct HTTPHeaderValueClassField
 		{
 			std::string m_name;
-			std::vector<std::string> m_arguments;
+			std::vector<HTTPHeaderValueClassFielsArgument> m_arguments;
 
 			HTTPHeaderValueClassField();
 			HTTPHeaderValueClassField(std::string value);
 			HTTPHeaderValueClassField(std::string name, std::string value);
+			HTTPHeaderValueClassField(std::string name, HTTPHeaderValueClassFielsArgument argument);
 		};
 	}
 }

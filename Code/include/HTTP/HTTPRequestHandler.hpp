@@ -30,11 +30,14 @@ namespace AxxonsoftInternProject
 			URIDecoder m_decoder;
 			Target m_URITarget;
 			std::shared_ptr<AxxonsoftInternProject::SERVER::DigestManager> m_digestManager;
+			std::string m_sessionID;
+			bool m_isUserLoggedIn;
 
 		private: 
 			void verifyVersion() override;
 			void handleMethod();
 			void handleHeaders();
+			void setHeaders();
 			std::string getFilePathOnServer(nlohmann::json inputFileInfo);
 			std::vector<std::byte> readFileInBinates(std::string pathToFile);
 			void putDirectoryContentToReplyBody();
@@ -46,8 +49,10 @@ namespace AxxonsoftInternProject
 			void handleGetFileMethod();
 			void handleGETContentMethod();
 			void handleGETMethod();
-			bool isUserLoggedIn();
-			void setAuthHeader();
+			void setWWWAuthHeader();
+			std::string handleAuthHeaderFields(const std::vector<HTTPHeaderValueClassField>& fields);
+			void handleAuthHeader(const HTTPHeader& header);
+			void handleCookieHeader(const HTTPHeader& header);
 			
 		public:
 			HTTPRequestHandler(

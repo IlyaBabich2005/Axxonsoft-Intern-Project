@@ -15,6 +15,7 @@ namespace AxxonsoftInternProject
 			std::vector<HTTPHeaderValueClass> m_classes;
 
 			HTTPHeader();
+			HTTPHeader(std::string name);
 			HTTPHeader(std::string name, std::string value);
 		};
 	}

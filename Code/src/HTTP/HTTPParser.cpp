@@ -10,8 +10,9 @@ namespace AxxonsoftInternProject
             m_contentSize{ 0 },
             m_handledContentSize{ 0 },
             m_isHeaderClassDefined {false},
-            m_isStringValue{false},
-            m_isHeaserFieldNameDefined{false}
+            m_isStringValueReading{false},
+            m_isHeaserFieldNameDefined{false},
+            m_isArgumentString{false}
         {
         }
 
@@ -90,19 +91,19 @@ namespace AxxonsoftInternProject
             if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) ||
                 !AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
             {
-                if(curentSymbol == '\r')
-				{
+                if (curentSymbol == '\r')
+                {
                     handleRSymbolInHeaderValue(curentSymbol);
-				}
-                else if (!m_isStringValue)
+                }
+                else if (!m_isStringValueReading && curentSymbol != '"')
                 {
                     handleNonStringHeaderValueSymbol(curentSymbol);
                 }
-                
-                if (curentSymbol == '"')
+                else if (curentSymbol == '"')
                 {
-                    m_isStringValue = !m_isStringValue;
-                }
+                    m_isStringValueReading = !m_isStringValueReading;
+                    m_isArgumentString = true;
+                }  
                 else
                 {
                     m_tempHeaderString.push_back(curentSymbol);
@@ -148,8 +149,9 @@ namespace AxxonsoftInternProject
         {
             defineHeaderFieldName();
 
-            m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(m_tempHeaderString);
+            m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(HTTPHeaderValueClassFielsArgument{ m_tempHeaderString, m_isArgumentString });
             m_isHeaserFieldNameDefined = false;
+            m_isArgumentString = false;
             m_stage = ParsingStage::spaceBeforeHaderValue;
         }
 
@@ -157,9 +159,10 @@ namespace AxxonsoftInternProject
         {
             defineHeaderFieldName();
 
-            m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(m_tempHeaderString);
+            m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(HTTPHeaderValueClassFielsArgument{ m_tempHeaderString, m_isArgumentString });
             m_isHeaserFieldNameDefined = false;
             m_isHeaderClassDefined = false;
+            m_isArgumentString = false;
             m_stage = ParsingStage::spaceBeforeHaderValue;
         }
 
@@ -167,11 +170,12 @@ namespace AxxonsoftInternProject
         {
             defineHeaderFieldName();
 
-			m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(m_tempHeaderString);
+			m_document->m_headers.back().m_classes.back().m_fields.back().m_arguments.push_back(HTTPHeaderValueClassFielsArgument{ m_tempHeaderString, m_isArgumentString });
 
-            m_isStringValue = false;
+            m_isStringValueReading = false;
             m_isHeaderClassDefined = false;
             m_isHeaserFieldNameDefined = false;
+            m_isArgumentString = false;
             m_tempHeaderString.clear();
             m_stage = ParsingStage::expectingHeaderNewLine;
         }
@@ -193,6 +197,7 @@ namespace AxxonsoftInternProject
                 handleCommaSymbolInHeaderValue(curentSymbol);
                 break;
 			default:
+                m_tempHeaderString.push_back(curentSymbol);
                 return;
             }
 
@@ -240,7 +245,7 @@ namespace AxxonsoftInternProject
                     {
                         try
                         {
-                            m_contentSize = std::stoi(header.m_classes.back().m_fields.back().m_arguments.back());
+                            m_contentSize = std::stoi(header.m_classes.back().m_fields.back().m_arguments.back().m_value);
                         }
                         catch (std::exception& ex)
                         {

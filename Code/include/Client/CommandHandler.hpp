@@ -8,6 +8,8 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/format.hpp>
+#include <boost/uuid/detail/md5.hpp>
+#include <boost/algorithm/hex.hpp>
 
 #include "HTTPRequest.hpp"
 #include "Stock.hpp"
@@ -17,6 +19,7 @@
 #include "NoFileToPostException.hpp"
 #include "CantOpenPostedFileException.hpp"
 #include "Config.hpp"
+#include "LoginManager.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -28,6 +31,7 @@ namespace AxxonsoftInternProject
 			std::shared_ptr<AxxonsoftInternProject::http::HTTPRequest> m_outputRequest;
 			Command m_comand;
 			nlohmann::json m_requestBody;
+			std::shared_ptr<LoginManager> m_loginManager;
 
 		private: 
 			void setRequestUriAndMethod(
@@ -43,9 +47,12 @@ namespace AxxonsoftInternProject
 			void handleGetCommand();
 			void handlePostCommand();
 			void handleCommand();
+			void formAuthHeader();
+			std::string formRequestSring();
 
 		public:
 			CommandHandler();
+			CommandHandler(std::shared_ptr<LoginManager> loginManager);
 			void Handle(Command comand, std::shared_ptr<http::HTTPRequest> request);
 		};
 	}

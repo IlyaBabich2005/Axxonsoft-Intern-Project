@@ -19,6 +19,11 @@ namespace AxxonsoftInternProject
 			m_usersData.insert(std::pair<std::string, std::string>(username, password));
 		}
 
+		bool DigestManager::IsOpaqueValid(const std::string& nonce, const std::string& opaque)
+		{
+			return m_authRequestPairs.find(nonce) != m_authRequestPairs.end() && m_authRequestPairs[nonce] == opaque;
+		}
+
 		std::string DigestManager::getServerHash(const std::string authString)
 		{
 				boost::uuids::detail::md5 hash;
@@ -55,6 +60,11 @@ namespace AxxonsoftInternProject
 		std::string DigestManager::GetSessionId(const std::string& sessionID)
 		{
 			return m_sessionManager.GetSession(sessionID).m_sessionID;
+		}
+
+		void DigestManager::AddAuthRequestPair(const std::string& nounce, const std::string& opaque)
+		{
+			m_authRequestPairs.insert(std::pair<std::string, std::string>(nounce, opaque));
 		}
 	}
 }

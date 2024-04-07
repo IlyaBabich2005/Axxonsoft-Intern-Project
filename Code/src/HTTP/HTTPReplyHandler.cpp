@@ -4,9 +4,15 @@ namespace AxxonsoftInternProject
 {
 	namespace http
 	{
-		HTTPReplyHandler::HTTPReplyHandler(std::shared_ptr<HTTPReply> handledDocument, ClientRequestType requestType) :
-			HTTPHandler { std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
-			m_requestType { requestType }
+		HTTPReplyHandler::HTTPReplyHandler
+		(
+			std::shared_ptr<HTTPReply> handledDocument,
+			ClientRequestType requestType,
+			std::shared_ptr<AxxonsoftInternProject::Client::LoginManager> loginManager
+		) :
+			HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
+			m_requestType{ requestType },
+			m_loginManager{ loginManager }
 		{
 		}
 
@@ -24,7 +30,7 @@ namespace AxxonsoftInternProject
 
 			std::vector<std::byte> bytes = body[stock::json::g_dataFieldName];
 
-			std::string pathToFile = { AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + 
+			std::string pathToFile = { AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory +
 				std::string{body[stock::json::g_filenameFiledName] } };
 
 			std::ofstream file{ pathToFile, std::ios::binary | std::ios::trunc };
@@ -64,25 +70,7 @@ namespace AxxonsoftInternProject
 		{
 			if (m_requestType == ClientRequestType::checkTarget)
 			{
-				nlohmann::json body = nlohmann::json::parse(m_handledDocument->m_body);
-
-				try
-				{
-					std::vector<std::string> content = body[stock::json::g_contentFieldName];
-
-					for (auto target : content)
-					{
-						std::cout << boost::format("%1%\n") % target;
-					}
-				}
-				catch (std::exception& ex)
-				{
-					std::cout << boost::format("%1%\n") % ex.what();
-				}
-				catch (boost::exception& ex)
-				{
-					std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
-				}
+				showFolderContent();
 			}
 			else if (m_requestType == ClientRequestType::downloadTarget)
 			{
@@ -93,13 +81,58 @@ namespace AxxonsoftInternProject
 			{
 				std::cout << boost::format("%1%\n") % stock::messages::g_targetWasSuccesfullyDeleted;
 			}
-			else if(m_requestType == ClientRequestType::sendTarget)
+			else if (m_requestType == ClientRequestType::sendTarget)
 			{
 				std::cout << boost::format("%1%\n") % stock::messages::g_targetWasSuccesfullySended;
 			}
 			else
 			{
 				std::cout << boost::format("%1%\n") % stock::messages::g_clientRequestTypeError;
+			}
+		}
+
+		void HTTPReplyHandler::handleUnauthorized()
+		{
+			m_loginManager->m_isNeedToLogin = true;
+
+			for (auto header : m_handledDocument->m_headers)
+			{
+				if (header.m_name == stock::headers::names::g_wwwAuthenticate)
+				{
+					handleAuthHeader(header);
+					std::cout << boost::format("%1%\n") % stock::messages::g_unauthorized;
+					return;
+				}
+			}
+
+			std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+			m_loginManager->m_isNeedToLogin = false;
+		}
+
+		void HTTPReplyHandler::handleAuthHeader(const HTTPHeader& header)
+		{
+			for (auto field : header.m_classes.back().m_fields)
+			{
+				if (field.m_name == stock::headers::values::g_nonce)
+				{
+					m_loginManager->m_nonce = field.m_arguments.back().m_value;
+				}
+				else if (field.m_name == stock::headers::values::g_opaque)
+				{
+					m_loginManager->m_opaque = field.m_arguments.back().m_value;
+				}
+				else if (field.m_name == stock::headers::values::g_qop)
+				{
+					if (field.m_arguments.back().m_value == stock::headers::values::g_auth)
+					{
+						m_loginManager->m_qop = stock::headers::values::g_auth;
+					}
+				}
+				else
+				{
+					std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+					m_loginManager->m_isNeedToLogin = false;
+				}
 			}
 		}
 
@@ -111,14 +144,41 @@ namespace AxxonsoftInternProject
 			{
 				handleBadRequest();
 			}
-			if (handledReply->m_status == stock::replyStatuses::g_notFound)
+			else if (handledReply->m_status == stock::replyStatuses::g_notFound)
 			{
 				handleNotFound();
 			}
-			if (handledReply->m_status == stock::replyStatuses::g_ok)
+			else if (handledReply->m_status == stock::replyStatuses::g_ok)
 			{
 				handleOk();
-			}                                                   
+			}                   
+			else if (handledReply->m_status == stock::replyStatuses::g_unauthorized)
+			{
+				handleUnauthorized();
+			}
+		}
+
+		void HTTPReplyHandler::showFolderContent()
+		{
+			nlohmann::json body = nlohmann::json::parse(m_handledDocument->m_body);
+
+			try
+			{
+				std::vector<std::string> content = body[stock::json::g_contentFieldName];
+
+				for (auto target : content)
+				{
+					std::cout << boost::format("%1%\n") % target;
+				}
+			}
+			catch (std::exception& ex)
+			{
+				std::cout << boost::format("%1%\n") % ex.what();
+			}
+			catch (boost::exception& ex)
+			{
+				std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
+			}
 		}
 
 		void HTTPReplyHandler::Handle()

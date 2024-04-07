@@ -22,6 +22,7 @@ namespace AxxonsoftInternProject
 					const std::string g_httpHeaderValueArgumentsSeparator{ ", " };
 					const std::string g_httpHeaderValueFieldSeparator{ "=" };
 					const std::string g_httpHeaderValueSeparator{ "; " };
+					const std::string g_doubleQuotes{ "\"" };
 				}
 			}
 
@@ -56,11 +57,24 @@ namespace AxxonsoftInternProject
 				{
 					const std::string g_connection{ "Connection" };
 					const std::string g_contentLength{ "Content-Length" };
+					const std::string g_authorization{ "Authorization" };
+					const std::string g_wwwAuthenticate{ "WWW-Authenticate" };
+					const std::string g_host{ "Host" };
+					const std::string g_cookie{ "Cookie" };
+					const std::string g_setCookie{ "Set-Cookie" };
 				}
 
 				namespace values
 				{
 					const std::string g_keepAlive{ "keep-alive" };
+					const std::string g_opaque{ "opaque" };
+					const std::string g_digest{ "Digest" };
+					const std::string g_nonce{ "nonce" };
+					const std::string g_qop{ "qop" };
+					const std::string g_auth{ "auth" };
+					const std::string g_username{ "username" };
+					const std::string g_response{ "response" };
+					const std::string g_sessionID{ "sessionID" };
 				}
 			}
 
@@ -105,6 +119,10 @@ namespace AxxonsoftInternProject
 				const std::string g_succesfullyChecked{ "Succesfully checked" };
 				const std::string g_scanDirectory{ "Scun directory" };
 				const std::string g_searchFile{ "Search file" };
+				const std::string g_inputLogin{ "Input login: " };
+				const std::string g_inputPassword{ "Input password: " };
+				const std::string g_authError{ "Auth error" };
+				const std::string g_unauthorized{ "Unauthorized" };
 			}
 
 			namespace json

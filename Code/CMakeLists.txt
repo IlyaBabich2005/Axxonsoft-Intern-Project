@@ -75,6 +75,7 @@ add_library(
 	include/HTTP/HTTPRequestSerializer.hpp
 	include/HTTP/HTTPHeaderValueClass.hpp
 	include/HTTP/HTTPHeaderValueClassField.hpp
+	include/HTTP/HTTPHeaderValueClassFieldArgument.hpp
 	src/HTTP/checks.cpp
 	src/HTTP/HTTPHandler.cpp
 	src/HTTP/HTTPHeader.cpp
@@ -92,6 +93,7 @@ add_library(
 	src/HTTP/InvalidHTTPVersionException.cpp
 	src/HTTP/HTTPHeaderValueClass.cpp
 	src/HTTP/HTTPHeaderValueClassField.cpp
+	src/HTTP/HTTPHeaderValueClassFieldArgument.cpp
 	src/HTTP/Stock.cpp
 )
 
@@ -136,6 +138,7 @@ add_executable(
 	include/Client/NoFileToPostException.hpp
 	include/Client/CantOpenPostedFileException.hpp
 	include/Client/Config.hpp
+	include/Client/LoginManager.hpp
 )
 
 target_include_directories(Client PRIVATE include/Client)

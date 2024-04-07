@@ -14,6 +14,7 @@
 #include "InvalidHTTPVersionException.hpp"
 #include "Stock.hpp"
 #include "Configuration.hpp"
+#include "LoginManager.hpp"
 
 namespace AxxonsoftInternProject
 {
@@ -23,6 +24,7 @@ namespace AxxonsoftInternProject
 		{
 		private:
 			ClientRequestType m_requestType;
+			std::shared_ptr<AxxonsoftInternProject::Client::LoginManager> m_loginManager;
 
 		private:
 			void downloadGettedFile();
@@ -31,9 +33,17 @@ namespace AxxonsoftInternProject
 			void handleNotFound();
 			void handleOk();
 			void handleStatus();
+			void showFolderContent();
+			void handleUnauthorized();
+			void handleAuthHeader(const HTTPHeader& header);
 
 		public:
-			HTTPReplyHandler(std::shared_ptr<HTTPReply> handledDocument, ClientRequestType requestType);
+			HTTPReplyHandler(
+				std::shared_ptr<HTTPReply> handledDocument, 
+				ClientRequestType requestType,
+				std::shared_ptr<AxxonsoftInternProject::Client::LoginManager> loginManager
+			);
+
 			HTTPReplyHandler();
 			~HTTPReplyHandler();
 

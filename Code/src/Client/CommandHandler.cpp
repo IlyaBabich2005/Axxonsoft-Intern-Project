@@ -4,6 +4,11 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
+		CommandHandler::CommandHandler(std::shared_ptr<LoginManager> loginManager) :
+			m_loginManager(loginManager)
+		{
+		}
+
 		CommandHandler::CommandHandler()
 		{
 		}
@@ -201,13 +206,52 @@ namespace AxxonsoftInternProject
 			}
 		}
 
+		void CommandHandler::formAuthHeader()
+		{
+			m_outputRequest->m_headers.push_back(http::HTTPHeader{ http::stock::headers::names::g_authorization });
+			m_outputRequest->m_headers[0].m_classes.push_back(http::HTTPHeaderValueClass{http::stock::headers::values::g_digest});
+
+			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_username, m_loginManager->m_login });
+			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_nonce, m_loginManager->m_nonce });
+			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_opaque, m_loginManager->m_opaque });
+			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_response, formRequestSring() });
+		}
+
+		std::string CommandHandler::formRequestSring()
+		{
+			boost::uuids::detail::md5 hash;
+			boost::uuids::detail::md5::digest_type digest;
+			std::string authString = m_loginManager->m_login + m_loginManager->m_nonce + m_loginManager->m_password;
+			std::string clientHash;
+
+			hash.process_bytes(authString.data(), authString.size());
+			hash.get_digest(digest);
+
+			const auto intDigest = reinterpret_cast<const int*>(digest);
+			boost::algorithm::hex(intDigest, intDigest + (sizeof(boost::uuids::detail::md5::digest_type) / sizeof(int)), std::back_inserter(clientHash));
+
+			return clientHash;
+		}
+
 		void CommandHandler::Handle(Command command, std::shared_ptr<http::HTTPRequest> request)
 		{
 			m_outputRequest = request;
 			m_comand = command;
 
 			m_outputRequest->m_version = config::g_httpVersion;
-			handleCommand();
+
+			if(m_loginManager->m_isNeedToLogin)
+			{
+				std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputLogin;
+				std::getline(std::cin, m_loginManager->m_login);
+				std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputPassword;
+				std::getline(std::cin, m_loginManager->m_password);
+			}
+			else
+			{
+				handleCommand();
+			}
+
 			m_outputRequest->m_body = m_requestBody.dump(AxxonsoftInternProject::http::stock::json::g_dumpSize);
 			setHeaders();
 		}

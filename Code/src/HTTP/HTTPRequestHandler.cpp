@@ -9,17 +9,103 @@ namespace AxxonsoftInternProject
 		) :
 		HTTPHandler{ std::dynamic_pointer_cast<HTTPDocument>(handledDocument) },
 		m_outputDocument{ outputDocument },
-		m_digestManager{ digestManager }
+		m_digestManager{ digestManager },
+		m_isUserLoggedIn{ false }
 	{
 	}
 
-	bool http::HTTPRequestHandler::isUserLoggedIn()
+	void http::HTTPRequestHandler::setWWWAuthHeader()
 	{
-		return false;
+		m_outputDocument->m_headers.push_back(HTTPHeader{ stock::headers::names::g_wwwAuthenticate});
+		m_outputDocument->m_headers.back().m_classes.push_back(HTTPHeaderValueClass{});
+		m_outputDocument->m_headers.back().m_classes.back().m_name = stock::headers::values::g_digest;
+		m_outputDocument->m_headers.back().m_classes.back().m_fields.push_back(HTTPHeaderValueClassField{
+			stock::headers::values::g_qop,
+			HTTPHeaderValueClassFielsArgument{stock::headers::values::g_auth, true}
+			});
+
+		std::string nonce = stock::functions::generateRandomString(AxxonsoftInternProject::SERVER::Configuration::g_nonceSize);
+		std::string opaque = stock::functions::generateRandomString(AxxonsoftInternProject::SERVER::Configuration::g_opaqueSize);
+		m_digestManager->AddAuthRequestPair(nonce, opaque);
+
+		m_outputDocument->m_headers.back().m_classes.back().m_fields.push_back(HTTPHeaderValueClassField{
+			stock::headers::values::g_nonce,
+			HTTPHeaderValueClassFielsArgument{nonce, true}
+			});
+		m_outputDocument->m_headers.back().m_classes.back().m_fields.push_back(HTTPHeaderValueClassField{
+			stock::headers::values::g_opaque,
+			HTTPHeaderValueClassFielsArgument{opaque, true}
+			});
 	}
 
-	void http::HTTPRequestHandler::setAuthHeader()
+	void http::HTTPRequestHandler::handleAuthHeader(const HTTPHeader& header)
 	{
+		if (header.m_classes.back().m_name != stock::headers::values::g_digest)
+		{
+			std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+			m_isUserLoggedIn = false;
+		}
+
+		std::string sessionId = handleAuthHeaderFields(header.m_classes.back().m_fields);
+
+		if (sessionId != "")
+		{
+			m_sessionID = sessionId;
+			return;
+		}
+
+		std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+		m_isUserLoggedIn = false;
+	}
+
+	void http::HTTPRequestHandler::handleCookieHeader(const HTTPHeader& header)
+	{
+		for (auto field : header.m_classes.back().m_fields)
+		{
+			if (field.m_name == stock::headers::values::g_sessionID && m_digestManager)
+			{
+			//Cookie	
+			}
+		}
+
+		std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+	}
+
+	std::string http::HTTPRequestHandler::handleAuthHeaderFields(const std::vector<HTTPHeaderValueClassField>& fields)
+	{
+		std::string opaque;
+		std::string nonce;
+		std::string response;
+		std::string username;
+
+		for (auto field : fields)
+		{
+			if (field.m_name == stock::headers::values::g_username)
+			{
+				std::string username = field.m_arguments.back().m_value;
+			}
+			else if(field.m_name == stock::headers::values::g_response)
+			{
+				std::string response = field.m_arguments.back().m_value;
+			}
+			else if(field.m_name == stock::headers::values::g_opaque)
+			{
+				std::string opaque = field.m_arguments.back().m_value;
+			}
+			else if(field.m_name == stock::headers::values::g_nonce)
+			{
+				std::string nonce = field.m_arguments.back().m_value;
+			}
+		}
+
+		std::string sessionId;
+
+		if(m_digestManager->IsOpaqueValid(nonce, opaque))
+		{
+			sessionId = m_digestManager->GetSessionId(response, username, nonce);
+		}
+
+		return sessionId;
 	}
 
 	void http::HTTPRequestHandler::verifyVersion()
@@ -51,10 +137,10 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::handleMethod()
 	{
-		if(!isUserLoggedIn())
+		if(!m_isUserLoggedIn)
 		{
 			std::dynamic_pointer_cast<HTTPReply>(m_outputDocument)->m_status = stock::replyStatuses::g_unauthorized;
-			//add authorization header
+			setWWWAuthHeader();
 		}
 		else if (m_decoder.Decode(std::dynamic_pointer_cast<HTTPRequest>(m_handledDocument)->m_uri, m_URITarget))
 		{
@@ -81,15 +167,18 @@ namespace AxxonsoftInternProject
 		for (auto header : m_handledDocument->m_headers)
 		{
 			if (header.m_name == stock::headers::names::g_connection && 
-				header.m_classes.back().m_fields.back().m_arguments.back() == stock::headers::values::g_keepAlive)
+				header.m_classes.back().m_fields.back().m_arguments.back().m_value == stock::headers::values::g_keepAlive)
 			{
 				m_outputDocument->m_headers.push_back(header);
 			}
-		}
-
-		if (m_outputDocument->m_body.size() != 0)
-		{
-			m_outputDocument->m_headers.push_back(HTTPHeader{ stock::headers::names::g_contentLength, std::to_string(m_outputDocument->m_body.size()) });
+			else if (header.m_name == stock::headers::names::g_authorization)
+			{
+				handleAuthHeader(header);
+			}
+			else if (header.m_name == stock::headers::names::g_cookie)
+			{
+				handleCookieHeader(header);
+			}
 		}
 	}
 
@@ -125,6 +214,14 @@ namespace AxxonsoftInternProject
 			AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory %
 			std::string{ inputFileInfo[stock::json::g_pathFileldName] } %
 			std::string{ inputFileInfo[stock::json::g_filenameFiledName] });
+	}
+
+	void http::HTTPRequestHandler::setHeaders()
+	{
+		if (m_outputDocument->m_body.size() != 0)
+		{
+			m_outputDocument->m_headers.push_back(HTTPHeader{ stock::headers::names::g_contentLength, std::to_string(m_outputDocument->m_body.size()) });
+		}
 	}
 
 	void http::HTTPRequestHandler::handlePOSTMethod()
@@ -340,7 +437,8 @@ namespace AxxonsoftInternProject
 	void http::HTTPRequestHandler::Handle()
 	{
 		verifyVersion();
-		handleMethod();
 		handleHeaders();
+		handleMethod();
+		setHeaders();
 	}
 }
