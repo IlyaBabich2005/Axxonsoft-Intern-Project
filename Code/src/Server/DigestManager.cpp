@@ -31,15 +31,8 @@ namespace AxxonsoftInternProject
 
 		bool DigestManager::IsAuthPairValid(std::string nonce, std::string opaque)
 		{
-			for (auto request_pair : m_authRequestPairs)
-			{
-				if (request_pair.nonce == nonce && request_pair.opaque == opaque)
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return m_authRequestPairs.find(nonce) != m_authRequestPairs.end() && 
+				m_authRequestPairs[nonce] == opaque ? true : false;
 		}
 
 		std::string DigestManager::getServerHash(const std::string authString)
@@ -66,18 +59,13 @@ namespace AxxonsoftInternProject
 				serverHash = getServerHash(username + nonce + m_usersData[username]);
 			}
 
+			std::string sessionID = generateSessionId();
+
 			if (serverHash == userhash)
 			{
-				for (auto authPairIterator = m_authRequestPairs.begin(); authPairIterator != m_authRequestPairs.end(); authPairIterator++)
-				{
-					if(authPairIterator->nonce == nonce)
-					{
-						m_authRequestPairs.erase(authPairIterator);
-						break;
-					}
-				}
+				m_authRequestPairs.erase(nonce);
 
-				m_sessions.push_back(generateSessionId());
+				m_sessions.push_back(sessionID);
 			}
 
 			return serverHash;
@@ -88,20 +76,22 @@ namespace AxxonsoftInternProject
 			return AxxonsoftInternProject::http::stock::functions::generateRandomString(Configuration::g_sessionIdSize);
 		}
 
-		std::string DigestManager::IsSessionIdValid(const std::string& sessionID)
+		bool DigestManager::IsSessionIdValid(const std::string& sessionID)
 		{
 			for (auto session : m_sessions)
 			{
 				if (session.m_sessionID == sessionID)
 				{
-					return session.m_sessionID;
+					return true;
 				}
 			}
+
+			return false;
 		}
 
 		void DigestManager::AddAuthRequestPair(const std::string& nounce, const std::string& opaque)
 		{
-			m_authRequestPairs.push_back(AuthPair{ nounce, opaque });
+			m_authRequestPairs.insert(std::pair<std::string, std::string>{ nounce, opaque });
 		}
 	}
 }

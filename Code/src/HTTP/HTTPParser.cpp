@@ -88,14 +88,10 @@ namespace AxxonsoftInternProject
 
         void HTTPParser::handleHeaderValueSymbol(char curentSymbol)
         {
-            if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) ||
+            if (AxxonsoftInternProject::checks::characters::IsChar(curentSymbol) &&
                 !AxxonsoftInternProject::checks::characters::IsControlChar(curentSymbol))
             {
-                if (curentSymbol == '\r')
-                {
-                    handleRSymbolInHeaderValue(curentSymbol);
-                }
-                else if (!m_isStringValueReading && curentSymbol != '"')
+                if (!m_isStringValueReading && curentSymbol != '"')
                 {
                     handleNonStringHeaderValueSymbol(curentSymbol);
                 }
@@ -111,7 +107,18 @@ namespace AxxonsoftInternProject
             }
             else
             {
-                m_status = ParsingStatus::endResultBad;
+                if (curentSymbol == '\r')
+                {
+                    handleRSymbolInHeaderValue(curentSymbol);
+                }
+                else if(curentSymbol == '\0')
+				{
+                    return;
+				}
+                else
+                {
+                    m_status = ParsingStatus::endResultBad;
+                }
             }
         }
 

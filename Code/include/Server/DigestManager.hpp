@@ -1,9 +1,11 @@
 #include <boost/uuid/detail/md5.hpp>
 #include <boost/algorithm/hex.hpp>
 
-#include "AuthPair.hpp"
+#include <map>
+
 #include "Session.hpp"
 #include "Config.hpp"
+#include "Stock.hpp"
 
 #define BOOST_UUID_COMPAT_PRE_1_71_MD5
 
@@ -15,7 +17,7 @@ namespace AxxonsoftInternProject
 		{
 		private:
 			std::map<std::string, std::string> m_usersData;
-			std::vector<AuthPair> m_authRequestPairs;
+			std::map<std::string, std::string> m_authRequestPairs;
 			std::vector<Session> m_sessions;
 
 		private:

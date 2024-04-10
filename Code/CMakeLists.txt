@@ -112,7 +112,6 @@ add_executable(
 	include/Server/Session.hpp
 	src/Server/DigestManager.cpp 
 	include/Server/DigestManager.hpp
-	include/Server/AuthPair.hpp
 )
 
 target_include_directories(Server PRIVATE include/Server)
