@@ -93,20 +93,25 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::handleUnauthorized()
 		{
-			m_loginManager->m_isNeedToLogin = true;
-
 			for (auto header : m_handledDocument->m_headers)
 			{
+				m_loginManager->m_isNeedToLogin = true;
+
 				if (header.m_name == stock::headers::names::g_wwwAuthenticate)
 				{
 					handleAuthHeader(header);
 					std::cout << boost::format("%1%\n") % stock::messages::g_unauthorized;
+
+					std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputLogin;
+					std::getline(std::cin, m_loginManager->m_login);
+					std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputPassword;
+					std::getline(std::cin, m_loginManager->m_password);
+
 					return;
 				}
 			}
-
+;
 			std::cout << boost::format("%1%\n") % stock::messages::g_authError;
-			m_loginManager->m_isNeedToLogin = false;
 		}
 
 		void HTTPReplyHandler::handleAuthHeader(const HTTPHeader& header)
@@ -155,7 +160,10 @@ namespace AxxonsoftInternProject
 			else if (handledReply->m_status == stock::replyStatuses::g_unauthorized)
 			{
 				handleUnauthorized();
+				return;
 			}
+
+			m_loginManager->m_isNeedToLogin = false;
 		}
 
 		void HTTPReplyHandler::showFolderContent()

@@ -26,6 +26,11 @@ namespace AxxonsoftInternProject
 					}
 				);
 			}
+
+			if (m_loginManager->m_isNeedToLogin)
+			{
+				formAuthHeader();
+			}
 		}
 
 		void CommandHandler::extructTargetIntoRequestBody(std::string target)
@@ -188,20 +193,27 @@ namespace AxxonsoftInternProject
 					}
 					else
 					{
+						m_handlingResult = HandlingResult::Error;
 						std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_invalidMethod;
+						return;
 					}
+
+					m_handlingResult = HandlingResult::Success;
 				}
 				else
 				{
 					handlePostCommand();
+					m_handlingResult = HandlingResult::Success;
 				}
 			}
 			catch (std::exception& ex)
 			{
+				m_handlingResult = HandlingResult::Error;
 				std::cout << boost::format("%1%\n") % ex.what();
 			}
 			catch (boost::exception& ex)
 			{
+				m_handlingResult = HandlingResult::Error;
 				std::cout << boost::format("%1%\n") % boost::diagnostic_information(ex);
 			}
 		}
@@ -209,12 +221,25 @@ namespace AxxonsoftInternProject
 		void CommandHandler::formAuthHeader()
 		{
 			m_outputRequest->m_headers.push_back(http::HTTPHeader{ http::stock::headers::names::g_authorization });
-			m_outputRequest->m_headers[0].m_classes.push_back(http::HTTPHeaderValueClass{http::stock::headers::values::g_digest});
+			m_outputRequest->m_headers.back().m_classes.push_back(http::HTTPHeaderValueClass{});
+			m_outputRequest->m_headers.back().m_classes[0].m_name = http::stock::headers::values::g_digest;
 
-			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_username, m_loginManager->m_login });
-			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_nonce, m_loginManager->m_nonce });
-			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_opaque, m_loginManager->m_opaque });
-			m_outputRequest->m_headers[0].m_classes[0].m_fields.push_back(http::HTTPHeaderValueClassField{ http::stock::headers::values::g_response, formRequestSring() });
+			m_outputRequest->m_headers.back().m_classes.back().m_fields.push_back(http::HTTPHeaderValueClassField{
+				http::stock::headers::values::g_username, 
+				http::HTTPHeaderValueClassFielsArgument{m_loginManager->m_login, true}
+				});
+			m_outputRequest->m_headers.back().m_classes.back().m_fields.push_back(http::HTTPHeaderValueClassField{
+				http::stock::headers::values::g_nonce, 
+				http::HTTPHeaderValueClassFielsArgument{m_loginManager->m_nonce, true}
+				});
+			m_outputRequest->m_headers.back().m_classes.back().m_fields.push_back(http::HTTPHeaderValueClassField{
+				http::stock::headers::values::g_opaque, 
+				http::HTTPHeaderValueClassFielsArgument{m_loginManager->m_opaque, true}
+				});
+			m_outputRequest->m_headers.back().m_classes.back().m_fields.push_back(http::HTTPHeaderValueClassField{
+				http::stock::headers::values::g_response, 
+				http::HTTPHeaderValueClassFielsArgument{formRequestSring(), true}
+				});
 		}
 
 		std::string CommandHandler::formRequestSring()
@@ -233,27 +258,18 @@ namespace AxxonsoftInternProject
 			return clientHash;
 		}
 
-		void CommandHandler::Handle(Command command, std::shared_ptr<http::HTTPRequest> request)
+		HandlingResult CommandHandler::Handle(Command command, std::shared_ptr<http::HTTPRequest> request)
 		{
 			m_outputRequest = request;
 			m_comand = command;
 
 			m_outputRequest->m_version = config::g_httpVersion;
-
-			if(m_loginManager->m_isNeedToLogin)
-			{
-				std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputLogin;
-				std::getline(std::cin, m_loginManager->m_login);
-				std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputPassword;
-				std::getline(std::cin, m_loginManager->m_password);
-			}
-			else
-			{
-				handleCommand();
-			}
+			handleCommand();
 
 			m_outputRequest->m_body = m_requestBody.dump(AxxonsoftInternProject::http::stock::json::g_dumpSize);
 			setHeaders();
+
+			return m_handlingResult;
 		}
 	}
 }

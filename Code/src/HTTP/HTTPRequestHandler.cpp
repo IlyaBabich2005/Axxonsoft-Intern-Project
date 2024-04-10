@@ -82,25 +82,25 @@ namespace AxxonsoftInternProject
 		{
 			if (field.m_name == stock::headers::values::g_username)
 			{
-				std::string username = field.m_arguments.back().m_value;
+				username = field.m_arguments.back().m_value;
 			}
 			else if(field.m_name == stock::headers::values::g_response)
 			{
-				std::string response = field.m_arguments.back().m_value;
+				response = field.m_arguments.back().m_value;
 			}
 			else if(field.m_name == stock::headers::values::g_opaque)
 			{
-				std::string opaque = field.m_arguments.back().m_value;
+				opaque = field.m_arguments.back().m_value;
 			}
 			else if(field.m_name == stock::headers::values::g_nonce)
 			{
-				std::string nonce = field.m_arguments.back().m_value;
+				nonce = field.m_arguments.back().m_value;
 			}
 		}
 
 		std::string sessionId;
 
-		if(m_digestManager->IsOpaqueValid(nonce, opaque))
+		if(m_digestManager->IsAuthPairValid(nonce, opaque))
 		{
 			sessionId = m_digestManager->GetSessionId(response, username, nonce);
 		}

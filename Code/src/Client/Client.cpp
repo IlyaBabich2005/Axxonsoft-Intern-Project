@@ -21,18 +21,22 @@ namespace AxxonsoftInternProject
 	void Client::Client::readCommand()
 	{
 		m_command = std::shared_ptr<Command>{ new Command };
+		std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputCommand;
+		std::getline(std::cin, m_oldCommand);
+		
 		m_request = std::shared_ptr<http::HTTPRequest>{ new http::HTTPRequest };
 
-		std::string command;
-
-		std::getline(std::cin, command);
-
-		if (m_commandParcer.Parce(m_command, command) == http::ParsingStatus::endResultGood)
+		if (m_commandParcer.Parce(m_command, m_oldCommand) == http::ParsingStatus::endResultGood)
 		{
-			m_commandHandler.Handle(*m_command, m_request);
-
-			m_replyHandler = http::HTTPReplyHandler{ m_reply, m_request->m_type, m_loginManager };
-			writeRequest();
+			if (m_commandHandler.Handle(*m_command, m_request) == HandlingResult::Success)
+			{
+				m_replyHandler = http::HTTPReplyHandler{ m_reply, m_request->m_type, m_loginManager};
+				writeRequest();
+			}
+			else
+			{
+				return;
+			}	
 		}
 		else
 		{

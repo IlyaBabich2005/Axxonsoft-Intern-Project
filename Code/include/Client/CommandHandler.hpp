@@ -25,6 +25,12 @@ namespace AxxonsoftInternProject
 {
 	namespace Client
 	{
+		enum HandlingResult
+		{
+			Success = 0,
+			Error
+		};
+
 		class CommandHandler
 		{
 		private: 
@@ -32,6 +38,7 @@ namespace AxxonsoftInternProject
 			Command m_comand;
 			nlohmann::json m_requestBody;
 			std::shared_ptr<LoginManager> m_loginManager;
+			HandlingResult m_handlingResult;
 
 		private: 
 			void setRequestUriAndMethod(
@@ -53,7 +60,7 @@ namespace AxxonsoftInternProject
 		public:
 			CommandHandler();
 			CommandHandler(std::shared_ptr<LoginManager> loginManager);
-			void Handle(Command comand, std::shared_ptr<http::HTTPRequest> request);
+			HandlingResult Handle(Command comand, std::shared_ptr<http::HTTPRequest> request);
 		};
 	}
 }

@@ -110,10 +110,9 @@ add_executable(
 	include/Server/Configuration.hpp
 	src/Server/Session.cpp
 	include/Server/Session.hpp
-	src/Server/SessionManager.cpp
-	include/Server/SessionManager.hpp
 	src/Server/DigestManager.cpp 
 	include/Server/DigestManager.hpp
+	include/Server/AuthPair.hpp
 )
 
 target_include_directories(Server PRIVATE include/Server)
