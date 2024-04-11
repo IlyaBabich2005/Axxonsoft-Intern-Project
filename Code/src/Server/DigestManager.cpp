@@ -68,7 +68,7 @@ namespace AxxonsoftInternProject
 				m_sessions.push_back(sessionID);
 			}
 
-			return serverHash;
+			return sessionID;
 		}
 
 		std::string DigestManager::generateSessionId()

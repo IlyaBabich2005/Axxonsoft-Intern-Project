@@ -53,6 +53,7 @@ namespace AxxonsoftInternProject
 			std::string handleAuthHeaderFields(const std::vector<HTTPHeaderValueClassField>& fields);
 			void handleAuthHeader(const HTTPHeader& header);
 			void handleCookieHeader(const HTTPHeader& header);
+			void setSetCookieHeader();
 			
 		public:
 			HTTPRequestHandler(

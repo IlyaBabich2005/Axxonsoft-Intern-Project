@@ -31,6 +31,10 @@ namespace AxxonsoftInternProject
 			{
 				formAuthHeader();
 			}
+			else if (m_loginManager->m_sessionID != "")
+			{
+				formCookie();
+			}
 		}
 
 		void CommandHandler::extructTargetIntoRequestBody(std::string target)
@@ -256,6 +260,18 @@ namespace AxxonsoftInternProject
 			boost::algorithm::hex(intDigest, intDigest + (sizeof(boost::uuids::detail::md5::digest_type) / sizeof(int)), std::back_inserter(clientHash));
 
 			return clientHash;
+		}
+
+		void CommandHandler::formCookie()
+		{
+			m_outputRequest->m_headers.push_back(http::HTTPHeader{ http::stock::headers::names::g_cookie });
+			m_outputRequest->m_headers.back().m_classes.push_back(http::HTTPHeaderValueClass{});
+			m_outputRequest->m_headers.back().m_classes.back().m_fields.push_back(http::HTTPHeaderValueClassField{
+				http::stock::headers::values::g_sessionID,
+				http::HTTPHeaderValueClassFielsArgument{
+					m_loginManager->m_sessionID, 
+					true
+				}});
 		}
 
 		HandlingResult CommandHandler::Handle(Command command, std::shared_ptr<http::HTTPRequest> request)

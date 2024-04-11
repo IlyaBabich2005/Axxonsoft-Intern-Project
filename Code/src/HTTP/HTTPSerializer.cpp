@@ -65,8 +65,6 @@ namespace AxxonsoftInternProject
 
 				serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpDocumentLineSeparator));
 			}
-
-			serializedHeaders.push_back(boost::asio::buffer(stock::characters::separators::g_httpDocumentLineSeparator));
 			
 			return serializedHeaders;
 		}

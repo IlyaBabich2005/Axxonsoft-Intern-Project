@@ -56,6 +56,7 @@ namespace AxxonsoftInternProject
 			void handleCommand();
 			void formAuthHeader();
 			std::string formRequestSring();
+			void formCookie();
 
 		public:
 			CommandHandler();

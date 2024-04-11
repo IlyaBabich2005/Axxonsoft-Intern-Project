@@ -24,7 +24,7 @@ namespace AxxonsoftInternProject
 		{
 		private:
 			ClientRequestType m_requestType;
-			std::shared_ptr<AxxonsoftInternProject::Client::LoginManager> m_loginManager;
+			std::shared_ptr<Client::LoginManager> m_loginManager;
 
 		private:
 			void downloadGettedFile();
@@ -36,6 +36,8 @@ namespace AxxonsoftInternProject
 			void showFolderContent();
 			void handleUnauthorized();
 			void handleAuthHeader(const HTTPHeader& header);
+			void handleSetCoockieHeader(const HTTPHeader& header);
+			void handleHeaders();
 
 		public:
 			HTTPReplyHandler(

@@ -125,6 +125,7 @@ namespace AxxonsoftInternProject
 				const std::string g_unauthorized{ "Unauthorized" };
 				const std::string g_authSuccess{ "Auth success" };
 				const std::string g_inputCommand{ "Input command: " };
+				const std::string g_folderIsEmpty{ "Folder is empty" };
 			}
 
 			namespace json

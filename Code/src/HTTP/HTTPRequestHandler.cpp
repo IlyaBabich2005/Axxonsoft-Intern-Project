@@ -51,6 +51,7 @@ namespace AxxonsoftInternProject
 		if (sessionId != "")
 		{
 			m_sessionID = sessionId;
+			m_isUserLoggedIn = true;
 			return;
 		}
 
@@ -62,13 +63,27 @@ namespace AxxonsoftInternProject
 	{
 		for (auto field : header.m_classes.back().m_fields)
 		{
-			if (field.m_name == stock::headers::values::g_sessionID && m_digestManager)
+			if (field.m_name == stock::headers::values::g_sessionID && 
+				m_digestManager->IsSessionIdValid(field.m_arguments.back().m_value))
 			{
-			//Cookie	
+				m_isUserLoggedIn = true;
+				return;
 			}
 		}
 
 		std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+		m_isUserLoggedIn = false;
+	}
+
+	void http::HTTPRequestHandler::setSetCookieHeader()
+	{
+		m_outputDocument->m_headers.push_back(HTTPHeader{ stock::headers::names::g_setCookie });
+		m_outputDocument->m_headers.back().m_classes.push_back(HTTPHeaderValueClass{});
+		m_outputDocument->m_headers.back().m_classes.back().m_fields.push_back(HTTPHeaderValueClassField{
+			stock::headers::values::g_sessionID,
+			HTTPHeaderValueClassFielsArgument{m_sessionID, true}
+			});
+		m_sessionID.clear();
 	}
 
 	std::string http::HTTPRequestHandler::handleAuthHeaderFields(const std::vector<HTTPHeaderValueClassField>& fields)
@@ -222,6 +237,11 @@ namespace AxxonsoftInternProject
 		{
 			m_outputDocument->m_headers.push_back(HTTPHeader{ stock::headers::names::g_contentLength, std::to_string(m_outputDocument->m_body.size()) });
 		}
+
+		if (m_sessionID.size() != 0)
+		{
+			setSetCookieHeader();
+		}
 	}
 
 	void http::HTTPRequestHandler::handlePOSTMethod()
@@ -316,12 +336,17 @@ namespace AxxonsoftInternProject
 
 	void http::HTTPRequestHandler::putDirectoryContentToReplyBody()
 	{
-		nlohmann::json directoryInfo = nlohmann::json::parse(m_handledDocument->m_body);
+		std::string path = SERVER::Configuration::g_serverRootDirectory;
+
+		if (m_handledDocument->m_body.size() != 0)
+		{
+			nlohmann::json directoryInfo = nlohmann::json::parse(m_handledDocument->m_body);
+			path += directoryInfo[stock::json::g_pathFileldName];
+		}
+		
 		nlohmann::json directoryContent;
 
-		std::string path = directoryInfo[stock::json::g_pathFileldName];
-
-		for (const auto& file : std::filesystem::directory_iterator(AxxonsoftInternProject::SERVER::Configuration::g_serverRootDirectory + path))
+		for (const auto& file : std::filesystem::directory_iterator(path))
 		{
 			std::cout << boost::format("%1%\n") % file;
 

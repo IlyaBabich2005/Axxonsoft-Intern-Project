@@ -10,7 +10,7 @@ namespace AxxonsoftInternProject
 		{
 			std::string m_nonce;
 			std::string m_opaque;
-			std::string m_sessonID;
+			std::string m_sessionID;
 			bool m_isNeedToLogin = false;
 			std::string m_realm;
 			std::string m_qop;

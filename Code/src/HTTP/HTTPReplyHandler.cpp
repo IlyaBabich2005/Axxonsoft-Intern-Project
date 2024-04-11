@@ -93,24 +93,18 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::handleUnauthorized()
 		{
-			for (auto header : m_handledDocument->m_headers)
+			if (m_loginManager->m_isNeedToLogin)
 			{
-				m_loginManager->m_isNeedToLogin = true;
+				std::cout << boost::format("%1%\n") % stock::messages::g_unauthorized;
 
-				if (header.m_name == stock::headers::names::g_wwwAuthenticate)
-				{
-					handleAuthHeader(header);
-					std::cout << boost::format("%1%\n") % stock::messages::g_unauthorized;
+				std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputLogin;
+				std::getline(std::cin, m_loginManager->m_login);
+				std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputPassword;
+				std::getline(std::cin, m_loginManager->m_password);
 
-					std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputLogin;
-					std::getline(std::cin, m_loginManager->m_login);
-					std::cout << boost::format("%1%\n") % AxxonsoftInternProject::http::stock::messages::g_inputPassword;
-					std::getline(std::cin, m_loginManager->m_password);
-
-					return;
-				}
+				return;
 			}
-;
+
 			std::cout << boost::format("%1%\n") % stock::messages::g_authError;
 		}
 
@@ -137,6 +131,39 @@ namespace AxxonsoftInternProject
 				{
 					std::cout << boost::format("%1%\n") % stock::messages::g_authError;
 					m_loginManager->m_isNeedToLogin = false;
+					return;
+				}
+			}
+
+			m_loginManager->m_isNeedToLogin = true;
+		}
+
+		void HTTPReplyHandler::handleSetCoockieHeader(const HTTPHeader& header)
+		{
+			for (auto field : header.m_classes.back().m_fields)
+			{
+				if (field.m_name == stock::headers::values::g_sessionID)
+				{
+					m_loginManager->m_sessionID = field.m_arguments.back().m_value;
+					m_loginManager->m_isNeedToLogin = false;
+					return;
+				}
+			}
+
+			std::cout << boost::format("%1%\n") % stock::messages::g_authError;
+		}
+
+		void HTTPReplyHandler::handleHeaders()
+		{
+			for (auto header : m_handledDocument->m_headers)
+			{
+				if (header.m_name == stock::headers::names::g_setCookie)
+				{
+					handleSetCoockieHeader(header);
+				}
+				else if(header.m_name == stock::headers::names::g_wwwAuthenticate)
+				{
+					handleAuthHeader(header);
 				}
 			}
 		}
@@ -168,16 +195,24 @@ namespace AxxonsoftInternProject
 
 		void HTTPReplyHandler::showFolderContent()
 		{
-			nlohmann::json body = nlohmann::json::parse(m_handledDocument->m_body);
-
 			try
 			{
-				std::vector<std::string> content = body[stock::json::g_contentFieldName];
+				nlohmann::json body = nlohmann::json::parse(m_handledDocument->m_body);
 
-				for (auto target : content)
+				if (body[stock::json::g_contentFieldName] != nullptr)
 				{
-					std::cout << boost::format("%1%\n") % target;
+					std::vector<std::string> content = body[stock::json::g_contentFieldName];
+
+					for (auto target : content)
+					{
+						std::cout << boost::format("%1%\n") % target;
+					}
 				}
+				else
+				{
+					std::cout << boost::format("%1%\n") % stock::messages::g_folderIsEmpty;
+				}
+				
 			}
 			catch (std::exception& ex)
 			{
@@ -193,6 +228,7 @@ namespace AxxonsoftInternProject
 		{
 			try
 			{
+				handleHeaders();
 				verifyVersion();
 				handleStatus();
 			}
